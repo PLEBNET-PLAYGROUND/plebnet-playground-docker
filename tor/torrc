@@ -1,0 +1,5 @@
+ControlPort 0.0.0.0:9051
+SOCKSPort 0.0.0.0:9050
+HashedControlPassword 16:A170E9325684E5366021C2AA404D4CA5AAE0D6FFE947E60B939083EF61
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
