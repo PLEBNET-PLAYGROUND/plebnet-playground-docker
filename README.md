@@ -10,6 +10,11 @@ This package will setup a bitcoind and lnd daemon that will connect to the Plebn
 - All ports are completely exposed to local host, this is mostly to make it easy for end-users to tinker, and as the signet coins in the playground are worthless so there is little risk of hacking. You can modify the ```docker-compose.yaml``` should these cause conflits.
 ## Basic Setup
 
+### Clone Repo
+```
+git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker
+cd plebnet-playground-docker
+```
 ### Install and start containers
 ```
 docker-compose up --no-start --build
