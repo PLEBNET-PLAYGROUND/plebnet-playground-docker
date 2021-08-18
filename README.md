@@ -26,7 +26,7 @@ docker start playground-lnd
 ```
 alias lncli='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
 
-alias create-lnd-wallet='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/admin.macaroon create'
+alias create-lnd-wallet='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon create'
 
 alias unlock-lnd='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon unlock'
 
