@@ -61,5 +61,7 @@ create-lnd-wallet
 
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)
+- [Bitcoin Wiki](https://bitcoin.it)
+- [Lightning Wiki](https://lightningwiki.net/index.php/Main_Page)
 - [Plebnet Telegram](http://plebnet.org/)
   
