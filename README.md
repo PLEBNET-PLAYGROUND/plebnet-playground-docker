@@ -17,26 +17,28 @@ cd plebnet-playground-docker
 ```
 ### Install and start containers
 ```
-docker-compose up --no-start --build
-docker start playground-tor
-docker start playground-bitcoind
-docker start playground-lnd
+sudo docker-compose up --no-start --build
+sudo docker start playground-tor
+sudo docker start playground-bitcoind
+sudo docker start playground-lnd
 ```
 ### Setup aliases for your convenience
 ```
-alias lncli='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
+alias lncli='sudo docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
 
-alias create-lnd-wallet='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon create'
+alias create-lnd-wallet='sudo docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon create'
 
-alias unlock-lnd='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon unlock'
+alias unlock-lnd='sudo docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon unlock'
 
-alias connect-playground='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon connect 03ee9d906caa8e8e66fe97d7a76c2bd9806813b0b0f1cee8b9d03904b538f53c4e@104.131.10.218:9735'
+alias connect-playground='sudo docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon connect 03ee9d906caa8e8e66fe97d7a76c2bd9806813b0b0f1cee8b9d03904b538f53c4e@104.131.10.218:9735'
 
-alias logs-bitcoind='docker logs playground-bitcoind'
+alias logs-bitcoind='sudo docker logs playground-bitcoind'
 
-alias logs-lnd='docker logs playground-lnd'
+alias logs-lnd='sudo docker logs playground-lnd'
 
-alias logs-tor='docker logs playground-tor'
+alias logs-tor='sudo docker logs playground-tor'
+
+alias restart-lnd='sudo docker restart playground-lnd'
 
 ```
 ### Create your first playground LND wallet
