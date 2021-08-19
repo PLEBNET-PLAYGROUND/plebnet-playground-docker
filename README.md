@@ -69,3 +69,6 @@ create-lnd-wallet
 - [Lightning Wiki](https://lightningwiki.net/index.php/Main_Page)
 - [Plebnet Telegram](http://plebnet.org/)
   
+### Contributors to project
+- Richard Safier
+- Nan Liu
