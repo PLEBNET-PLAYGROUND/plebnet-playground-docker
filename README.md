@@ -26,7 +26,7 @@ docker start playground-tor
 docker start playground-bitcoind
 docker start playground-lnd
 ```
-### Setup aliases for your convenience
+### Setup bash aliases for your convenience
 ```
 alias lncli='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
 
@@ -55,7 +55,7 @@ create-lnd-wallet
 - Create a password file like ```unlock.password``` in your lnd docker volume (On my machine this happens to be ```/var/lib/docker/volumes/plebnet-playground-docker_lnd_datadir/_data/```), the only content of this file will be your plaintext password you used to generate your wallet in prior step. 
 - 
 - Edit ```lnd.conf``` file and add ```wallet-unlock-password-file=/root/.lnd/unlock.password``` parameter configuration pointing to the LND container relative path to you created in prior step.
-- ``docker restart playground-lnd``` and your lnd container should now automaticly unlock your wallet on startup
+- ```docker restart playground-lnd``` and your lnd container should now automaticly unlock your wallet on startup
 
 ### Make your first peer with the seed node for Plebnet Playground Signet
 - ```connect-playground```
