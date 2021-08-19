@@ -3,7 +3,7 @@
 This package will setup a bitcoind and lnd daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain.
 
 ## Notes
-- Package currently on works/tested on x64 Linux (Ubuntu specifically)
+- Package currently on works/tested on x64 Linux (Ubuntu specifically), I was able to get it to startup in Windows but not sure how to access the volumes.
 - Bitcoind is not using tor, simply because it takes much longer to sync the chain, and while testing this slows me down. The playground signet chain is only around 1MB at time of writing, and takes my machine ~15 seconds to be fully synced clearnet, via tor it is taking minutes.
 - You will need to setup LND wallet from scratch, instructions below
 - PM @xenonfun on Telegram to get access to the Plebnet Playground Telegram group and get some playground tBTC coins to start playing with (faucet will be coming in the future)
@@ -12,7 +12,7 @@ This package will setup a bitcoind and lnd daemon that will connect to the Plebn
 
 ### Clone Repo
 ```
-git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker
+git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --config core.autocrlf=input
 cd plebnet-playground-docker
 ```
 ### Install and start containers
