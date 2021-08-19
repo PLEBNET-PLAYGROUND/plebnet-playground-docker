@@ -3,11 +3,13 @@
 This package will setup a bitcoind and lnd daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain.
 
 ## Notes
-- Package currently on works/tested on x64 Linux (Ubuntu specifically), I was able to get it to startup in Windows but not sure how to access the volumes.
+- Package currently on works/tested on x64 Linux (Ubuntu specifically)
+- This will also run under Windows Docker Desktop, be aware your docker volumes will be located via special share ```\\wsl$\docker-desktop-data\version-pack-data\community\docker\volumes``
 - Bitcoind is not using tor, simply because it takes much longer to sync the chain, and while testing this slows me down. The playground signet chain is only around 1MB at time of writing, and takes my machine ~15 seconds to be fully synced clearnet, via tor it is taking minutes.
 - You will need to setup LND wallet from scratch, instructions below
 - PM @xenonfun on Telegram to get access to the Plebnet Playground Telegram group and get some playground tBTC coins to start playing with (faucet will be coming in the future)
 - All ports are completely exposed to local host, this is mostly to make it easy for end-users to tinker, and as the signet coins in the playground are worthless so there is little risk of hacking. You can modify the ```docker-compose.yaml``` should these cause conflits.
+- FYI if you are not running the instructions below as root or the aliases you might need to alter these with ```sudo```
 ## Basic Setup
 
 ### Clone Repo
@@ -17,28 +19,28 @@ cd plebnet-playground-docker
 ```
 ### Install and start containers
 ```
-sudo docker-compose up --no-start --build
-sudo docker start playground-tor
-sudo docker start playground-bitcoind
-sudo docker start playground-lnd
+docker-compose up --no-start --build
+docker start playground-tor
+docker start playground-bitcoind
+docker start playground-lnd
 ```
 ### Setup aliases for your convenience
 ```
-alias lncli='sudo docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
+alias lncli='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
 
-alias create-lnd-wallet='sudo docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon create'
+alias create-lnd-wallet='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon create'
 
-alias unlock-lnd='sudo docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon unlock'
+alias unlock-lnd='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon unlock'
 
-alias connect-playground='sudo docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon connect 03ee9d906caa8e8e66fe97d7a76c2bd9806813b0b0f1cee8b9d03904b538f53c4e@104.131.10.218:9735'
+alias connect-playground='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon connect 03ee9d906caa8e8e66fe97d7a76c2bd9806813b0b0f1cee8b9d03904b538f53c4e@104.131.10.218:9735'
 
-alias logs-bitcoind='sudo docker logs playground-bitcoind'
+alias logs-bitcoind='docker logs playground-bitcoind'
 
-alias logs-lnd='sudo docker logs playground-lnd'
+alias logs-lnd='docker logs playground-lnd'
 
-alias logs-tor='sudo docker logs playground-tor'
+alias logs-tor='docker logs playground-tor'
 
-alias restart-lnd='sudo docker restart playground-lnd'
+alias restart-lnd='docker restart playground-lnd'
 
 ```
 ### Create your first playground LND wallet
