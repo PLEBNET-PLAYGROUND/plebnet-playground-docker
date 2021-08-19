@@ -53,7 +53,6 @@ create-lnd-wallet
 
 ### Modify your lnd.conf to auto unlock your wallet in future
 - Create a password file like ```unlock.password``` in your lnd docker volume (On my machine this happens to be ```/var/lib/docker/volumes/plebnet-playground-docker_lnd_datadir/_data/```), the only content of this file will be your plaintext password you used to generate your wallet in prior step. 
-- 
 - Edit ```lnd.conf``` file and add ```wallet-unlock-password-file=/root/.lnd/unlock.password``` parameter configuration pointing to the LND container relative path to you created in prior step.
 - ```docker restart playground-lnd``` and your lnd container should now automaticly unlock your wallet on startup
 
