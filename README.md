@@ -1,7 +1,9 @@
 # Plebnet Playground Docker Package
 
 This package will setup a bitcoind and lnd daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain.
-
+## Donate to Project
+- [Crowdfund for Playground + Plebnet.wiki running costs](https://btcpay.xenon.fun/apps/477A5RjNYiRcHWZUm4di4V6DFLnx/crowdfund)
+- [Direct Donation to Xenonfun](https://btcpay.xenon.fun/apps/41Cvr8bo3LgG42kmNyyDccvMzK2U/crowdfund)
 ## Notes
 - Package currently on works/tested on x64 Linux (Ubuntu specifically)
 - This will also run under Windows Docker Desktop, be aware your docker volumes will be located via special share ```\\wsl$\docker-desktop-data\version-pack-data\community\docker\volumes```
