@@ -7,6 +7,7 @@ volumes:
   tor_torrcdir:
   tor_servicesdir:
   thub_datadir:
+  rtl_datadir:
 services:
   bitcoind:
     links:
@@ -81,3 +82,27 @@ services:
     expose:
       - '3000'
     command: ['npm', 'run', 'start']
+  rtl:
+      container_name: playground-rtl
+      links: 
+        - lnd      
+        - bitcoind 
+      restart: unless-stopped 
+      environment: 
+        LND_SERVER_URL: https://playground-lnd:8080/v1
+        MACAROON_PATH: /root/.lnd/data/chain/bitcoin/signet
+        RTL_CONFIG_PATH: /data/
+        LND_CONFIG_PATH: /root/.lnd/lnd.conf
+        BITCOIND_CONFIG_PATH: /etc/bitcoin/bitcoin.conf
+        RTL_SSO: 0
+        RTL_COOKIE_PATH: ''
+        LOGOUT_REDIRECT_LINK: ''
+        CONFIG_PATH: ''
+        LN_IMPLEMENTATION: LND
+      ports:
+      - "3000:3000"
+      image: shahanafarooqui/rtl:0.11.0 
+      volumes: 
+      - lnd_datadir:/root/.lnd/:ro
+      - bitcoin_datadir:/etc/bitcoin/:ro
+      - rtl_datadir:/data
