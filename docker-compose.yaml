@@ -6,6 +6,7 @@ volumes:
   tor_datadir:
   tor_torrcdir:
   tor_servicesdir:
+  rtl_datadir:
 services:
   bitcoind:
     links:
@@ -60,3 +61,15 @@ services:
       - "tor_datadir:/home/tor/.tor"
       - "tor_torrcdir:/usr/local/etc/tor"
       - "tor_servicesdir:/var/lib/tor/hidden_services"
+  rtl:
+      container_name: :playground-rtl
+      links: 
+        - lnd      
+        - bitcoind 
+      restart: unless-stopped
+      container_name: playground-rtl
+      image: shahanafarooqui/rtl:0.11.0      
+      volumes: 
+      - "./RTL/RTL-Config.json:/RTL/RTL-Config.json" 
+      - "lnd_datadir:/etc/lnd/"
+      - "bitcoin_datadir:/etc/bitcoin/"   

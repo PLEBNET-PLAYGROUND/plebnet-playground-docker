@@ -1,0 +1,31 @@
+{
+    "multiPass": "password",
+    "port": "3000",
+    "defaultNodeIndex": 1,
+    "SSO": {
+      "rtlSSO": 0,
+      "rtlCookiePath": "",
+      "logoutRedirectLink": ""
+    },
+    "nodes": [
+      {
+        "index": 1,
+        "lnNode": "LND Signet",
+        "lnImplementation": "LND",
+        "Authentication": {
+          "macaroonPath": "/etc/lnd//data/chain/bitcoin/signet/admin.macaroon",
+        },
+        "Settings": {
+          "userPersona": "OPERATOR",
+          "themeMode": "DAY",
+          "themeColor": "PURPLE",
+          "channelBackupPath": "/etc/lnd/",
+          "bitcoindConfigPath": "/etc/bitcoind/bitcoin.conf",
+          "enableLogging": true,
+          "fiatConversion": false,
+          "lnServerUrl": "https://playground-lnd:8080"
+        }
+      }
+    ]
+  }
+  
