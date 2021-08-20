@@ -6,6 +6,7 @@ volumes:
   tor_datadir:
   tor_torrcdir:
   tor_servicesdir:
+  thub_datadir:
 services:
   bitcoind:
     links:
@@ -60,3 +61,23 @@ services:
       - "tor_datadir:/home/tor/.tor"
       - "tor_torrcdir:/usr/local/etc/tor"
       - "tor_servicesdir:/var/lib/tor/hidden_services"
+  thunderhub:
+    container_name: playground-thub
+    links: 
+      - bitcoind
+      - lnd
+    image: apotdevin/thunderhub:v0.12.24
+    restart: unless-stopped
+    stop_signal: SIGKILL
+    environment:
+      NO_VERSION_CHECK: "true" 
+      ACCOUNT_CONFIG_PATH: '/data/thubConfig.yaml'
+      LOG_LEVEL: debug
+    volumes:
+      - "lnd_datadir:/etc/lnd"
+      - "thub_datadir:/data"
+    ports:
+      - '3000:3000'
+    expose:
+      - '3000'
+    command: ['npm', 'run', 'start']

@@ -1,0 +1,7 @@
+masterPassword: 'a'
+accounts:
+  - name: 'Playground'
+    serverUrl: 'playground-lnd:10009'
+    macaroonPath: '/etc/lnd/data/chain/bitcoin/signet/admin.macaroon'
+    certificatePath: '/etc/lnd/tls.cert'
+    
