@@ -1,4 +1,4 @@
-# Plebnet Playground Docker Package
+# Plebnet Playground Sandbox Docker Package
 
 This package will setup a bitcoind, lnd, and tor daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain. RTL (Ride The Lightning) and ThunderHub Web UI is also include to provide a more user friendly experiance. 
 ## Donate to Project
@@ -26,6 +26,10 @@ docker start playground-tor
 docker start playground-bitcoind
 docker start playground-lnd
 ```
+### Full removal of Plebnet Playground
+```
+docker-compose down -v
+```
 ### Setup bash aliases for your convenience
 ```
 alias lncli='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
@@ -42,7 +46,19 @@ alias logs-lnd='docker logs playground-lnd'
 
 alias logs-tor='docker logs playground-tor'
 
+alias logs-rtl='docker logs playground-rtl'
+
+alias logs-thub='docker logs playground-thub'
+
+alias restart-bitcoind='docker restart playground-bitcoind'
+
 alias restart-lnd='docker restart playground-lnd'
+
+alias restart-tor='docker restart playground-tor'
+
+alias restart-rtl='docker restart playground-rtl'
+
+alias restart-thub='docker restart playground-thub'
 
 ```
 ### Create your first playground LND wallet
@@ -52,7 +68,7 @@ create-lnd-wallet
 ![create lnd wallet image](/images/create-wallet.png)
 
 ### Modify your lnd.conf to auto unlock your wallet in future
-- Create a password file like ```unlock.password``` in your lnd docker volume (On my machine this happens to be ```/var/lib/docker/volumes/plebnet-playground-docker_lnd_datadir/_data/```), the only content of this file will be your plaintext password you used to generate your wallet in prior step. 
+- Create a password file like ```unlock.password``` in your lnd docker volume (Default location on Ubuntu is ```/var/lib/docker/volumes/plebnet-playground-docker_lnd_datadir/_data/```), the only content of this file will be your plaintext password you used to generate your wallet in prior step. 
 - Edit ```lnd.conf``` file and add ```wallet-unlock-password-file=/root/.lnd/unlock.password``` parameter configuration pointing to the LND container relative path to you created in prior step.
 - ```docker restart playground-lnd``` and your lnd container should now automaticly unlock your wallet on startup
 
@@ -72,7 +88,7 @@ docker start playground-rtl
 ### RTL Setup
 - RTL will at ```http://localhost:3000```, the default password is ```password``` and it will ask you to change this on first login.
 ### ThunderHub Setup
-- ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```thubConfig.yaml``` in the volume associated with ThunderHub (On my machin this is ```/var/lib/docker/volumes/plebnet-playground-docker_thub_datadir/_data```)
+- ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```thubConfig.yaml``` in the volume associated with ThunderHub (Default location on Ubuntu is ```/var/lib/docker/volumes/plebnet-playground-docker_thub_datadir/_data```)
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)
 - [Bitcoin Wiki](https://bitcoin.it)
