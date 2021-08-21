@@ -19,7 +19,7 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --config core.autocrlf=input
 cd plebnet-playground-docker
 ```
-### Install and start containers
+### Install and start base containers
 ```
 docker-compose up --no-start --build
 docker start playground-tor
@@ -62,6 +62,13 @@ create-lnd-wallet
 - FYI, your alias is not set in default configuration to avoid confusion, go ahead and edit your ```lnd.conf``` and make an ```alias=YourNewAliasName``` parameter and restart the container.
 - Get into the telegram group and ask for some playground signet coins and go wild.
 
+## GUI Setup
+
+Start GUI containers
+```
+docker start playground-thub
+docker start playground-rtl
+```
 ### RTL Setup
 - RTL will at ```http://localhost:3000```, the default password is ```password``` and it will ask you to change this on first login.
 ### ThunderHub Setup
