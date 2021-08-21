@@ -1,4 +1,4 @@
-masterPassword: 'a'
+masterPassword: 'password'
 accounts:
   - name: 'Playground'
     serverUrl: 'playground-lnd:10009'

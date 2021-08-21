@@ -1,6 +1,6 @@
 # Plebnet Playground Docker Package
 
-This package will setup a bitcoind, lnd, and tor daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain. RTL (Ride The Lightning) Web UI is also include to provide a more user friendly experiance. 
+This package will setup a bitcoind, lnd, and tor daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain. RTL (Ride The Lightning) and ThunderHub Web UI is also include to provide a more user friendly experiance. 
 ## Donate to Project
 - [Crowdfund for Playground + Plebnet.wiki running costs](https://btcpay.xenon.fun/apps/477A5RjNYiRcHWZUm4di4V6DFLnx/crowdfund)
 - [Direct Donation to Xenonfun](https://btcpay.xenon.fun/apps/41Cvr8bo3LgG42kmNyyDccvMzK2U/crowdfund)
@@ -64,6 +64,8 @@ create-lnd-wallet
 
 ### RTL Setup
 - RTL will at ```http://localhost:3000```, the default password is ```password``` and it will ask you to change this on first login.
+### ThunderHub Setup
+- ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```thubConfig.yaml``` in the volume associated with ThunderHub (On my machin this is ```/var/lib/docker/volumes/plebnet-playground-docker_thub_datadir/_data```)
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)
 - [Bitcoin Wiki](https://bitcoin.it)
