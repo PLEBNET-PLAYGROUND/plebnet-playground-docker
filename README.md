@@ -84,7 +84,8 @@ create-lnd-wallet
 - Now you should get some gossip about the network and be able to run something like this ```lncli describegraph | jq .nodes[] | grep "alias"``` and see a list of the various node aliases on the network
 - FYI, your alias is not set in default configuration to avoid confusion, go ahead and edit your ```lnd.conf``` and make an ```alias=YourNewAliasName``` parameter and restart the container.
 - Get into the telegram group and ask for some playground signet coins and go wild.
-
+### Get some coins
+run the ```getcoins.py``` script and you will get 1tBTC put into your lightning wallet
 ## GUI Setup
 ****
 Start GUI containers
