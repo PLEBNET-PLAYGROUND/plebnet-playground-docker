@@ -8,6 +8,7 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 ***
 - Package currently on works/tested on x64 Linux (Ubuntu specifically)
 - This will also run under Windows Docker Desktop, be aware your docker volumes will be located via special share ```\\wsl$\docker-desktop-data\version-pack-data\community\docker\volumes```
+- On Mac getting to volumes is a bit hacky you can try to get VM that runs docker and has volume access with ```docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i bash```
 - Bitcoind is not using tor, simply because it takes much longer to sync the chain, and while testing this slows me down. The playground signet chain is only around 1MB at time of writing, and takes my machine ~15 seconds to be fully synced clearnet, via tor it is taking minutes.
 - You will need to setup LND wallet from scratch, instructions below
 - PM @xenonfun on Telegram to get access to the Plebnet Playground Telegram group and get some playground tBTC coins to start playing with (faucet will be coming in the future)
