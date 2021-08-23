@@ -1,3 +1,4 @@
+![create lnd wallet image](/images/PlebnetPlayground.png)
 # Plebnet Playground Sandbox Docker Package
 This package will setup a bitcoind, lnd, and tor daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain. RTL (Ride The Lightning) and ThunderHub Web UI is also include to provide a more user friendly experience. 
 ## Donate to Project
