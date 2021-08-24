@@ -22,15 +22,22 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --config core.autocrlf=input
 cd plebnet-playground-docker
 ```
-### Install and start base containers
+### Install and start containers
 ***
 ```
-docker-compose up --no-start --build
-docker start playground-tor
-docker start playground-bitcoind
-docker start playground-lnd
+docker-compose up --build -d
 ```
-### Full removal of Plebnet Playground
+### Stop containers
+***
+```
+docker-compose stop
+```
+### Start containers
+***
+```
+docker-compose up -d
+```
+### Full removal of Plebnet Playground (this deletes all volumes)
 ***
 ```
 docker-compose down -v

@@ -12,6 +12,8 @@ services:
   bitcoind:
     links:
     - tor
+    depends_on: 
+    - tor
     restart: unless-stopped
     container_name: playground-bitcoind
     build: 
@@ -27,6 +29,9 @@ services:
     - "bitcoin_datadir:/root/.bitcoin/"   
   lnd:
     links:
+    - bitcoind
+    - tor
+    depends_on: 
     - bitcoind
     - tor
     restart: unless-stopped
@@ -64,6 +69,9 @@ services:
       - "tor_servicesdir:/var/lib/tor/hidden_services"
   thunderhub:
     container_name: playground-thub
+    depends_on: 
+      - lnd
+      - bitcoind
     links: 
       - bitcoind
       - lnd
@@ -86,6 +94,9 @@ services:
       links: 
         - lnd      
         - bitcoind 
+      depends_on: 
+        - lnd
+        - bitcoind
       restart: unless-stopped 
       environment: 
         LND_SERVER_URL: https://playground-lnd:8080/v1
