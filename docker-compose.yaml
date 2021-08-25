@@ -16,9 +16,13 @@ services:
     - tor
     restart: unless-stopped
     container_name: playground-bitcoind
+    environment:
+      - ARCH=${ARCH}
     build: 
       context: ./bitcoin-signet
       dockerfile: Dockerfile
+      args:
+        - ARCH=${ARCH}
     expose:
     - "38332"
     - "38333"
