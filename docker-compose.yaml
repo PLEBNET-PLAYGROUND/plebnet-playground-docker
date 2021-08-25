@@ -1,13 +1,5 @@
 version: "3"
 networks: {}
-# volumes:
-#   bitcoin_datadir:
-#   lnd_datadir:
-#   tor_datadir:
-#   tor_torrcdir:
-#   tor_servicesdir:
-#   thub_datadir:
-#   rtl_datadir:
 services:
   bitcoind:
     links:

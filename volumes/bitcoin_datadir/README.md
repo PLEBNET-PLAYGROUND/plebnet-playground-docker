@@ -1,3 +1,3 @@
 # About
 
-This directory contains data needed for bitcoind
+This directory will be mounted into the Docker container for bitcoind.
