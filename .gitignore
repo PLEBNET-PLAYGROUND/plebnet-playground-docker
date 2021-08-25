@@ -350,3 +350,15 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+## Hourly
+
+hourly.yaml
+hourly-outputs/
+
+## Plebnet Playground
+
+# Volumes
+
+volumes/
+
