@@ -22,10 +22,14 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --config core.autocrlf=input
 cd plebnet-playground-docker
 ```
-### Install and start containers
+### Architectures 
+x86_64-linux-gnu = Intel x64
+osx64 = OSX 64-bit
+### Install and start containers (Intel x64 example)
 ***
 ```
-docker-compose up --build -d
+docker-compose build --build-arg ARCH=x86_64-linux-gnu
+docker-compose up -d
 ```
 ### Stop containers
 ***

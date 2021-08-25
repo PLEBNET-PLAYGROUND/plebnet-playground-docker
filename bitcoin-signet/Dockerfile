@@ -3,6 +3,7 @@ FROM debian:buster-slim as builder
 ARG BITCOIN_VERSION=0.21.1
 ARG ARCH=${ARCH}
 
+
 #RUN apt-add-repository ppa:bitcoin/bitcoin && apt-get update && apt-get install bitcoin
 #RUN /lib64/ld-linux-x86-64.so.2 /bin/chmod +x /bin/chmod
 
@@ -12,8 +13,8 @@ RUN  apt-get update && \
 WORKDIR /tmp
 
 # install bitcoin binaries
-RUN BITCOIN_URL="https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}-${ARCH}-linux-gnu.tar.gz" && \
-    BITCOIN_FILE="bitcoin-${BITCOIN_VERSION}-${ARCH}-linux-gnu.tar.gz" && \
+RUN BITCOIN_URL="https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}-${ARCH}.tar.gz" && \
+    BITCOIN_FILE="bitcoin-${BITCOIN_VERSION}-${ARCH}.tar.gz" && \
     BITCOIN_SHA_URL="https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc" && \
     wget -qO "${BITCOIN_FILE}" "${BITCOIN_URL}" && wget -qO SHA256SUMS.asc "${BITCOIN_SHA_URL}" && \
     grep "${BITCOIN_FILE}" SHA256SUMS.asc | sha256sum -c - && \
