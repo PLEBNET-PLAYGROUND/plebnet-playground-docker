@@ -134,7 +134,7 @@ alias bos='docker run -it --rm -v $HOME/.bos:/home/node/.bos:rw --network plebne
 - [Lightning Wiki](https://lightningwiki.net/index.php/Main_Page)
 - [Plebnet Telegram](http://plebnet.org/)
   
-### Contributors to project & Testing
+### Thanks to the contributors to project development & testing
 - Richard Safier
 - Nan Liu
 - Lamar Wilson
@@ -142,3 +142,6 @@ alias bos='docker run -it --rm -v $HOME/.bos:/home/node/.bos:rw --network plebne
 - @stflowstate
 - John Doe
 - @rafgxyz
+- @asherp
+- Randy McMillian
+- @nitesh_btc
