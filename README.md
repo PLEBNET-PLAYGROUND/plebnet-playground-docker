@@ -135,13 +135,13 @@ alias bos='docker run -it --rm -v $HOME/.bos:/home/node/.bos:rw --network plebne
 - [Plebnet Telegram](http://plebnet.org/)
   
 ### Thanks to the contributors to project development & testing
-- Richard Safier
-- Nan Liu
+- [Richard Safier](https://github.com/rsafier)
+- [Nan Liu](https://github.com/nanliu)
 - Lamar Wilson
-- @Exfrog
+- [@Exfrog](https://github.com/exfrog)
 - @stflowstate
 - John Doe
 - @rafgxyz
-- @asherp
-- Randy McMillian
+- [@asherp](https://github.com/asherp)
+- [@RandyMcMillian](https://github.com/randymcmillan)
 - @nitesh_btc
