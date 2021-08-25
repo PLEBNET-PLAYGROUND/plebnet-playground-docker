@@ -1,13 +1,13 @@
 version: "3"
 networks: {}
-volumes:
-  bitcoin_datadir:
-  lnd_datadir:
-  tor_datadir:
-  tor_torrcdir:
-  tor_servicesdir:
-  thub_datadir:
-  rtl_datadir:
+# volumes:
+#   bitcoin_datadir:
+#   lnd_datadir:
+#   tor_datadir:
+#   tor_torrcdir:
+#   tor_servicesdir:
+#   thub_datadir:
+#   rtl_datadir:
 services:
   bitcoind:
     links:
@@ -29,8 +29,10 @@ services:
     - "38334"
     ports:
     - "38333:38333"
-    volumes: 
-    - "bitcoin_datadir:/root/.bitcoin/"   
+    volumes:
+      - type: bind
+        source: ${PWD}/volumes/bitcoin_datadir
+        target: /root/.bitcoin/
   lnd:
     links:
     - bitcoind
@@ -53,8 +55,10 @@ services:
     - "9735:9735"
     - "9911:9911"
     - "10009:10009"
-    volumes: 
-    - "lnd_datadir:/root/.lnd/"
+    volumes:
+      - type: bind
+        source: ${PWD}/volumes/lnd_datadir
+        target: /root/.lnd/
   tor:
       restart: unless-stopped
       container_name: playground-tor
@@ -67,10 +71,16 @@ services:
       ports:
       - "9050:9050"
       - "9051:9051"
-      volumes: 
-      - "tor_datadir:/home/tor/.tor"
-      - "tor_torrcdir:/usr/local/etc/tor"
-      - "tor_servicesdir:/var/lib/tor/hidden_services"
+      volumes:
+        - type: bind
+          source: ${PWD}/volumes/tor_datadir
+          target: /home/tor/.tor
+        - type: bind
+          source: ${PWD}/volumes/tor_torrcdir
+          target: /usr/local/etc/tor
+        - type: bind
+          source: ${PWD}/volumes/tor_servicesdir
+          target: /var/lib/tor/hidden_services
   thunderhub:
     container_name: playground-thub
     depends_on: 
@@ -89,8 +99,12 @@ services:
       ACCOUNT_CONFIG_PATH: '/data/thubConfig.yaml'
       LOG_LEVEL: debug
     volumes:
-      - "lnd_datadir:/etc/lnd"
-      - "thub_datadir:/data"
+      - type: bind
+        source: ${PWD}/volumes/lnd_datadir
+        target: /etc/lnd
+      - type: bind
+        source: ${PWD}/volumes/thub_datadir
+        target: /data
     ports:
       - '3001:3000'  
   rtl:
@@ -116,7 +130,15 @@ services:
       ports:
       - "3000:3000"
       image: shahanafarooqui/rtl:0.11.0 
-      volumes: 
-      - lnd_datadir:/root/.lnd/:ro
-      - bitcoin_datadir:/etc/bitcoin/:ro
-      - rtl_datadir:/data
+      volumes:
+        - type: bind
+          source: ${PWD}/volumes/lnd_datadir
+          target: /root/.lnd/
+          read_only: true
+        - type: bind
+          source: ${PWD}/volumes/bitcoin_datadir
+          target: /etc/bitcoin/
+          read_only: true
+        - type: bind
+          source: ${PWD}/volumes/rtl_datadir
+          target: /data
