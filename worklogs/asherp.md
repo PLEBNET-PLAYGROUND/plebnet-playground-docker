@@ -1,3 +1,5 @@
+### 2021-08-25 18:21:40.161252: clock-out
+
 * fixed up arch table
 * `ARCH=aarch64-linux-gnu` works on my mac. bitcoind starts up
 * docker-compose was not stoping containers on my mac, but restarting docker desktop from tray icon worked
