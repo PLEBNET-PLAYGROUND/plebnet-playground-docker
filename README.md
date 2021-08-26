@@ -84,6 +84,7 @@ alias restart-rtl='docker restart playground-rtl'
 
 alias restart-thub='docker restart playground-thub'
 
+alias bos="docker run -it --rm -v $PWD/volumes/lnd_datadir:/root/.lnd/:ro -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
 ```
 ### Create your first playground LND wallet
 ***
@@ -119,19 +120,8 @@ docker start playground-rtl
 - RTL will at ```http://localhost:3000```, the default password is ```password``` and it will ask you to change this on first login.
 ### ThunderHub Setup
 ***
-- ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```thubConfig.yaml``` in the volume associated with ThunderHub (```volumes/thub_datadir```)
+- ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```volumes/thub_datadir/thubConfig.yaml```. Change `masterPassword: thunderhub-$2a$12$oRzmFZSOmvYv1heHkU053uv0a1tX9MXNqmcMpZs2hQ0t8k1Onnk1a` to `masterPassword: mynewpassword`. Then restart thunderhub using alias `restart-thub`. The masterPassword entry should automatically be converted to the hashed version of the password.
 
-### How to setup Balance of Satoshis (BOS)
-***
-#### Setup ```~/.bos directory``` with template from your cloned repo
-```
-cp -r bos/* ~/.bos
-```
-#### Base64 encode your ```tls.cert``` and ```admin.macaroon``` and replace values in ```credentials.json```
-#### Setup Alias
-```
-alias bos='docker run -it --rm -v $HOME/.bos:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis'
-```
 
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)

@@ -94,6 +94,7 @@ services:
       - type: bind
         source: ${PWD}/volumes/lnd_datadir
         target: /etc/lnd
+        read_only: true
       - type: bind
         source: ${PWD}/volumes/thub_datadir
         target: /data
