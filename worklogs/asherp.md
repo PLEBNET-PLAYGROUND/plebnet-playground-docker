@@ -1,3 +1,4 @@
+* dashboard passwords, meeting with Richard
 
 ### 2021-08-25 20:28:27.858430: clock-in
 
