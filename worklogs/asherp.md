@@ -1,3 +1,5 @@
+### 2021-08-26 16:32:44.887667: clock-out
+
 * updated bos alias
 
 * getting the following error when running `bos peers`
