@@ -1,3 +1,4 @@
+* verbose output
 * bos prototype install
 
 * building install script for bos
