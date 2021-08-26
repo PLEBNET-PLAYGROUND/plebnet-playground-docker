@@ -13,6 +13,7 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 - You will need to setup LND wallet from scratch, instructions below
 - PM [@xenonfun](t.me/xenonfun) on Telegram to get access to the Plebnet Playground Telegram group
 - All ports are completely exposed to local host, this is mostly to make it easy for end-users to tinker, and as the signet coins in the playground are worthless so there is little risk of hacking. You can modify the ```docker-compose.yaml``` should these cause conflicts.
+- For Windows users you will need to use something like git bash until we make some powershell scripts to provide cleaner functionality 
 ## Basic Setup
 ***
 ### Clone Repo
@@ -35,7 +36,7 @@ cd plebnet-playground-docker
 ### Install and start containers (Intel x64 example)
 ***
 ```
-docker-compose build --build-arg ARCH=x86_64-linux-gnu
+./install.sh x86_64-linux-gnu
 docker-compose up -d
 ```
 ### Stop containers
@@ -48,10 +49,10 @@ docker-compose stop
 ```
 docker-compose up -d
 ```
-### Full removal of Plebnet Playground (this deletes all volumes)
+### Full removal of Plebnet Playground (this deletes all data out of volumes directory)
 ***
 ```
-docker-compose down -v
+./uninstall.sh
 ```
 ### Setup bash aliases for your convenience
 ***
@@ -108,13 +109,6 @@ create-lnd-wallet
 ### Get some coins
 Install requirements ```pip3 install -r requirements.txt```
 Run the ```./getcoins.py``` script and you will get 1tBTC put into your lightning on-chain wallet.
-## GUI Setup
-****
-Start GUI containers
-```
-docker start playground-thub
-docker start playground-rtl
-```
 ### RTL Setup
 ***
 - RTL will at ```http://localhost:3000```, the default password is ```password``` and it will ask you to change this on first login.
