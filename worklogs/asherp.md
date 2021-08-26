@@ -1,3 +1,28 @@
+* updated bos alias
+
+* getting the following error when running `bos peers`
+
+```console
+err: 
+  message: 400,ExpectedLndWithKnownChain
+  stack: 
+    - Error: 400,ExpectedLndWithKnownChain
+    -     at /app/node_modules/async/asyncify.js:105:61
+    -     at processTicksAndRejections (node:internal/process/task_queues:96:5)
+```
+
+* Keeping credentials.json fixed in the repo so user updates have no effect:
+
+```console
+git update-index --assume-unchanged bos/node/credentials.json
+```
+
+To continue tracking changes, use the following:
+
+```console
+git update-index --no-assume-unchanged bos/node/credentials.json
+```
+
 * verbose output
 * bos prototype install
 
