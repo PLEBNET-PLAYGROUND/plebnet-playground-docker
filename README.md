@@ -22,11 +22,15 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --config core.autocrlf=input
 cd plebnet-playground-docker
 ```
-### Architectures (ARCH build-arg)
-x86_64-linux-gnu = Intel x64
-osx64 = OSX 64-bit
-arm-linux-gnueabihf = arm 32-bit linux
-aarch64-linux-gnu = ARM64 linux
+### Supported Architectures
+
+| Architecture      | ARCH build-arg |
+| ----------- | ----------- |
+|  Intel x64  | x86_64-linux-gnu |
+|  OSX 64-bit | osx64        |
+|  arm 32-bit linux | arm-linux-gnueabihf |
+| ARM64 linux |  aarch64-linux-gnu |
+
 ### Install and start containers (Intel x64 example)
 ***
 ```
@@ -90,7 +94,7 @@ create-lnd-wallet
 ### Modify your lnd.conf to auto unlock your wallet in future
 ***
 - Create a password file like ```unlock.password``` in your lnd docker volume (Default location on Ubuntu is ```/var/lib/docker/volumes/plebnet-playground-docker_lnd_datadir/_data/```), the only content of this file will be your plaintext password you used to generate your wallet in prior step. 
-- Edit ```lnd.conf``` file and add ```wallet-unlock-password-file=/root/.lnd/unlock.password``` parameter configuration pointing to the LND container relative path to you created in prior step.
+- Edit ```lnd.conf``` file and add ```wallet-unlock-password-file=/root/.lnd/unlock.password``` within the first group of parameters (Application Options) so that it points pointing to the LND container relative path you created in prior step.
 - ```docker restart playground-lnd``` and your lnd container should now automatically unlock your wallet on startup
 
 ### Make your first peer with the seed node for Plebnet Playground Signet
