@@ -19,5 +19,5 @@ mkdir volumes/rtl_datadir
 mkdir volumes/tor_datadir
 mkdir volumes/tor_servicesdir
 mkdir volumes/tor_torrcdir
-docker-compose build --build-arg ARCH=($ARCH)
+docker-compose build --build-arg ARCH=$ARCH
 docker-compose up -d
