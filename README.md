@@ -8,8 +8,7 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 ## Notes
 ***
 - Package currently on works/tested on x64 Linux (Ubuntu specifically)
-- This will also run under Windows Docker Desktop, be aware your docker volumes will be located via special share ```\\wsl$\docker-desktop-data\version-pack-data\community\docker\volumes```
-- On Mac getting to volumes is a bit hacky you can try to get VM that runs docker and has volume access with ```docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i bash```
+- All data for containers are bind mapped into ```volumes/``` directory inside the clone repo for ease of editing them.
 - Bitcoind is not using tor, simply because it takes much longer to sync the chain, and while testing this slows me down. The playground signet chain is only around 1MB at time of writing, and takes my machine ~15 seconds to be fully synced clearnet, via tor it is taking minutes.
 - You will need to setup LND wallet from scratch, instructions below
 - PM @xenonfun on Telegram to get access to the Plebnet Playground Telegram group and get some playground tBTC coins to start playing with (faucet will be coming in the future)
@@ -28,7 +27,7 @@ cd plebnet-playground-docker
 | Architecture      | ARCH build-arg |
 | ----------- | ----------- |
 |  Intel x64  | x86_64-linux-gnu |
-|  OSX 64-bit | ~~osx64~~ aarch64-linux-gnu  |
+|  OSX 64-bit | aarch64-linux-gnu  |
 |  arm 32-bit linux | arm-linux-gnueabihf |
 | ARM64 linux |  aarch64-linux-gnu |
 
@@ -95,7 +94,7 @@ create-lnd-wallet
 
 ### Modify your lnd.conf to auto unlock your wallet in future
 ***
-- Create a password file like ```unlock.password``` in your lnd docker volume (Default location on Ubuntu is ```/var/lib/docker/volumes/plebnet-playground-docker_lnd_datadir/_data/```), the only content of this file will be your plaintext password you used to generate your wallet in prior step. 
+- Create a password file like ```unlock.password``` in your lnd docker volume (```volumes/lnd_datadir```), the only content of this file will be your plaintext password you used to generate your wallet in prior step. 
 - Edit ```lnd.conf``` file and add ```wallet-unlock-password-file=/root/.lnd/unlock.password``` within the first group of parameters (Application Options) so that it points pointing to the LND container relative path you created in prior step.
 - ```docker restart playground-lnd``` and your lnd container should now automatically unlock your wallet on startup
 
@@ -120,7 +119,7 @@ docker start playground-rtl
 - RTL will at ```http://localhost:3000```, the default password is ```password``` and it will ask you to change this on first login.
 ### ThunderHub Setup
 ***
-- ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```thubConfig.yaml``` in the volume associated with ThunderHub (Default location on Ubuntu is ```/var/lib/docker/volumes/plebnet-playground-docker_thub_datadir/_data```)
+- ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```thubConfig.yaml``` in the volume associated with ThunderHub (```volumes/thub_datadir```)
 
 ### How to setup Balance of Satoshis (BOS)
 ***
