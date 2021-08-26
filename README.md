@@ -23,10 +23,10 @@ git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --conf
 cd plebnet-playground-docker
 ```
 ### Architectures (ARCH build-arg)
-x86_64-linux-gnu = Intel x64
-osx64 = OSX 64-bit
-arm-linux-gnueabihf = arm 32-bit linux
-aarch64-linux-gnu = ARM64 linux
+- x86_64-linux-gnu = Intel x64
+- osx64 = OSX 64-bit
+- arm-linux-gnueabihf = arm 32-bit linux
+- aarch64-linux-gnu = ARM64 linux
 ### Install and start containers (Intel x64 example)
 ***
 ```
