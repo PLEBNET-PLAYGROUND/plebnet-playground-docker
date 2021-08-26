@@ -1,3 +1,6 @@
+
+### 2021-08-26 14:06:43.311135: clock-in
+
 ### 2021-08-25 23:24:46.982492: clock-out
 
 * mounting volumes/bos_datadir for bos container
