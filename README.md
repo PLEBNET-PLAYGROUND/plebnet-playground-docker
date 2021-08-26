@@ -22,14 +22,16 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --config core.autocrlf=input
 cd plebnet-playground-docker
 ```
-### Supported Architectures
+
+### Supported System Architectures
 
 | Architecture      | ARCH build-arg |
 | ----------- | ----------- |
 |  Intel x64  | x86_64-linux-gnu |
-|  OSX 64-bit | osx64        |
+|  OSX 64-bit | ~~osx64~~ aarch64-linux-gnu  |
 |  arm 32-bit linux | arm-linux-gnueabihf |
 | ARM64 linux |  aarch64-linux-gnu |
+
 
 ### Install and start containers (Intel x64 example)
 ***
@@ -139,13 +141,13 @@ alias bos='docker run -it --rm -v $HOME/.bos:/home/node/.bos:rw --network plebne
 - [Plebnet Telegram](http://plebnet.org/)
   
 ### Thanks to the contributors to project development & testing
-- Richard Safier
-- Nan Liu
+- [Richard Safier](https://github.com/rsafier)
+- [Nan Liu](https://github.com/nanliu)
 - Lamar Wilson
-- @Exfrog
+- [@Exfrog](https://github.com/exfrog)
 - @stflowstate
 - John Doe
 - @rafgxyz
-- @asherp
-- Randy McMillian
+- [@asherp](https://github.com/asherp)
+- [@RandyMcMillian](https://github.com/randymcmillan)
 - @nitesh_btc
