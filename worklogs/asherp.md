@@ -1,5 +1,14 @@
-* install script
-* allowing sed replacement
+* bos prototype install
+
+* building install script for bos
+
+bos instructions do not work https://github.com/alexbosworth/balanceofsatoshis
+```console
+!base64 volumes/lnd_datadir/tls.cert | tr -d '\n'
+```
+
+Above command does not actually strip the newline character. When I decode in python, the line is still there.
+
 
 ### 2021-08-26 14:06:43.311135: clock-in
 
