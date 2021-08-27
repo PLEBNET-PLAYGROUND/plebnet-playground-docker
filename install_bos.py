@@ -45,23 +45,39 @@ macaroon = bytes.decode(file_data)
 macaroon
 # -
 
-# ## Update credentials file
+# ## Read credentials file
 
 # +
-credentials_fname = 'bos/node/credentials.json'
+credentials_fname_read = 'bos/node/credentials.json'
 
-print('loading existing credentials {}'.format(credentials_fname))
+print('loading existing credentials {}'.format(credentials_fname_read))
 
-with open(credentials_fname, 'r') as f:
+with open(credentials_fname_read, 'r') as f:
     credentials = json.load(f)
 
 credentials['cert'] = tls_cert
 credentials['macaroon'] = macaroon
+# -
 
-print('writing new credentials {}'.format(credentials_fname))
+# ## Write credentials file
 
-with open(credentials_fname, 'w') as f:
+# +
+bos_datadir = 'volumes/bos_datadir'
+
+if not os.path.exists(bos_datadir):
+    os.mkdir(bos_datadir)
+    os.mkdir(bos_datadir + '/node')
+# -
+
+credentials_fname_write = '{}/node/credentials.json'.format(bos_datadir)
+print('writing new credentials {}'.format(credentials_fname_write))
+
+# +
+with open(credentials_fname_write, 'w') as f:
     json.dump(credentials, f, indent=2)
     f.write('\n')
 
 print('done')
+# -
+
+# cat volumes/bos_datadir/node/credentials.json

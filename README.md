@@ -84,7 +84,7 @@ alias restart-rtl='docker restart playground-rtl'
 
 alias restart-thub='docker restart playground-thub'
 
-alias bos="docker run -it --rm -v $PWD/volumes/lnd_datadir:/home/node/.lnd/:ro -v $PWD/bos:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
+alias bos="docker run -it --rm -v $PWD/volumes/lnd_datadir:/home/node/.lnd/:ro -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
 ```
 ### Create your first playground LND wallet
 ***
