@@ -1,3 +1,6 @@
+
+### 2021-08-26 21:43:18.142796: clock-in
+
 ### 2021-08-26 21:37:06.837015: clock-out
 
 * moving bos credentials into volume
