@@ -84,7 +84,7 @@ alias restart-rtl='docker restart playground-rtl'
 
 alias restart-thub='docker restart playground-thub'
 
-alias bos="docker run -it --rm -v $PWD/volumes/lnd_datadir:/home/node/.lnd/:ro -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
+alias bos="docker run -it --rm -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
 ```
 ### Create your first playground LND wallet
 ***
@@ -128,7 +128,7 @@ docker start playground-rtl
 You may install bos only **after** you have generated an lnd wallet with `create-lnd-wallet`.
 
 ```console
-./install_bos.py
+sudo python3 ./install_bos.py
 ```
 If you created the bos alias above, you should be good to go
 
