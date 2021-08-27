@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-# Standard imports
+# Standard imports only
 
 import json
 import base64
+import shutil
+import os
 
 # ## tls.cert
 #
 # encodes the file as a base64 str, stripping newlines
-
-import os
 
 # +
 tls_fname = 'volumes/lnd_datadir/tls.cert'
@@ -72,12 +72,19 @@ if not os.path.exists(bos_datadir):
 credentials_fname_write = '{}/node/credentials.json'.format(bos_datadir)
 print('writing new credentials {}'.format(credentials_fname_write))
 
-# +
 with open(credentials_fname_write, 'w') as f:
     json.dump(credentials, f, indent=2)
     f.write('\n')
 
-print('done')
-# -
-
 # cat volumes/bos_datadir/node/credentials.json
+
+# ## Copy config file
+#
+
+print('copying config.json')
+
+shutil.copy2('bos/config.json', bos_datadir)
+
+# ## fini
+
+print('done')
