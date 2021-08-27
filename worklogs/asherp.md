@@ -1,3 +1,5 @@
+### 2021-08-26 21:37:06.837015: clock-out
+
 * moving bos credentials into volume
 * also @apembroke you need to switch script to move those template files over into the volume, the script edited the /bos files, which is part of github repo so could get checked in
 
