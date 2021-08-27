@@ -362,3 +362,12 @@ hourly-outputs/
 
 volumes/
 
+# bos credentials
+
+bos/node/credentials.json
+
+# jupyter
+
+.ipynb_checkpoints/
+
+

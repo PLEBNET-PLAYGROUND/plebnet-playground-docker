@@ -85,7 +85,7 @@ alias restart-rtl='docker restart playground-rtl'
 
 alias restart-thub='docker restart playground-thub'
 
-alias bos="docker run -it --rm -v $PWD/volumes/lnd_datadir:/root/.lnd/:ro -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
+alias bos="docker run -it --rm -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
 ```
 ### Create your first playground LND wallet
 ***
@@ -116,6 +116,20 @@ Run the ```./getcoins.py``` script and you will get 1tBTC put into your lightnin
 ***
 - ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```volumes/thub_datadir/thubConfig.yaml```. Change `masterPassword: thunderhub-$2a$12$oRzmFZSOmvYv1heHkU053uv0a1tX9MXNqmcMpZs2hQ0t8k1Onnk1a` to `masterPassword: mynewpassword`. Then restart thunderhub using alias `restart-thub`. The masterPassword entry should automatically be converted to the hashed version of the password.
 
+### How to setup Balance of Satoshis (BOS)
+***
+
+You may install bos only **after** you have generated an lnd wallet with `create-lnd-wallet`.
+
+```console
+sudo python3 ./install_bos.py
+```
+If you created the bos alias above, you should be good to go
+
+```console
+bos --version
+10.9.2
+```
 
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)
