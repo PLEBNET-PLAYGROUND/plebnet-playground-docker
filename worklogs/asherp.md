@@ -1,3 +1,4 @@
+* got first node/edge graph to render
 
 ### 2021-08-27 10:26:15.392487: clock-in
 
