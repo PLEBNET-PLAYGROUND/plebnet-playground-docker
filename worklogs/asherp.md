@@ -1,3 +1,4 @@
+* got describegraph in grpc to pull nodes/edges
 
 ### 2021-08-26 20:17:20.601943: clock-in
 
