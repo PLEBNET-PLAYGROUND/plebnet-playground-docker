@@ -67,17 +67,17 @@ edge
 import networkx as nx
 ```
 
-Use a MultiDiGraph to represent multiple channels between nodes.
+Use a MultiDiGraph to represent multiple channels between nodes. After gathering all channel information, we will convert this to an undirected graph with one channel per node pair.
 
 ```python
-G = nx.MultiDiGraph()
+MG = nx.MultiDiGraph()
 ```
 
 add nodes
 
 ```python
-G.add_nodes_from(((node.pub_key, dict(alias=node.alias, last_update=node.last_update)) for node in response.nodes))
-G.number_of_nodes()
+MG.add_nodes_from(((node.pub_key, dict(alias=node.alias, last_update=node.last_update)) for node in response.nodes))
+MG.number_of_nodes()
 ```
 
 Add edges. Use `channel_id` as edge keys to so future updates don't duplicate edges.
@@ -87,8 +87,34 @@ edge_iterable = [(edge.node1_pub, edge.node2_pub, edge.channel_id, dict(capacity
 ```
 
 ```python
-channel_ids = G.add_edges_from(edge_iterable)
-G.number_of_edges()
+channel_ids = MG.add_edges_from(edge_iterable)
+MG.number_of_edges()
+```
+
+```python
+MG.adjacency?
+```
+
+```python
+for n, nbrs in MG.adjacency():
+    print(MG.nodes[n]['alias'])
+    for k,v in nbrs.items():
+        print('\t{}:'.format(k[:10]))
+        for k_, v_ in v.items():
+            print('\t\t{}: {}'.format(k_, v_))
+    
+```
+
+```python
+nbrs
+```
+
+```python
+n
+```
+
+```python
+G = nx.Graph()
 ```
 
 ## Total node capacity
@@ -188,7 +214,7 @@ edge_x = edge_pos[['x1','x2', 'empty']].values.ravel()
 edge_y = edge_pos[['y1', 'y2', 'empty']].values.ravel()
 ```
 
-The below graph makes it hard to see the capacity available to bidirectional channels.
+The below graph makes it hard to see the capacity available to bidirectional channels. That's ok, because we don't actually have information on bidirectional channels!
 
 ```python
 fig = go.Figure(data=[
