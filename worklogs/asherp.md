@@ -1,3 +1,6 @@
+
+### 2021-08-28 09:43:10.421124: clock-in
+
 ### 2021-08-27 22:34:51.923450: clock-out: T-15m 
 
 * converting to undirected graph
