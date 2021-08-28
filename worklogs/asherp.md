@@ -1,3 +1,4 @@
+* trying minimum spanning tree, shortest path algorithms
 
 ### 2021-08-28 16:18:02.400093: clock-in
 

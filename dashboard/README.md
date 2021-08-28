@@ -68,7 +68,34 @@ response.nodes[0]
 ## edges
 
 ```python
-response.edges[0]
+edge
+```
+
+```python
+G.nodes['02ad6fb8d693dc1e4569bcedefadf5f72a931ae027dc0f0c544b34c1c6f3b9a02b']
+```
+
+```python
+G.nodes['03fab7f8655169ea77d9691d4bd359e97782cb6177a6f76383994ed9c262af97a5']
+```
+
+```python
+npolicies = 0
+for edge in response.edges:
+    if edge.node1_policy is not None:
+        npolicies += 1
+```
+
+```python
+npolicies
+```
+
+```python
+len(response.edges) - npolicies
+```
+
+```python
+edge
 ```
 
 ## Assembling Graph
@@ -140,6 +167,30 @@ def get_initial_node_posn(G):
     return initial_node_pos
 ```
 
+## Weighted shortest paths
+We want to restrict the visualization to just the paths the user is interested for potential payments.
+In liue of bos-computed paths, we will generate some candidate paths based on a weighted path analysis.
+
+```python
+# nx.shortest_simple_paths(G, node1, node2)
+```
+
+```python
+# next(nx.shortest_simple_paths(G, node1, node2))
+```
+
+## Minimum Spanning Tree
+
+This reduces the number of edges in the final visualization.
+
+```python
+T = nx.minimum_spanning_tree(G)
+```
+
+```python
+T
+```
+
 ## Layout
 
 ```python
@@ -157,21 +208,21 @@ import scipy
 ```
 
 ```python
-initial_posns = get_initial_node_posn(G)
+initial_posns = get_initial_node_posn(T)
 ```
 
 ```python
-pos = pd.DataFrame.from_dict(nx.spring_layout(G,
+pos = pd.DataFrame.from_dict(nx.spring_layout(T,
                                               pos=initial_posns,
-                                              iterations=10,
+                                              iterations=20,
                                              ),
                              orient='index', columns = ['x', 'y'])
 pos
 ```
 
 ```python
-pos['alias'] = [G.nodes[_]['alias'] for _ in pos.index]
-pos['color'] = [G.nodes[_]['color'] for _ in pos.index]
+pos['alias'] = [T.nodes[_]['alias'] for _ in pos.index]
+pos['color'] = [T.nodes[_]['color'] for _ in pos.index]
 pos
 ```
 
@@ -193,7 +244,7 @@ def get_edge_posns(G):
         edge_cap['capacity'].append(sum(edge_pos[edge]))
     return edge_cap
 
-edge_pos = pd.DataFrame(get_edge_posns(G))
+edge_pos = pd.DataFrame(get_edge_posns(T))
 edge_pos['x1'] = pos.loc[edge_pos.node1.values]['x'].values
 edge_pos['y1'] = pos.loc[edge_pos.node1.values]['y'].values
 edge_pos['x2'] = pos.loc[edge_pos.node2.values]['x'].values
