@@ -1,3 +1,4 @@
+* added colors, starting to create channels, visualized global network
 
 ### 2021-08-28 09:43:10.421124: clock-in
 

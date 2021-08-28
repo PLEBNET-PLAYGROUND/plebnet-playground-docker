@@ -9,6 +9,10 @@ The grpc instructions are here https://github.com/lightningnetwork/lnd/blob/mast
 ## Accessing node graph though lightning-grpc
 
 ```python
+import numpy as np
+```
+
+```python
 LND_DIR = '../volumes/lnd_datadir'
 ```
 
@@ -31,34 +35,40 @@ response = stub.DescribeGraph(request, metadata=[('macaroon', macaroon)])
 # }
 ```
 
+## Sample data
+
+
+Use this to test more realistic graph data.
+
+```python
+import json
+
+from collections import namedtuple
+Response = namedtuple('Response', ['nodes', 'edges'] )
+Node = namedtuple('Node', ['last_update', 'pub_key', 'alias', 'addresses', 'color', 'features'])
+Edge = namedtuple('Edge', ['channel_id', 'chan_point', 'last_update', 'node1_pub', 'node2_pub', 'capacity', 'node1_policy', 'node2_policy'])
+
+def get_describegraph_json(filename='describegraph.json'):
+    with open(filename) as f:
+        dg = json.load(f)
+    return Response([Node(**node) for node in dg['nodes']],
+                    [Edge(**edge) for edge in dg['edges']])
+```
+
+```python
+response = get_describegraph_json()
+```
+
 ## nodes
 
 ```python
-len(response.nodes)
-```
-
-```python
-for node in response.nodes:
-    print(node.alias)
-```
-
-```python
-node
-```
-
-```python
-node.pub_key
+response.nodes[0]
 ```
 
 ## edges
 
 ```python
-for i, edge in enumerate(response.edges):
-    print(i, edge.channel_id, edge.node1_pub)
-```
-
-```python
-edge
+response.edges[0]
 ```
 
 ## Assembling Graph
@@ -76,7 +86,7 @@ MG = nx.MultiDiGraph()
 add nodes
 
 ```python
-MG.add_nodes_from(((node.pub_key, dict(alias=node.alias, last_update=node.last_update)) for node in response.nodes))
+MG.add_nodes_from(((node.pub_key, dict(alias=node.alias, color=node.color, last_update=node.last_update)) for node in response.nodes))
 MG.number_of_nodes()
 ```
 
@@ -91,30 +101,31 @@ channel_ids = MG.add_edges_from(edge_iterable)
 MG.number_of_edges()
 ```
 
-```python
-MG.adjacency?
-```
-
-```python
-for n, nbrs in MG.adjacency():
-    print(MG.nodes[n]['alias'])
-    for k,v in nbrs.items():
-        print('\t{}:'.format(k[:10]))
-        for k_, v_ in v.items():
-            print('\t\t{}: {}'.format(k_, v_))
-    
-```
-
-```python
-nbrs
-```
-
-```python
-n
-```
+Create a fresh undirected graph
 
 ```python
 G = nx.Graph()
+```
+
+Insert all node information from multi grid graph
+
+```python
+G.add_nodes_from(MG.nodes(data=True))
+```
+
+Accumulate capacity for all edges
+
+```python
+for node, neighbors in MG.adjacency():
+#     print(node, MG.nodes[node]['alias'])
+    for neighbor, v in neighbors.items():
+#         print('\t{}:'.format(neighbor))
+        capacity = 0
+        for k_, v_ in v.items():
+            capacity += int(v_['capacity'])
+#             print('\t\t{}: {}'.format(k_, v_))
+        G.add_edge(node, neighbor, capacity = capacity)
+    
 ```
 
 ## Total node capacity
@@ -141,24 +152,18 @@ init_notebook_mode(connected=True)
 ```
 
 ```python
-G.nodes['023627c64b010c51ec961a5e2f0a140a4f6f61ccbb008616004ed3a51a143e0a44']['alias']
-```
-
-```python
 import pandas as pd
+import scipy
 ```
 
 ```python
-G.nodes
-```
-
-```python
-get_initial_node_posn(G)
+initial_posns = get_initial_node_posn(G)
 ```
 
 ```python
 pos = pd.DataFrame.from_dict(nx.spring_layout(G,
-#                                               pos=get_initial_node_posn(G),
+                                              pos=initial_posns,
+                                              iterations=10,
                                              ),
                              orient='index', columns = ['x', 'y'])
 pos
@@ -166,11 +171,8 @@ pos
 
 ```python
 pos['alias'] = [G.nodes[_]['alias'] for _ in pos.index]
+pos['color'] = [G.nodes[_]['color'] for _ in pos.index]
 pos
-```
-
-```python
-G.edges['023627c64b010c51ec961a5e2f0a140a4f6f61ccbb008616004ed3a51a143e0a44', '03ee9d906caa8e8e66fe97d7a76c2bd9806813b0b0f1cee8b9d03904b538f53c4e', 10580600394153984]
 ```
 
 ```python
@@ -218,9 +220,9 @@ The below graph makes it hard to see the capacity available to bidirectional cha
 
 ```python
 fig = go.Figure(data=[
-    go.Scatter(x=pos.x, y=pos.y, text=pos.alias, hoverinfo='text', mode='markers'),
-    go.Scatter(x=edge_x, y=edge_y, hoverinfo='text', mode='lines'),
-    go.Scatter(x=edge_pos.x_avg, y=edge_pos.y_avg, text=edge_pos.capacity, hoverinfo='text', mode='markers'),
+    go.Scattergl(x=pos.x, y=pos.y, text=pos.alias, hoverinfo='text', marker=dict(color=pos.color), mode='markers'),
+    go.Scattergl(x=edge_x, y=edge_y, hoverinfo='text', mode='lines'),
+    go.Scattergl(x=edge_pos.x_avg, y=edge_pos.y_avg, text=edge_pos.capacity, hoverinfo='text', mode='markers'),
 ])
 
 fig
