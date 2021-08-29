@@ -1,3 +1,6 @@
+
+### 2021-08-28 20:32:21.015838: clock-in
+
 ### 2021-08-28 18:49:44.214159: clock-out
 
 * https://github.com/andrerfneves/lightning-address/blob/master/README.md
