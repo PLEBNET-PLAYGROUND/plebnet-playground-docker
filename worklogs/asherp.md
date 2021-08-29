@@ -1,8 +1,11 @@
+* degree histogram
+* looking at k-componts
 
 ### 2021-08-29 14:51:03.558541: clock-in
 
 ### 2021-08-29 14:22:39.600142: clock-out: T-1h30m 
 
+* calculating weights for minimum spanning tree
 
 ### 2021-08-29 12:18:35.208999: clock-in
 
