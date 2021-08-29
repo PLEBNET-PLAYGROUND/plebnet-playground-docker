@@ -1,3 +1,5 @@
+### 2021-08-29 15:19:51.728227: clock-out
+
 * degree histogram
 * looking at k-componts
 
