@@ -145,8 +145,8 @@ services:
     environment:
       - ARCH=${ARCH}
     build: 
-      context: ${PWD}
-      dockerfile: ${PWD}/docs/Dockerfile
+      context: ${PWD}/docs
+      dockerfile: Dockerfile
       args:
         - ARCH=${ARCH}
     expose:
