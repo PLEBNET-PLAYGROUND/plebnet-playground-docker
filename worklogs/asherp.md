@@ -1,3 +1,6 @@
+
+### 2021-08-30 17:22:19.733165: clock-in
+
 ### 2021-08-30 16:04:33.359857: clock-out
 
 * look at generating macaroons from command line
