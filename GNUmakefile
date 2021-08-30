@@ -309,7 +309,7 @@ signin:
 .PHONY: run
 run: init
 	@echo 'run'
-	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up &
+	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
 	@echo ''
 
 #######################
