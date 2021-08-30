@@ -275,6 +275,7 @@ endif
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
+	pip install -r requirements.txt
 else
 	        bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 endif
@@ -308,7 +309,7 @@ signin:
 .PHONY: run
 run: init
 	@echo 'run'
-	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up &
+	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
 	@echo ''
 
 #######################

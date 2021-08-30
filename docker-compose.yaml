@@ -135,3 +135,26 @@ services:
         - type: bind
           source: ${PWD}/volumes/rtl_datadir
           target: /data
+  docs:
+    links:
+    - tor
+    depends_on: 
+    - tor
+    restart: unless-stopped
+    container_name: playground-docs
+    environment:
+      - ARCH=${ARCH}
+    build: 
+      context: ${PWD}/docs
+      dockerfile: Dockerfile
+      args:
+        - ARCH=${ARCH}
+    expose:
+    - "8000"
+    ports:
+    - "8000:8000"
+    volumes:
+      - type: bind
+        source: ${PWD}/docs
+        target: /docs
+
