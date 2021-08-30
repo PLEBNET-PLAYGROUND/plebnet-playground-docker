@@ -1,3 +1,7 @@
+### 2021-08-30 16:04:33.359857: clock-out
+
+* look at generating macaroons from command line
+* firecracker vm setup?
 
 ### 2021-08-30 14:54:58.062615: clock-in
 
