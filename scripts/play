@@ -2,70 +2,65 @@
 
 if hash docker 2>/dev/null; then
 
-STATS_ID=$(echo $(docker ps | awk '/bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
-export STATS_ID
-
-STATS_IMAGE=$(echo $(docker images | awk '/bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
-export STATS_IMAGE
+BITCOIND_ID=$(echo $(docker ps | awk '/bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
+export BITCOIND_ID
+BITCOIND_IMAGE=$(echo $(docker images | awk '/bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
+export BITCOIND_IMAGE
 
 for ((i=1;i<=$#;i++));
 do
 
     if [[ ${!i} = *id ]]; then
         ((i++))
-        echo $STATS_ID
+        echo $BITCOIND_ID
         exit
 
     elif [[ ${!i} = *image ]]; then
         ((i++))
-        echo $STATS_IMAGE
+        echo $BITCOIND_IMAGE
         exit
 
     elif [[ ${!i} = top ]]; then
         ((i++))
-        docker top $STATS_ID
+        docker top $BITCOIND_ID
         exit
 
     elif [[ ${!i} = start ]]; then
         ((i++))
         [ -z "$var" ] && echo "playground-bitcoind not running" && echo "make run from folder" && exit
-        docker exec -it $STATS_ID sh -c  "/usr/local/bin/entrypoint &"
-        docker exec -it $STATS_ID sh -c  "/usr/local/bin/bitcoind -daemon -datadir=/home/root/.bitcoin -addnode=umbrel.local &"
-        docker exec -it $STATS_ID sh -c  "/usr/local/bin/bitcoin-cli gettxoutsetinfo"
-        docker exec -it $STATS_ID sh -c  "/usr/local/bin/bitcoin-cli getmininginfo"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/entrypoint &"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind -daemon -datadir=/home/root/.bitcoin -addnode=umbrel.local &"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli gettxoutsetinfo"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli getmininginfo"
         exit
 
     elif [[ ${!i} = stop ]]; then
         ((i++))
-        docker stop $STATS_ID
-        exit
-    elif [[ ${!i} = prune ]]; then
-        ((i++))
-        docker exec -it $STATS_ID sh -c  "/usr/local/bin/bitcoind -daemon"
+        docker stop $BITCOIND_ID
         exit
 
     elif [[ ${!i} = *cli ]]; then
         ((i++))
-        docker exec -it $STATS_ID sh -c  "/usr/local/bin/bitcoin-cli ${!i}"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli ${!i}"
         exit
 
     elif [[ ${!i} = *d ]]; then
         ((i++))
-        docker exec -it $STATS_ID sh -c  "/usr/local/bin/bitcoind ${!i}"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind ${!i}"
         exit
 
     elif [[ ${!i} = *ep ]]; then
         ((i++))
-        docker exec -it $STATS_ID sh -c  "/usr/local/bin/entrypoint &"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/entrypoint &"
         exit
 
     elif [[ ${!i} = *console ]]; then
         ((i++))
-        docker exec -it $STATS_ID bash
+        docker exec -it $BITCOIND_ID bash
 
     elif [[ ${!i} = *debug ]]; then
         ((i++))
-        docker exec -it $STATS_ID sh -c "tail -f /home/root/.bitcoin"
+        docker exec -it $BITCOIND_ID sh -c "tail -f /home/root/.bitcoin"
 
     elif [[ ${!i} == *help ]]; then
         ((i++))
@@ -82,17 +77,19 @@ do
         echo "play                     -cli getmininginfo"
         echo "play                     -cli 'getblockhash 1000'"
         echo
-        echo "docker exec -it $STATS_ID sh -c  '/usr/local/bin/bitcoind -daemon -prune=550'"
-        echo "docker exec -it $STATS_ID sh -c  '/usr/local/bin/bitcoin-cli gettxoutsetinfo'"
-        echo "docker exec -it $STATS_ID sh -c  '/usr/local/bin/bitcoin-cli getmininginfo'"
-        echo "docker exec -it $STATS_ID sh -c  '/usr/local/bin/bitcoin-cli $1'"
+        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoind -daemon -prune=550'"
+        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli gettxoutsetinfo'"
+        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli getmininginfo'"
+        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli $1'"
+        exit
 
     elif [ -n ${!i} ]; then
         ((i++))
-        docker exec -it $STATS_ID sh -c  "$1"
+        docker exec -it $BITCOIND_ID sh -c  "$1"
         exit
     fi
 
 done;
-#echo statoshi help
+play help;
 fi #end if docker hash
+
