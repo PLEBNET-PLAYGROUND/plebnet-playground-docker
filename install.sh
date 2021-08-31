@@ -114,14 +114,12 @@ else
     echo TODO add support for $OSTYPE
 fi
 
-if [ -z "$1" ]
-    then
-    echo 'You must provide ARCH as first parameter'
-    echo './install.sh x86_64'
-    exit;
+if [ -z "$1" ]; then
+    ARCH=$(uname -m)
+else
+    ARCH=$1
 fi
 
-ARCH=$1
 #Remove any old version
 docker-compose down
 sudo rm -rf volumes
