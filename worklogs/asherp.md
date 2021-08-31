@@ -1,3 +1,14 @@
+* meeting with Richard/Randy
+* testing docker volume permissions
+
+drwx------    5 root     root           160 Aug 30 21:36 data
+drwx------    2 root     root            64 Aug 30 21:35 letsencrypt
+-rw-r--r--    1 root     root          1086 Aug 30 23:31 lnd.conf
+drwx------    3 root     root            96 Aug 30 21:35 logs
+-rw-r--r--    1 root     root           826 Aug 30 21:36 tls.cert
+-rw-------    1 root     root           227 Aug 30 21:36 tls.key
+-rw-r--r--    1 root     root            11 Aug 30 21:52 unlock.password
+-rw-------    1 root     root            99 Aug 30 21:52 v3_onion_private_key
 
 ### 2021-08-30 17:22:19.733165: clock-in
 
