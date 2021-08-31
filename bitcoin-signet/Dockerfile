@@ -13,7 +13,7 @@ RUN  apt-get update && \
 WORKDIR /tmp
 
 # install bitcoin binaries
-RUN BITCOIN_URL="https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}-${ARCH}.tar.gz" && \
+RUN BITCOIN_URL="https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}-${ARCH}-linux-gnu.tar.gz" && \
     BITCOIN_FILE="bitcoin-${BITCOIN_VERSION}-${ARCH}.tar.gz" && \
     BITCOIN_SHA_URL="https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc" && \
     wget -qO "${BITCOIN_FILE}" "${BITCOIN_URL}" && wget -qO SHA256SUMS.asc "${BITCOIN_SHA_URL}" && \

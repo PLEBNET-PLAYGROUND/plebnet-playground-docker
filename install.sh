@@ -1,13 +1,13 @@
 if [ -z "$1" ]
-    then 
+    then
     echo 'You must provide ARCH as first parameter'
-    echo './install.sh x86_64-linux-gnu'
+    echo './install.sh x86_64'
     exit;
 fi
 
 ARCH=$1
 #Remove any old version
-docker-compose down 
+docker-compose down
 sudo rm -rf volumes
 
 #Create Datafile

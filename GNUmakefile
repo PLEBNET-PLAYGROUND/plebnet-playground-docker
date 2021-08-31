@@ -279,6 +279,7 @@ ifneq ($(shell id -u),0)
 else
 	        bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 endif
+	        bash -c './install.sh $(ARCH)'
 #######################
 .PHONY: build-shell
 build-shell:
