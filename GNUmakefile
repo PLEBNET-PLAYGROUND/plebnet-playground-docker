@@ -292,6 +292,11 @@ install:
 
 	bash -c './install.sh $(ARCH)'
 #######################
+.PHONY: uninstall
+uninstall:
+
+	bash -c './uninstall.sh $(ARCH)'
+#######################
 .PHONY: build-shell
 build-shell:
 	@echo ''
