@@ -36,7 +36,9 @@ cd plebnet-playground-docker
 ### Install and start containers (Intel x64 example)
 ***
 ```
-./install.sh x86_64-linux-gnu
+./install.sh x86_64
+OR 
+export ARCH=$(uname -m) && ./install.sh $ARCH
 docker-compose up -d
 ```
 ### Stop containers
