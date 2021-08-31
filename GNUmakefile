@@ -11,6 +11,11 @@ export TIME
 
 ARCH                                    := $(shell uname -m)
 export ARCH
+#macOS requires aarch64 as ARCH in docker container
+ifeq ($(ARCH),arm64)
+ARCH                                    := aarch64
+export ARCH
+endif
 
 #ifeq ($(user),)
 #HOST_USER								:= root
