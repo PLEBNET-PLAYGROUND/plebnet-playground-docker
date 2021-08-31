@@ -1,4 +1,6 @@
-SHELL := /bin/bash
+SHELL                                   := /bin/bash
+
+PYTHON3                                  := $(shell which python3)
 
 PWD 									?= pwd_unknown
 
@@ -275,7 +277,7 @@ endif
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
-	pip install -r requirements.txt
+	$(PYTHON3) -m pip install -r requirements.txt
 else
 	        bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 endif
