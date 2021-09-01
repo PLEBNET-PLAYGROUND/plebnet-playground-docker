@@ -1,3 +1,6 @@
+
+### 2021-08-31 20:25:59.032072: clock-in
+
 ### 2021-08-30 19:41:07.202459: clock-out
 
 * meeting with Richard/Randy
