@@ -1,3 +1,6 @@
+
+### 2021-09-01 13:49:54.103872: clock-in
+
 ### 2021-08-31 22:30:33.124519: clock-out
 
 * simple path visualization
