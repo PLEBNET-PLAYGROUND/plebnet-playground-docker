@@ -1,5 +1,16 @@
 ```python
+from plotly.offline import iplot, init_notebook_mode
+import plotly.graph_objs as go
+
+init_notebook_mode(connected=True)
+
+import pandas as pd
+import scipy
+```
+
+```python
 import numpy as np
+import pandas as pd
 ```
 
 ```python
@@ -84,19 +95,7 @@ response.nodes[0]
 ## edges
 
 ```python
-edge
-```
-
-```python
-G.nodes['02ad6fb8d693dc1e4569bcedefadf5f72a931ae027dc0f0c544b34c1c6f3b9a02b']
-```
-
-```python
-G.nodes['03fab7f8655169ea77d9691d4bd359e97782cb6177a6f76383994ed9c262af97a5']
-```
-
-```python
-edge
+response.edges[0]
 ```
 
 ## Assembling Graph
@@ -127,10 +126,6 @@ edge_iterable = [(edge.node1_pub,
                   dict(capacity=edge.capacity,
                        node1_policy=edge.node1_policy,
                        node2_policy=edge.node2_policy)) for edge in response.edges]
-```
-
-```python
-edge
 ```
 
 ```python
@@ -182,11 +177,18 @@ for node, neighbors in MG.adjacency():
 This is the sum of channel capacities available to a given node. This will be used to compute initial positions in the layout.
 
 ```python
-capacity = pd.Series(dict(G.degree(weight='capacity')))
+def assign_capacity(G):
+    'Calculate the total channel capacity for each node'
+    G.add_nodes_from(((k, dict(capacity=v)) for k,v in G.degree(weight='capacity')))
+    return G
+
+G = assign_capacity(G)
 ```
 
+## Layout
+
 ```python
-capacity.head()
+nx.circular_layout?
 ```
 
 ```python
@@ -196,6 +198,73 @@ def get_initial_node_posn(G):
     for _, cap in G.degree(weight='capacity'):
         initial_node_pos[_] = float(G.nodes[_]['last_update']), float(cap)
     return initial_node_pos
+
+def get_layout(G, pos=None, layout_type = 'spring', fixed = None, iterations=2):
+    if layout_type == 'spring':
+        layout = nx.spring_layout(
+                    G,
+                    pos=pos,
+                    fixed=fixed,
+                    iterations=iterations)
+    elif layout_type == 'kamada_kawai_layout':
+        layout = nx.kamada_kawai_layout(G, pos=pos)
+    pos = pd.DataFrame.from_dict(
+        layout,
+        orient='index', columns = ['x', 'y'])
+    pos['alias'] = [G.nodes[_]['alias'] for _ in pos.index]
+    pos['color'] = [G.nodes[_]['color'] for _ in pos.index]
+    pos['capacity'] = [G.nodes[_]['capacity'] for _ in pos.index]
+    return pos
+
+def get_edge_posns(G, pos):
+    """For each position"""
+    edge_pos = defaultdict(list)
+    for edge in G.edges:
+        edge_pos[(edge[0], edge[1])].append(G.edges[edge]['capacity'])
+    edge_cap = defaultdict(list)
+    for edge in edge_pos:
+        edge_cap['node1'].append(edge[0])
+        edge_cap['node2'].append(edge[1])
+        edge_cap['capacity'].append(sum(edge_pos[edge]))
+    
+    edge_pos = pd.DataFrame(edge_cap)
+    edge_pos['x1'] = pos.loc[edge_pos.node1.values]['x'].values
+    edge_pos['y1'] = pos.loc[edge_pos.node1.values]['y'].values
+    edge_pos['x2'] = pos.loc[edge_pos.node2.values]['x'].values
+    edge_pos['y2'] = pos.loc[edge_pos.node2.values]['y'].values
+    edge_pos['empty'] = np.nan
+    edge_pos['x_avg'] = edge_pos[['x1', 'x2']].mean(axis=1)
+    edge_pos['y_avg'] = edge_pos[['y1', 'y2']].mean(axis=1)
+    edge_pos['color1'] = pos.loc[edge_pos.node1.values]['color'].values
+    edge_pos['color2'] = pos.loc[edge_pos.node2.values]['color'].values
+    return edge_pos
+
+def plot_graph(pos, edge_pos):
+    edge_x = edge_pos[['x1','x2', 'empty']].values.ravel()
+    edge_y = edge_pos[['y1', 'y2', 'empty']].values.ravel()
+    edge_color = edge_pos[['color1', 'color2', 'empty']].values.ravel()
+    
+    node_trace = go.Scattergl(
+                     x=pos.x,
+                     y=pos.y,
+                     text=pos.alias,
+                     hoverinfo='text',
+                     marker=dict(size=2*np.log10(pos.capacity),
+                                 color=pos.color),
+                     mode='markers')
+    edge_trace = go.Scattergl(
+                     x=edge_x,
+                     y=edge_y,
+                     marker=dict(color='rgba(0, 0, 0, 0.1)'),
+                     hoverinfo='text',
+                     mode='lines')
+    fig = go.Figure(layout=dict(xaxis=dict(visible=False, showgrid=False),
+                                yaxis=dict(visible=False, showgrid=False), plot_bgcolor='white'),
+                    data=[node_trace, edge_trace,
+    #     go.Scattergl(x=edge_pos.x_avg, y=edge_pos.y_avg, text=edge_pos.capacity, hoverinfo='text', mode='markers'),
+    ])
+    return fig
+
 ```
 
 ## Weighted shortest paths
@@ -203,11 +272,48 @@ We want to restrict the visualization to just the paths the user is interested f
 In liue of bos-computed paths, we will generate some candidate paths based on a weighted path analysis. This requires two nodes that are not already connected.
 
 ```python
-# nx.shortest_simple_paths(G, node1, node2)
+nodes = list(G.nodes.keys())
+node1 = nodes[0]
+node2 = nodes[-1]
 ```
 
 ```python
-# next(nx.shortest_simple_paths(G, node1, node2))
+def get_path(G, node1, node2, max_paths=5):
+    "Get a path graph from node1 to node2"
+    p = nx.Graph()
+    i = 0
+    for path in nx.shortest_simple_paths(G, node1, node2):
+        if i >= max_paths:
+            break
+        for node in path:
+            p.add_node(node, **G.nodes[node])
+        for edge in zip(path[:-1], path[1:]):
+            p.add_edge(*edge, **G.edges[edge])
+        i += 1
+    return p
+```
+
+```python
+path.nodes['039c73f53daad1050a6a72afb5353a2152f3152ee17168cd0ab28c2cb3e0050e36']
+```
+
+```python
+path = get_path(G, node1, node2, 7)
+# path_initial_posns = get_initial_node_posn(path)
+path_initial_posns = {node1: (0, 0), node2: (10, 0)}
+path_pos = get_layout(path,
+                      path_initial_posns,
+#                       layout_type='kamada_kawai_layout',
+                      layout_type='spring',
+                      fixed=[node1, node2], iterations=50)
+path_edge_pos = get_edge_posns(path, path_pos)
+print('{} -> {}'.format(G.nodes[node1]['alias'], G.nodes[node2]['alias']))
+plot_graph(path_pos, path_edge_pos)
+
+```
+
+```python
+path.
 ```
 
 ## Minimum Spanning Tree
@@ -240,10 +346,6 @@ len(policies)/len(response.edges)
 Need to weight by fees.
 
 ```python
-edge
-```
-
-```python
 G.edges['02e02d1e391733f2bd7e13d9cfd47d6d5c71ed65eafaaf801c194f13da227f8b81', '031c7ecff228dfe6054307ee49c8616998af5f8d4436f13c07d211aeb6c0ec87f7']
 ```
 
@@ -251,72 +353,17 @@ G.edges['02e02d1e391733f2bd7e13d9cfd47d6d5c71ed65eafaaf801c194f13da227f8b81', '0
 T = nx.minimum_spanning_tree(G, weight='avg_fee')
 ```
 
-## Layout
-
-```python
-from plotly.offline import iplot, init_notebook_mode
-import plotly.graph_objs as go
-```
-
-```python
-init_notebook_mode(connected=True)
-```
-
-```python
-import pandas as pd
-import scipy
-```
-
 ```python
 initial_posns = get_initial_node_posn(T)
 ```
 
 ```python
-pos = pd.DataFrame.from_dict(
-    nx.spring_layout(
-        T,
-        pos=initial_posns,
-        iterations=50),
-    orient='index', columns = ['x', 'y'])
+pos = get_layout(T, initial_posns, 2)
 pos
 ```
 
 ```python
-pos['alias'] = [T.nodes[_]['alias'] for _ in pos.index]
-pos['color'] = [T.nodes[_]['color'] for _ in pos.index]
-pos
-```
-
-```python
-def get_edge_posns(G):
-    """For each position"""
-    edge_pos = defaultdict(list)
-    for edge in G.edges:
-        edge_pos[(edge[0], edge[1])].append(G.edges[edge]['capacity'])
-    edge_cap = defaultdict(list)
-    for edge in edge_pos:
-        edge_cap['node1'].append(edge[0])
-        edge_cap['node2'].append(edge[1])
-        edge_cap['capacity'].append(sum(edge_pos[edge]))
-    return edge_cap
-
-edge_pos = pd.DataFrame(get_edge_posns(T))
-edge_pos['x1'] = pos.loc[edge_pos.node1.values]['x'].values
-edge_pos['y1'] = pos.loc[edge_pos.node1.values]['y'].values
-edge_pos['x2'] = pos.loc[edge_pos.node2.values]['x'].values
-edge_pos['y2'] = pos.loc[edge_pos.node2.values]['y'].values
-edge_pos['empty'] = np.nan
-edge_pos['x_avg'] = edge_pos[['x1', 'x2']].mean(axis=1)
-edge_pos['y_avg'] = edge_pos[['y1', 'y2']].mean(axis=1)
-edge_pos['color1'] = pos.loc[edge_pos.node1.values]['color'].values
-edge_pos['color2'] = pos.loc[edge_pos.node2.values]['color'].values
-edge_pos
-```
-
-```python
-edge_x = edge_pos[['x1','x2', 'empty']].values.ravel()
-edge_y = edge_pos[['y1', 'y2', 'empty']].values.ravel()
-edge_color = edge_pos[['color1', 'color2', 'empty']].values.ravel()
+edge_pos = get_edge_posns(T)
 ```
 
 The below graph makes it hard to see the capacity available to bidirectional channels. That's ok, because we don't actually have information on bidirectional channels!
@@ -331,24 +378,6 @@ pos.head()
 ```
 
 ```python
-fig = go.Figure(layout=dict(xaxis=dict(visible=False, showgrid=False),
-                            yaxis=dict(visible=False, showgrid=False), plot_bgcolor='white'),
-                data=[
-    go.Scattergl(x=pos.x,
-                 y=pos.y,
-                 text=pos.alias,
-                 hoverinfo='text',
-                 marker=dict(size=2*np.log10(pos.capacity),
-                             color=pos.color),
-                 mode='markers'),
-    go.Scattergl(x=edge_x,
-                 y=edge_y,
-                 marker=dict(color='rgba(0, 0, 0, 0.1)'),
-                 hoverinfo='text',
-                 mode='lines'),
-#     go.Scattergl(x=edge_pos.x_avg, y=edge_pos.y_avg, text=edge_pos.capacity, hoverinfo='text', mode='markers'),
-])
-
 fig
 ```
 
