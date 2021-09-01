@@ -18,6 +18,10 @@ from collections import defaultdict
 ```
 
 
+```python
+from collections.abc import Iterable
+```
+
 # About
 
 This directory contains setup necessary for creating dashboard visualizations of the lightning network
@@ -136,13 +140,13 @@ MG.number_of_edges()
 Create a fresh undirected graph
 
 ```python
-G = nx.Graph()
+DG = nx.DiGraph()
 ```
 
 Insert all node information from multi grid graph
 
 ```python
-G.add_nodes_from(MG.nodes(data=True))
+DG.add_nodes_from(MG.nodes(data=True))
 ```
 
 Accumulate capacity for all duplicate edges.
@@ -165,7 +169,7 @@ for node, neighbors in MG.adjacency():
                 avg_fee += (int(v_['node2_policy']['fee_rate_milli_msat']) + avg_fee)/(avg_N+1)
                 avg_N += 1
 #             print('\t\t{}: {}'.format(k_, v_))
-        G.add_edge(node,
+        DG.add_edge(node,
                    neighbor,
                    capacity=capacity,
                    avg_fee=avg_fee,
@@ -182,14 +186,10 @@ def assign_capacity(G):
     G.add_nodes_from(((k, dict(capacity=v)) for k,v in G.degree(weight='capacity')))
     return G
 
-G = assign_capacity(G)
+DG = assign_capacity(DG)
 ```
 
 ## Layout
-
-```python
-nx.circular_layout?
-```
 
 ```python
 def get_initial_node_posn(G):
@@ -199,13 +199,15 @@ def get_initial_node_posn(G):
         initial_node_pos[_] = float(G.nodes[_]['last_update']), float(cap)
     return initial_node_pos
 
-def get_layout(G, pos=None, layout_type = 'spring', fixed = None, iterations=2):
+def get_layout(G, pos=None, layout_type = 'spring', fixed = None, weight=None, iterations=2, seed=0):
     if layout_type == 'spring':
         layout = nx.spring_layout(
                     G,
                     pos=pos,
                     fixed=fixed,
-                    iterations=iterations)
+                    weight=weight,
+                    iterations=iterations,
+                    seed=seed)
     elif layout_type == 'kamada_kawai_layout':
         layout = nx.kamada_kawai_layout(G, pos=pos)
     pos = pd.DataFrame.from_dict(
@@ -239,7 +241,7 @@ def get_edge_posns(G, pos):
     edge_pos['color2'] = pos.loc[edge_pos.node2.values]['color'].values
     return edge_pos
 
-def plot_graph(pos, edge_pos):
+def plot_graph(pos, edge_pos, highlight=None):
     edge_x = edge_pos[['x1','x2', 'empty']].values.ravel()
     edge_y = edge_pos[['y1', 'y2', 'empty']].values.ravel()
     edge_color = edge_pos[['color1', 'color2', 'empty']].values.ravel()
@@ -258,11 +260,25 @@ def plot_graph(pos, edge_pos):
                      marker=dict(color='rgba(0, 0, 0, 0.1)'),
                      hoverinfo='text',
                      mode='lines')
-    fig = go.Figure(layout=dict(xaxis=dict(visible=False, showgrid=False),
-                                yaxis=dict(visible=False, showgrid=False), plot_bgcolor='white'),
-                    data=[node_trace, edge_trace,
-    #     go.Scattergl(x=edge_pos.x_avg, y=edge_pos.y_avg, text=edge_pos.capacity, hoverinfo='text', mode='markers'),
-    ])
+    traces = [node_trace, edge_trace]
+    if isinstance(highlight, Iterable):
+        highlighted = pos.loc[highlight]
+        highlighted_trace = go.Scattergl(
+                     x=highlighted.x,
+                     y=highlighted.y,
+                     text=highlighted.alias,
+                     marker_symbol='circle-open',
+                     hoverinfo='text',
+                     marker=dict(size=4*np.log10(pos.capacity),
+                                 color=pos.color),
+                     marker_line_width=2,
+                     mode='markers')
+        traces.append(highlighted_trace)
+        
+    fig = go.Figure(layout=dict(# xaxis=dict(visible=False, showgrid=False),
+                                # yaxis=dict(visible=False, showgrid=False),
+                                plot_bgcolor='white'),
+                    data=traces)
     return fig
 
 ```
@@ -272,7 +288,7 @@ We want to restrict the visualization to just the paths the user is interested f
 In liue of bos-computed paths, we will generate some candidate paths based on a weighted path analysis. This requires two nodes that are not already connected.
 
 ```python
-nodes = list(G.nodes.keys())
+nodes = list(DG.nodes.keys())
 node1 = nodes[0]
 node2 = nodes[-1]
 ```
@@ -280,40 +296,93 @@ node2 = nodes[-1]
 ```python
 def get_path(G, node1, node2, max_paths=5):
     "Get a path graph from node1 to node2"
-    p = nx.Graph()
+    p = nx.MultiDiGraph()
     i = 0
-    for path in nx.shortest_simple_paths(G, node1, node2):
+    for path in nx.shortest_simple_paths(G, node1, node2, weight='avg_fee'):
         if i >= max_paths:
             break
         for node in path:
             p.add_node(node, **G.nodes[node])
         for edge in zip(path[:-1], path[1:]):
-            p.add_edge(*edge, **G.edges[edge])
+            p.add_edge(*edge, key=i, **G.edges[edge])
         i += 1
     return p
-```
 
-```python
-path.nodes['039c73f53daad1050a6a72afb5353a2152f3152ee17168cd0ab28c2cb3e0050e36']
-```
+def plot_multipath(path, pos, edge_pos, highlight):
+    """Given a multidigraph path, plot separate edge traces"""
+    node_trace = go.Scattergl(
+                     x=pos.x,
+                     y=pos.y,
+                     text=pos.alias,
+                     hoverinfo='text',
+                     marker=dict(size=2*np.log10(pos.capacity),
+                                 color=pos.color),
+                     mode='markers')
+    traces = [node_trace]
+    
+    path_edges = defaultdict(set)
+    for n1, n2, pathid in path.edges:
+        path_edges[pathid].add((n1, n2))
+        
+    for pathid, path_ in path_edges.items():
+        path_df = pd.DataFrame(path_, columns = ['node1', 'node2'])
+        path_df = pd.DataFrame(path_, columns = ['node1', 'node2'])
+        path_df['empty'] = np.nan
+        
+        path_df['x1'] = pos.x.loc[path_df.node1].values
+        path_df['x2'] = pos.x.loc[path_df.node2].values
+        path_df['y1'] = pos.y.loc[path_df.node1].values
+        path_df['y2'] = pos.y.loc[path_df.node2].values
 
-```python
-path = get_path(G, node1, node2, 7)
+        edge_x = path_df[['x1','x2', 'empty']].values.ravel()
+        edge_y = path_df[['y1', 'y2', 'empty']].values.ravel()
+#         edge_color = edge_pos[['color1', 'color2', 'empty']].values.ravel()
+        edge_trace = go.Scattergl(
+                         x=edge_x.copy(),
+                         y=edge_y.copy(),
+                         marker=dict(color='rgba(0, 0, 0, 0.1)'),
+                         hoverinfo='text',
+                         name='path {}'.format(pathid),
+                         mode='lines')
+        
+        traces.append(edge_trace)
+    
+    if isinstance(highlight, Iterable):
+        highlighted = pos.loc[highlight]
+        highlighted_trace = go.Scattergl(
+                     x=highlighted.x,
+                     y=highlighted.y,
+                     text=highlighted.alias,
+                     marker_symbol='circle-open',
+                     hoverinfo='text',
+                     marker=dict(size=4*np.log10(pos.capacity),
+                                 color=pos.color),
+                     marker_line_width=2,
+                     mode='markers')
+        traces.append(highlighted_trace)
+        
+    fig = go.Figure(layout=dict(xaxis=dict(visible=False, showgrid=False),
+                                yaxis=dict(visible=False, showgrid=False),
+                                plot_bgcolor='white'),
+                    data=traces)
+    return fig
+
+path = get_path(DG, node1, node2, 7)
+
 # path_initial_posns = get_initial_node_posn(path)
-path_initial_posns = {node1: (0, 0), node2: (10, 0)}
+path_initial_posns = {node1: (0, 1), node2: (1, 0)}
 path_pos = get_layout(path,
                       path_initial_posns,
-#                       layout_type='kamada_kawai_layout',
                       layout_type='spring',
-                      fixed=[node1, node2], iterations=50)
+#                       fixed=[node1, node2],
+                      seed=5,
+                      weight='avgerage_fee',
+                      iterations=50)
 path_edge_pos = get_edge_posns(path, path_pos)
 print('{} -> {}'.format(G.nodes[node1]['alias'], G.nodes[node2]['alias']))
-plot_graph(path_pos, path_edge_pos)
 
-```
+plot_multipath(path, path_pos, path_edge_pos, [node1, node2])
 
-```python
-path.
 ```
 
 ## Minimum Spanning Tree
