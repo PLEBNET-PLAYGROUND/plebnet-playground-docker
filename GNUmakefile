@@ -7,8 +7,16 @@ export THIS_FILE
 TIME									:= $(shell date +%s)
 export TIME
 
-ARCH                                    := $(shell uname -m)
+ARCH                                    :=$(shell uname -m)
 export ARCH
+ifeq ($(ARCH),x86_64)
+ARCH                                    :=x86_64-linux-gnu
+export ARCH
+endif
+ifeq ($(ARCH),arm64)
+ARCH                                    :=aarch64-linux-gnu
+export ARCH
+endif
 
 #ifeq ($(user),)
 #HOST_USER								:= root
@@ -279,6 +287,16 @@ ifneq ($(shell id -u),0)
 else
 	        bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 endif
+#######################
+.PHONY: install
+install:
+
+	bash -c './install.sh $(ARCH)'
+#######################
+.PHONY: uninstall
+uninstall:
+
+	bash -c './uninstall.sh $(ARCH)'
 #######################
 .PHONY: build-shell
 build-shell:
