@@ -32,6 +32,10 @@ The grpc instructions are here https://github.com/lightningnetwork/lnd/blob/mast
 ## Accessing node graph though lightning-grpc
 
 ```python
+pwd
+```
+
+```python
 import numpy as np
 ```
 
@@ -294,19 +298,70 @@ node2 = nodes[-1]
 ```
 
 ```python
+node1 in DG
+```
+
+```python
 def get_path(G, node1, node2, max_paths=5):
     "Get a path graph from node1 to node2"
     p = nx.MultiDiGraph()
     i = 0
+    path_nodes = defaultdict(list)
     for path in nx.shortest_simple_paths(G, node1, node2, weight='avg_fee'):
         if i >= max_paths:
             break
         for node in path:
+            if node not in p:
+                path_nodes[i].append(node)
             p.add_node(node, **G.nodes[node])
         for edge in zip(path[:-1], path[1:]):
             p.add_edge(*edge, key=i, **G.edges[edge])
         i += 1
-    return p
+    return p, path_nodes
+
+def multipath_layout(path, path_nodes, weight=None, iterations=10, seed=0):
+    """ Layout for multiple paths
+    ToDo: iteratively build up position graph as routes are added.
+    
+    Layout paths iteratively, fixing shortest routes first
+    path: network containing nodes and edges describing the multipath
+    path_nodes: {path_number: new_nodes} nodes introduced for each new path
+    """
+    
+    # initialize multipath positions
+    pos = dict()
+    y = np.linspace(0, 1, len(path_nodes))
+    j = 0
+    for path_number, nodes in path_nodes.items():
+        x = np.linspace(0, 1, len(nodes))
+        for i, node in enumerate(nodes):
+            pos[node] = x[i], y[j]
+        j += 1
+    
+    for path_number, nodes in path_nodes.items():
+        print(path_number, len(nodes), 'new nodes')
+        if path_number == 0:
+            fixed = nodes
+        else:
+            for p in pos:
+                if p not in fixed:
+                    print('{}\tnot fixed:\t{}'.format(path.nodes[p]['alias'], pos[p]))
+            pos = nx.spring_layout(
+                path,
+                pos=pos,
+                fixed=fixed,
+                iterations=iterations,
+                weight=weight,
+                seed=seed)
+            fixed.extend(nodes)
+            j += 1
+    pos = pd.DataFrame.from_dict(
+        pos,
+        orient='index', columns = ['x', 'y'])
+    pos['alias'] = [path.nodes[_]['alias'] for _ in pos.index]
+    pos['color'] = [path.nodes[_]['color'] for _ in pos.index]
+    pos['capacity'] = [path.nodes[_]['capacity'] for _ in pos.index]
+    return pos
 
 def plot_multipath(path, pos, edge_pos, highlight):
     """Given a multidigraph path, plot separate edge traces"""
@@ -367,19 +422,20 @@ def plot_multipath(path, pos, edge_pos, highlight):
                     data=traces)
     return fig
 
-path = get_path(DG, node1, node2, 7)
+path, path_nodes = get_path(DG, node1, node2, 7)
 
 # path_initial_posns = get_initial_node_posn(path)
-path_initial_posns = {node1: (0, 1), node2: (1, 0)}
-path_pos = get_layout(path,
-                      path_initial_posns,
-                      layout_type='spring',
-#                       fixed=[node1, node2],
-                      seed=5,
-                      weight='avgerage_fee',
-                      iterations=50)
+# path_initial_posns = {node1: (0, 1), node2: (1, 0)}
+# path_pos = get_layout(path,
+#                       path_initial_posns,
+#                       layout_type='spring',
+# #                       fixed=[node1, node2],
+#                       seed=5,
+#                       weight='average_fee',
+#                       iterations=50)
+path_pos = multipath_layout(path, path_nodes, iterations=50, seed=1)
 path_edge_pos = get_edge_posns(path, path_pos)
-print('{} -> {}'.format(G.nodes[node1]['alias'], G.nodes[node2]['alias']))
+print('{} -> {}'.format(path.nodes[node1]['alias'], path.nodes[node2]['alias']))
 
 plot_multipath(path, path_pos, path_edge_pos, [node1, node2])
 
