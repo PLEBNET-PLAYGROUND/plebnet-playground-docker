@@ -1,3 +1,5 @@
+### 2021-09-05 13:24:24.791297: clock-out
+
 * shortest path vis looking better
 
 ### 2021-09-05 11:31:17.028480: clock-in: T-10m 
