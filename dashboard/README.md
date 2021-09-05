@@ -32,10 +32,6 @@ The grpc instructions are here https://github.com/lightningnetwork/lnd/blob/mast
 ## Accessing node graph though lightning-grpc
 
 ```python
-pwd
-```
-
-```python
 import numpy as np
 ```
 
@@ -295,31 +291,45 @@ In liue of bos-computed paths, we will generate some candidate paths based on a 
 nodes = list(DG.nodes.keys())
 node1 = nodes[0]
 node2 = nodes[-1]
-```
-
-```python
-node1 in DG
+node3 = '03ffda4c936c0f581c63ed6c29425e69f0df0471eb5adeb34e3b8ea263a48d277d'
+node4 = '03ffdfa7856778263cf1bc0e14dde4de5da537c6672eaee014f95da2e62cea0b44'
 ```
 
 ```python
 def get_path(G, node1, node2, max_paths=5):
     "Get a path graph from node1 to node2"
     p = nx.MultiDiGraph()
-    i = 0
+    i, j = 0, 0
     path_nodes = defaultdict(list)
-    for path in nx.shortest_simple_paths(G, node1, node2, weight='avg_fee'):
+    path_posns = defaultdict(list)
+    
+    paths = nx.shortest_simple_paths(G, node1, node2, weight='avg_fee')
+    
+#     max_nodes = 0
+#     for path in paths:
+#         max_nodes = max(max_nodes, len(path))
+#         if i >= max_paths:
+#             break
+#         i += 1
+    
+#     i = 0        
+#     x = np.linspace(0, 1, max_nodes)
+    
+    for path in paths:
         if i >= max_paths:
             break
-        for node in path:
+        x = np.linspace(0, 1, len(path))
+        for j, node in enumerate(path):
             if node not in p:
                 path_nodes[i].append(node)
+                path_posns[node]=(x[j], i)
             p.add_node(node, **G.nodes[node])
         for edge in zip(path[:-1], path[1:]):
             p.add_edge(*edge, key=i, **G.edges[edge])
         i += 1
-    return p, path_nodes
+    return p, path_nodes, path_posns
 
-def multipath_layout(path, path_nodes, weight=None, iterations=10, seed=0):
+def multipath_layout(path, path_nodes, path_posns, weight=None, iterations=10, seed=0):
     """ Layout for multiple paths
     ToDo: iteratively build up position graph as routes are added.
     
@@ -327,36 +337,8 @@ def multipath_layout(path, path_nodes, weight=None, iterations=10, seed=0):
     path: network containing nodes and edges describing the multipath
     path_nodes: {path_number: new_nodes} nodes introduced for each new path
     """
-    
-    # initialize multipath positions
-    pos = dict()
-    y = np.linspace(0, 1, len(path_nodes))
-    j = 0
-    for path_number, nodes in path_nodes.items():
-        x = np.linspace(0, 1, len(nodes))
-        for i, node in enumerate(nodes):
-            pos[node] = x[i], y[j]
-        j += 1
-    
-    for path_number, nodes in path_nodes.items():
-        print(path_number, len(nodes), 'new nodes')
-        if path_number == 0:
-            fixed = nodes
-        else:
-            for p in pos:
-                if p not in fixed:
-                    print('{}\tnot fixed:\t{}'.format(path.nodes[p]['alias'], pos[p]))
-            pos = nx.spring_layout(
-                path,
-                pos=pos,
-                fixed=fixed,
-                iterations=iterations,
-                weight=weight,
-                seed=seed)
-            fixed.extend(nodes)
-            j += 1
     pos = pd.DataFrame.from_dict(
-        pos,
+        path_posns,
         orient='index', columns = ['x', 'y'])
     pos['alias'] = [path.nodes[_]['alias'] for _ in pos.index]
     pos['color'] = [path.nodes[_]['color'] for _ in pos.index]
@@ -422,24 +404,32 @@ def plot_multipath(path, pos, edge_pos, highlight):
                     data=traces)
     return fig
 
-path, path_nodes = get_path(DG, node1, node2, 7)
-
-# path_initial_posns = get_initial_node_posn(path)
-# path_initial_posns = {node1: (0, 1), node2: (1, 0)}
-# path_pos = get_layout(path,
-#                       path_initial_posns,
-#                       layout_type='spring',
-# #                       fixed=[node1, node2],
-#                       seed=5,
-#                       weight='average_fee',
-#                       iterations=50)
-path_pos = multipath_layout(path, path_nodes, iterations=50, seed=1)
+trip = node1, node2
+path, path_nodes, path_posns = get_path(DG, trip[0], trip[1], 10)
+path_pos = multipath_layout(path, path_nodes, path_posns, iterations=50, seed=1)
 path_edge_pos = get_edge_posns(path, path_pos)
-print('{} -> {}'.format(path.nodes[node1]['alias'], path.nodes[node2]['alias']))
+print('{} -> {}'.format(path.nodes[trip[0]]['alias'], path.nodes[trip[1]]['alias']))
 
-plot_multipath(path, path_pos, path_edge_pos, [node1, node2])
+plot_multipath(path, path_pos, path_edge_pos, [trip[0], trip[1]])
 
 ```
+
+```python
+node5='030f2c70ce2e9a0aa20457f0e26be4f768f5e0e5b12ae81e5814145f52ecc6d1ec'
+```
+
+```python
+trip = node1, node5
+path, path_nodes, path_posns = get_path(DG, trip[0], trip[1], 10)
+path_pos = multipath_layout(path, path_nodes, path_posns, iterations=50, seed=1)
+path_edge_pos = get_edge_posns(path, path_pos)
+print('{} -> {}'.format(path.nodes[trip[0]]['alias'], path.nodes[trip[1]]['alias']))
+plot_multipath(path, path_pos, path_edge_pos, [trip[0], trip[1]])
+
+```
+
+average the x-positions for degree=2. Should be able to linearly interpolate via pandas with gap filling.
+
 
 ## Minimum Spanning Tree
 
@@ -471,11 +461,11 @@ len(policies)/len(response.edges)
 Need to weight by fees.
 
 ```python
-G.edges['02e02d1e391733f2bd7e13d9cfd47d6d5c71ed65eafaaf801c194f13da227f8b81', '031c7ecff228dfe6054307ee49c8616998af5f8d4436f13c07d211aeb6c0ec87f7']
+DG.edges['02e02d1e391733f2bd7e13d9cfd47d6d5c71ed65eafaaf801c194f13da227f8b81', '031c7ecff228dfe6054307ee49c8616998af5f8d4436f13c07d211aeb6c0ec87f7']
 ```
 
 ```python
-T = nx.minimum_spanning_tree(G, weight='avg_fee')
+T = nx.minimum_spanning_tree(DG.to_undirected(), weight='avg_fee')
 ```
 
 ```python
@@ -483,12 +473,12 @@ initial_posns = get_initial_node_posn(T)
 ```
 
 ```python
-pos = get_layout(T, initial_posns, 2)
+pos = get_layout(T, initial_posns, 'spring', iterations=2)
 pos
 ```
 
 ```python
-edge_pos = get_edge_posns(T)
+edge_pos = get_edge_posns(T, pos)
 ```
 
 The below graph makes it hard to see the capacity available to bidirectional channels. That's ok, because we don't actually have information on bidirectional channels!
