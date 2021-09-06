@@ -1,3 +1,6 @@
+
+### 2021-09-06 12:38:29.198835: clock-in
+
 ### 2021-09-05 22:31:50.256312: clock-out
 
 * python 3.7 for networkx compatibility
