@@ -135,3 +135,31 @@ services:
         - type: bind
           source: ${PWD}/volumes/rtl_datadir
           target: /data
+  dashboard:
+    container_name: playground-dashboard
+    links:
+      - lnd
+      - bitcoind
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    volumes:
+      - type: bind
+        source: ${PWD}/dashboard
+        target: /dashboard
+      - type: bind
+        source: ${PWD}/volumes/lnd_datadir
+        target: /root/.lnd/
+        read_only: true
+    environment:
+      JUPYTER_NOTEBOOKS: /dashboard
+      JUPYTER_PORT: 8888
+    # need to chmod startup script since permissions get clobbered by bind mount
+    command:
+      - sh
+      - -c
+      - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
+
