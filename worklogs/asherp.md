@@ -1,3 +1,6 @@
+
+### 2021-09-05 21:08:35.199569: clock-in
+
 ### 2021-09-05 13:24:24.791297: clock-out
 
 * shortest path vis looking better
