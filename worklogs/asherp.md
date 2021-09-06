@@ -1,3 +1,6 @@
+
+### 2021-09-06 15:35:37.593682: clock-in
+
 ### 2021-09-06 14:14:45.488795: clock-out
 
 * interpolating positions from base path
