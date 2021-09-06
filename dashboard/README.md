@@ -313,30 +313,32 @@ def get_path(G, node1, node2, max_paths=5):
     
     paths = nx.shortest_simple_paths(G, node1, node2, weight='avg_fee')
     
-#     max_nodes = 0
-#     for path in paths:
-#         max_nodes = max(max_nodes, len(path))
-#         if i >= max_paths:
-#             break
-#         i += 1
-    
-#     i = 0        
-#     x = np.linspace(0, 1, max_nodes)
-    
     for path in paths:
         if i >= max_paths:
             break
-        x = np.linspace(0, 1, len(path))
+        if i == 0:
+            pos_df = pd.DataFrame(
+                dict(x=np.linspace(0, 1, len(path0)),
+                     y=0),
+                index=path)
+        else:
+            df = pos_df.reindex(path)
+            new_nodes = df[df.x.isna()].copy()
+            new_nodes.x = df.x.interpolate().loc[new_nodes.index]
+            new_nodes.y = i
+            pos_df = pos_df.append(new_nodes)
+            
         for j, node in enumerate(path):
             if node not in p:
                 path_nodes[i].append(node)
-                path_posns[node]=(x[j], i)
             p.add_node(node, **G.nodes[node])
         for edge in zip(path[:-1], path[1:]):
             p.add_edge(*edge, key=i, **G.edges[edge])
         i += 1
-    return p, path_nodes, path_posns
+    return p, path_nodes, pos_df
+```
 
+```python
 def multipath_layout(path, path_nodes, path_posns, weight=None, iterations=10, seed=0):
     """ Layout for multiple paths
     ToDo: iteratively build up position graph as routes are added.
@@ -345,9 +347,7 @@ def multipath_layout(path, path_nodes, path_posns, weight=None, iterations=10, s
     path: network containing nodes and edges describing the multipath
     path_nodes: {path_number: new_nodes} nodes introduced for each new path
     """
-    pos = pd.DataFrame.from_dict(
-        path_posns,
-        orient='index', columns = ['x', 'y'])
+    pos = path_posns
     pos['alias'] = [path.nodes[_]['alias'] for _ in pos.index]
     pos['color'] = [path.nodes[_]['color'] for _ in pos.index]
     pos['capacity'] = [path.nodes[_]['capacity'] for _ in pos.index]
@@ -419,7 +419,6 @@ path_edge_pos = get_edge_posns(path, path_pos)
 print('{} -> {}'.format(path.nodes[trip[0]]['alias'], path.nodes[trip[1]]['alias']))
 
 plot_multipath(path, path_pos, path_edge_pos, [trip[0], trip[1]])
-
 ```
 
 ```python
