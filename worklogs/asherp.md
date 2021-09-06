@@ -1,3 +1,4 @@
+* python 3.7 for networkx compatibility
 * containerizing dashboard
 
 ### 2021-09-05 21:08:35.199569: clock-in

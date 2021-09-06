@@ -137,7 +137,10 @@ services:
           target: /data
   dashboard:
     container_name: playground-dashboard
-    links:
+    links: 
+      - lnd      
+      - bitcoind 
+    depends_on: 
       - lnd
       - bitcoind
     restart: unless-stopped

@@ -1,11 +1,15 @@
 FROM continuumio/miniconda3:latest
 LABEL maintainer "Asher Pembroke <apembroke@gmail.com>"
 
+RUN conda install -y python=3.7
 RUN conda install jupyter
 RUN conda install jupytext -c conda-forge
 RUN conda install -c conda-forge dash pandas scipy numpy networkx
 
 RUN pip install grpcio grpcio-tools googleapis-common-protos
+
+WORKDIR /grpc
+
 RUN git clone https://github.com/googleapis/googleapis.git
 RUN wget https://raw.githubusercontent.com/lightningnetwork/lnd/master/lnrpc/lightning.proto
 RUN python -m grpc_tools.protoc --proto_path=googleapis:. --python_out=. --grpc_python_out=. lightning.proto
