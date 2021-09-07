@@ -1,3 +1,4 @@
+* troubleshooting dashboard container with Richard, Randy
 
 ### 2021-09-06 19:19:55.258548: clock-in: T-1h 
 
