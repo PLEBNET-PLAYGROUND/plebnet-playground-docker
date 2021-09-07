@@ -146,5 +146,5 @@ bos --version
 - John Doe
 - @rafgxyz
 - [@asherp](https://github.com/asherp)
-- [@RandyMcMillian](https://github.com/randymcmillan)
+- [@RandyMcMillan](https://github.com/randymcmillan)
 - @nitesh_btc
