@@ -19,12 +19,12 @@
 # IN THE SOFTWARE.
 
 # Project information
-site_name: Material for MkDocs
-site_url: https://squidfunk.github.io/mkdocs-material/
-site_author: Martin Donath
+site_name: Plebnet Playground
+site_url: https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker
+site_author: Plebnet Developers
 site_description: >-
-  Create a branded static site from a set of Markdown files to host the
-  documentation of your Open Source or commercial project
+  Plebnet Playground Sandbox Docker Package
+  This package will setup a bitcoind, lnd, and tor daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain. RTL (Ride The Lightning) and ThunderHub Web UI is also include to provide a more user friendly experience.
 
 # Repository
 repo_name: squidfunk/mkdocs-material
