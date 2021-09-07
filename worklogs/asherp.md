@@ -1,3 +1,6 @@
+
+### 2021-09-06 19:19:55.258548: clock-in: T-1h 
+
 ### 2021-09-06 16:14:24.088591: clock-out
 
 * refactoring to dashboard library
