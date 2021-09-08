@@ -32,6 +32,18 @@ services:
     depends_on: 
     - bitcoind
     - tor
+    environment:
+      ARCH: '${ARCH}'
+      LND_ALIAS: 'NewNode'
+      LND_LISTEN: 'playground-lnd:9735'
+      LND_RPCLISTEN: 'playground-lnd:10009'
+      LND_RESTLISTEN: 'playground-lnd:8080'
+      zmqpubrawblock: 'tcp://playground-bitcoind:28332'
+      zmqpubrawtx: 'tcp://playground-bitcoind:28333'
+      torsocks: 'playground-tor:9050'
+      torcontrol: 'playground-tor:9051'
+      tlsextradomain: 'playground-lnd'
+      rpchost: 'playground-bitcoind'
     restart: unless-stopped
     container_name: playground-lnd
     build: 

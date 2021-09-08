@@ -50,9 +50,8 @@ COPY --from=builder /go/src/github.com/lightningnetwork/lnd/scripts/verify-insta
 # verification.
 RUN sha256sum /bin/lnd /bin/lncli > /shasums.txt
 
-COPY lnd.conf /usr/local/etc/lnd.conf
 COPY docker-entrypoint.sh /usr/local/etc/entrypoint.sh
-
+COPY docker-initwalletcreate.sh /usr/local/etc/docker-initwalletcreate.sh
 ENTRYPOINT ["/usr/local/etc/entrypoint.sh"]
 
 # Specify the start command and entrypoint as the lnd daemon.
