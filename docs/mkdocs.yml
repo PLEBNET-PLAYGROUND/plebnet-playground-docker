@@ -52,13 +52,13 @@ theme:
   features:
     - content.code.annotate
     - content.tabs.link
-    # - header.autohide
-    # - navigation.expand
-    # - navigation.indexes
-    # - navigation.instant
+    - header.autohide
+    - navigation.expand
+    - navigation.indexes
+    - navigation.instant
     - navigation.sections
     - navigation.tabs
-    # - navigation.tabs.sticky
+    - navigation.tabs.sticky
     - navigation.top
     - navigation.tracking
     - search.highlight
@@ -168,51 +168,9 @@ markdown_extensions:
 # Page tree
 nav:
   - Home: index.md
-  - Getting started:
-    - Installation: getting-started.md
-    - Creating your site: creating-your-site.md
-    - Publishing your site: publishing-your-site.md
-    - Customization: customization.md
-    - Troubleshooting: troubleshooting.md
-    - Data privacy: data-privacy.md
-    - License: license.md
-    - Releases:
-      - Changelog: changelog.md
-      - Upgrade guide: upgrading.md
-      - Deprecations: deprecations.md
-  - Setup:
-    - Changing the colors: setup/changing-the-colors.md
-    - Changing the fonts: setup/changing-the-fonts.md
-    - Changing the language: setup/changing-the-language.md
-    - Changing the logo and icons: setup/changing-the-logo-and-icons.md
-    - Setting up navigation: setup/setting-up-navigation.md
-    - Setting up site search: setup/setting-up-site-search.md
-    - Setting up site analytics: setup/setting-up-site-analytics.md
-    - Setting up social cards: setup/setting-up-social-cards.md
-    - Setting up tags: setup/setting-up-tags.md
-    - Setting up versioning: setup/setting-up-versioning.md
-    - Setting up the header: setup/setting-up-the-header.md
-    - Setting up the footer: setup/setting-up-the-footer.md
-    - Adding a git repository: setup/adding-a-git-repository.md
-    - Adding a comment system: setup/adding-a-comment-system.md
-  - Reference:
-    - Abbreviations: reference/abbreviations.md
-    - Admonitions: reference/admonitions.md
-    - Buttons: reference/buttons.md
-    - Code blocks: reference/code-blocks.md
-    - Content tabs: reference/content-tabs.md
-    - Data tables: reference/data-tables.md
-    - Diagrams: reference/diagrams.md
-    - Footnotes: reference/footnotes.md
-    - Formatting: reference/formatting.md
-    - Icons + Emojis: reference/icons-emojis.md
-    - Images: reference/images.md
-    - Lists: reference/lists.md
-    - MathJax: reference/mathjax.md
-    - Meta tags: reference/meta-tags.md
-    - Variables: reference/variables.md
-  - Insiders:
-    - Sponsorship: insiders/index.md
-    - Getting started:
-      - Installation: insiders/getting-started.md
-      - Changelog: insiders/changelog.md
+  - Plebnet Wiki: https://plebnet.wiki/wiki/Main_Page
+  - Bitcoin Wiki: https://en.bitcoin.it/wiki/Main_Page
+  - Lightning Wiki: https://lightningwiki.net/index.php/Main_Page
+  - Plebnet TG: https://t.me/plebnet
+  - Umbrel TG: https://t.me/getumbrel
+  - RaspiBlitz TG: https://t.me/raspiblitz
