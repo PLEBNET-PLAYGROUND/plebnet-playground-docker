@@ -354,7 +354,7 @@ run: docs init
 docs:
 	install -v README.md docs/docs/index.md
 	sed 's/\/images/.\/images/' README.md > docs/docs/index.md
-	cp -R images ./docs/images
+	cp -R ./images ./docs/docs/images
 
 #######################
 #.PHONY: run
