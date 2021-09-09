@@ -345,15 +345,16 @@ else
 	@echo ''
 endif
 
-.PHONY: signin
-signin:
-	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX) -u $(GIT_USER_NAME) --password-stdin'
-
 .PHONY: run
-run: init
+run: docs init
 	@echo 'run'
 	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
 	@echo ''
+.PHONY: docs
+docs:
+	install -v README.md docs/docs/index.md
+	sed 's/\/images/.\/images/' README.md > docs/docs/index.md
+	cp -R images ./docs/images
 
 #######################
 #.PHONY: run
