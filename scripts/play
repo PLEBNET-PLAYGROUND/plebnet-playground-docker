@@ -2,10 +2,35 @@
 
 if hash docker 2>/dev/null; then
 
+THUNDERHUB_ID=$(echo $(docker ps | awk '/thunderhub/'|awk ' {print $1}' | awk 'NR==1'))
+export THUNDERHUB_ID
+THUNDERHUB_IMAGE=$(echo $(docker images | awk '/thunderhub/'|awk ' {print $3}' | awk 'NR==1'))
+export THUNDERHUB_IMAGE
+
+RTL_ID=$(echo $(docker ps | awk '/rtl/'|awk ' {print $1}' | awk 'NR==1'))
+export RTL_ID
+RTL_IMAGE=$(echo $(docker images | awk '/rtl/'|awk ' {print $3}' | awk 'NR==1'))
+export RTL_IMAGE
+
+LND_ID=$(echo $(docker ps | awk '/lnd/'|awk ' {print $1}' | awk 'NR==1'))
+export LND_ID
+LND_IMAGE=$(echo $(docker images | awk '/lnd/'|awk ' {print $3}' | awk 'NR==1'))
+export LND_IMAGE
+
+DOCS_ID=$(echo $(docker ps | awk '/docs/'|awk ' {print $1}' | awk 'NR==1'))
+export DOCS_ID
+DOCS_IMAGE=$(echo $(docker images | awk '/docs/'|awk ' {print $3}' | awk 'NR==1'))
+export DOCS_IMAGE
+
 BITCOIND_ID=$(echo $(docker ps | awk '/bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
 export BITCOIND_ID
 BITCOIND_IMAGE=$(echo $(docker images | awk '/bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
 export BITCOIND_IMAGE
+
+TOR_ID=$(echo $(docker ps | awk '/tor/'|awk ' {print $1}' | awk 'NR==1'))
+export TOR_ID
+TOR_IMAGE=$(echo $(docker images | awk '/tor/'|awk ' {print $3}' | awk 'NR==1'))
+export TOR_IMAGE
 
 for ((i=1;i<=$#;i++));
 do
