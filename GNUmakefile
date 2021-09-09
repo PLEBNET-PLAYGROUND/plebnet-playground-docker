@@ -403,8 +403,6 @@ clean:
 	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down --remove-orphans --rmi all 2>/dev/null \
 	&& echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" removed.' \
 	|| echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" already removed.'
-	@rm -f $(DOCKERFILE)*
-	@rm -f shell
 #######################
 .PHONY: prune
 prune:
