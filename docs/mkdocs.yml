@@ -27,7 +27,7 @@ site_description: >-
   documentation of your Open Source or commercial project
 
 # Repository
-repo_name: squidfunk/mkdocs-material
+repo_name: plebnet-playground-docker
 repo_url: https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker
 edit_uri: ""
 
