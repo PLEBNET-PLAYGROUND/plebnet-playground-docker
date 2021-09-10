@@ -7,14 +7,17 @@ export THIS_FILE
 TIME									:= $(shell date +%s)
 export TIME
 
+#REF: https://wiki.debian.org/Multiarch/Tuples
 ARCH                                    :=$(shell uname -m)
 export ARCH
 ifeq ($(ARCH),x86_64)
-ARCH                                    :=x86_64-linux-gnu
+TRIPLET                                 :=x86_64-linux-gnu
+export TRIPLET
 export ARCH
 endif
 ifeq ($(ARCH),arm64)
-ARCH                                    :=aarch64-linux-gnu
+TRIPLET                                 :=aarch64-linux-gnu
+export TRIPLET
 export ARCH
 endif
 
@@ -222,6 +225,7 @@ report:
 	@echo '        - TIME=${TIME}'
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
+	@echo '        - TRIPLET=${TRIPLET}'
 	@echo '        - HOST_USER=${HOST_USER}'
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
@@ -296,6 +300,7 @@ endif
 	@echo 'init'
 	mkdir -p volumes/tor_datadir
 	mkdir -p volumes/tor_servicesdir
+	mkdir -p volumes/statoshi_datadir
 	touch volumes/tor_datadir/.gitkeep
 	touch volumes/tor_servicesdir/.gitkeep
 ifneq ($(shell id -u),0)
@@ -316,12 +321,12 @@ endif
 .PHONY: install
 install: init
 
-	bash -c './install.sh $(ARCH)'
+	bash -c './install.sh $(TRIPLET)'
 #######################
 .PHONY: uninstall
 uninstall:
 
-	bash -c './uninstall.sh $(ARCH)'
+	bash -c './uninstall.sh $(TRIPLET)'
 #######################
 .PHONY: build-shell
 build-shell:
@@ -355,16 +360,28 @@ run: docs init
 statoshi:
 	@echo 'statoshi'
 	docker pull ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
-	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) statoshi
+	#$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) statoshi
 	@echo ''
 #######################
 .PHONY: run-statoshi
 run-statoshi: statoshi
 	@echo 'run'
-	docker run -d --restart=always -p 3333:3000 -p 8333:8333 --name="statoshi-$(TIME)"  -v ${PWD}/volumes/statoshi_datadir:/root/.bitcoin ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
-	@echo 'Give grafana a few minutes to set up...'
-	@echo 'http://localhost:$(PUBLIC_PORT)'
-#######################
+	#docker run -d --restart=always -p 3333:3000 -p 8333:8333 --name="statoshi-$(TIME)"  -v ${PWD}/volumes/statoshi_datadir:/root/.bitcoin ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
+	docker run -d --restart=always -p 3333:3000 -p 8333:8333 --name="statoshi"  -v ${PWD}/volumes/statoshi_datadir:/root/.bitcoin ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
+#run-statoshi: init build
+#	@echo 'run'
+#ifeq ($(CMD_ARGUMENTS),)
+#	@echo ''
+#	$(DOCKER_COMPOSE) $(VERBOSE) -p $(PROJECT_NAME)_$(HOST_UID) run -d --publish $(PUBLIC_PORT):3000 --publish 8125:8125 --publish 8126:8126 --publish 8333:8333 --publish 8332:8332 statoshi sh
+#	@echo ''
+#else
+#	@echo ''
+#	$(DOCKER_COMPOSE) $(VERBOSE) -p $(PROJECT_NAME)_$(HOST_UID) run -d --publish $(PUBLIC_PORT):3000 --publish 8125:8125 --publish 8126:8126 --publish 8333:8333 --publish 8332:8332 statoshi sh -c "$(CMD_ARGUMENTS)"
+#	@echo ''
+#endif
+#	@echo 'Give grafana a few minutes to set up...'
+#	@echo 'http://localhost:$(PUBLIC_PORT)'
+########################
 .PHONY: docs
 docs:
 	install -v README.md docs/docs/index.md
@@ -374,6 +391,13 @@ docs:
 .PHONY: signin
 signin:
 	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX) -u $(GIT_USER_NAME) --password-stdin'
+#######################
+.PHONY: all
+all: bitcoind lnd tor thunderhub rtl statoshi docs
+#######################
+.PHONY: logs
+logs:
+	$(DOCKER_COMPOSE) logs
 
 #######################
 #.PHONY: run
@@ -420,20 +444,20 @@ endif
 .PHONY: clean
 clean:
 	# remove created images
-	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down --remove-orphans --rmi all 2>/dev/null \
-	&& echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" removed.' \
-	|| echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" already removed.'
+	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down --remove-orphans --rmi all 2>/dev/null \
+	&& echo 'Image(s) for "$(PROJECT_NAME)" removed.' \
+	|| echo 'Image(s) for "$(PROJECT_NAME)" already removed.'
 #######################
 .PHONY: prune
 prune:
 	@echo 'prune'
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
 	docker system prune -af
 #######################
 .PHONY: prune-network
 prune-network:
 	@echo 'prune-network'
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
 	docker network prune -f
 #######################
 .PHONY: readme
