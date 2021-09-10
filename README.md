@@ -134,7 +134,7 @@ By default only the playground nodes are visualized. However, you can also visua
 USE_TEST_DATA=TRUE docker-compose up dashboard
 ```
 
-![Plebnet Dashboard](/images/plebnet_dashboard.png)
+![Plebnet Dashboard](/docs/docs/images/plebnet_dashboard.png)
 
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)
