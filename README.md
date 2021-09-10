@@ -123,6 +123,19 @@ bos --version
 10.9.2
 ```
 
+### How to setup plebnet dashboard
+
+The interactive dashboard is an experimental visualization engine for viewing the lightning network.
+If you used the `docker-compose up -d` command above, then the dashboard will run on http://localhost:8050
+
+By default only the playground nodes are visualized. However, you can also visualize real lightning network data by placing a `describegraph.json` file in the repo's `dashboard/` directory, then restart the dashboard setting environment variable `USE_TEST_DATA=TRUE`:
+
+```console
+USE_TEST_DATA=TRUE docker-compose up dashboard
+```
+
+![Plebnet Dashboard](/images/plebnet_dashboard.png)
+
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)
 - [Bitcoin Wiki](https://bitcoin.it)
