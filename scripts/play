@@ -74,16 +74,12 @@ do
 
     elif [[ ${!i} = start ]]; then
         ((i++))
-        [ -z "$var" ] && echo "playground-bitcoind not running" && echo "make run from folder" && exit
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/entrypoint &"
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind -daemon -datadir=/home/root/.bitcoin -addnode=umbrel.local &"
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli gettxoutsetinfo"
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli getmininginfo"
+        docker start ${!i}
         exit
 
     elif [[ ${!i} = stop ]]; then
         ((i++))
-        docker stop $BITCOIND_ID
+        docker stop ${!i}
         exit
 
     elif [[ ${!i} = *cli ]]; then
