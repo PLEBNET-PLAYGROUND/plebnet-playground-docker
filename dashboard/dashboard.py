@@ -53,7 +53,7 @@ import logging
 
 LND_DIR = os.environ.get('LND_DATADIR', '/root/.lnd')
 
-use_test_data = os.environ.get('USE_TEST_DATA', 'False').lower() == 'true'
+use_test_data = 'true' in os.environ.get('USE_TEST_DATA', 'False').lower()
 
 
 from collections import namedtuple
@@ -263,6 +263,7 @@ def plot_graph(pos, edge_pos, highlight=None):
                      y=pos.y,
                      text=pos.alias,
                      hoverinfo='text',
+                     name='nodes',
                      marker=dict(size=2*np.log10(pos.capacity),
                                  color=pos.color),
                      mode='markers')
@@ -281,6 +282,7 @@ def plot_graph(pos, edge_pos, highlight=None):
                      text=highlighted.alias,
                      marker_symbol='circle-open',
                      hoverinfo='text',
+                     name='nodes',
                      marker=dict(size=4*np.log10(pos.capacity),
                                  color=pos.color),
                      marker_line_width=2,
@@ -347,6 +349,7 @@ def plot_multipath(path, pos, edge_pos, highlight):
                      y=pos.y,
                      text=pos.alias,
                      hoverinfo='text',
+                     name='nodes',
                      marker=dict(size=2*np.log10(pos.capacity),
                                  color=pos.color),
                      mode='markers')
@@ -387,6 +390,7 @@ def plot_multipath(path, pos, edge_pos, highlight):
                      text=highlighted.alias,
                      marker_symbol='circle-open',
                      hoverinfo='text',
+                     name='start/end',
                      marker=dict(size=4*np.log10(pos.capacity),
                                  color=pos.color),
                      marker_line_width=2,

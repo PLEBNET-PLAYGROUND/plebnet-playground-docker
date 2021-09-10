@@ -31,6 +31,19 @@ layout:
               searchable: True
     - dcc.Graph:
         id: node-graph
+        figure:
+          data: []
+          layout:
+            xaxis:
+              showticklabels: False
+              ticks: ''
+              showgrid: False
+              zeroline: False
+            yaxis:
+              showticklabels: False
+              ticks: ''
+              showgrid: False
+              zeroline: False
 
 callbacks:
   update_node_1_options:
