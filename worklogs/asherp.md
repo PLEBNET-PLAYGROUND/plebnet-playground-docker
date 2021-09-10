@@ -1,3 +1,4 @@
+* dashboard docs
 * cosmetic changes
 * merging
 * working dashboard

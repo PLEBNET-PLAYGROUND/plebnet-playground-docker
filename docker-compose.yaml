@@ -175,7 +175,7 @@ services:
       JUPYTER_PORT: 8888
       LND_DATADIR: /root/.lnd
       GRAPH_TEST_DATA: describegraph.json
-      USE_TEST_DATA: true
+      USE_TEST_DATA: ${USE_TEST_DATA}
     working_dir: /dashboard
     ## use this command to spin up jupyter serving on localhost:8888
     # command:
