@@ -1,3 +1,6 @@
+
+### 2021-09-10 11:49:31.529800: clock-in
+
 ### 2021-09-09 21:56:24.416247: clock-out
 
 * got interactive graph exploration working
