@@ -1,0 +1,65 @@
+name: plebnet-playground
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    #paths:
+    #  - '.github/workflows/automate.yml'
+    schedule:
+      - cron: "*/5 * * * *"
+
+    branches:       #[ master ]
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - 'master'    # includes master
+      - 'main'      # includes main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  github-workspace:
+    name: github-workspace
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Print github workspace
+        run: |
+          printenv
+
+  ubuntu-latest-build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: install, build, and test
+        run: |
+          sudo apt install python python3
+          sudo apt install -y mkdocs
+          pip install -r docs/requirements.txt
+          make init report
+          make install
+          #make uninstall
+
+  ubuntu-20-build_and_test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: install, build, and test
+        run: |
+          sudo apt install python python3
+          sudo apt install -y mkdocs
+          pip install -r docs/requirements.txt
+          make init report
+          make install
+          #make uninstall
+

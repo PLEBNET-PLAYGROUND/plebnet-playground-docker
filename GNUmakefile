@@ -7,8 +7,16 @@ export THIS_FILE
 TIME									:= $(shell date +%s)
 export TIME
 
-ARCH                                    := $(shell uname -m)
+ARCH                                    :=$(shell uname -m)
 export ARCH
+ifeq ($(ARCH),x86_64)
+ARCH                                    :=x86_64-linux-gnu
+export ARCH
+endif
+ifeq ($(ARCH),arm64)
+ARCH                                    :=aarch64-linux-gnu
+export ARCH
+endif
 
 #ifeq ($(user),)
 #HOST_USER								:= root
@@ -40,6 +48,16 @@ else
 DOCKER_COMPOSE							:= $(compose)
 endif
 export DOCKER_COMPOSE
+
+PYTHON                                  := $(shell which python)
+export PYTHON
+PYTHON3                                 := $(shell which python3)
+export PYTHON3
+
+PIP                                     := $(shell which pip)
+export PIP
+PIP3                                    := $(shell which pip3)
+export PIP3
 
 # PROJECT_NAME defaults to name of the current directory.
 ifeq ($(project),)
@@ -195,6 +213,10 @@ report:
 	@echo '      args:'
 	@echo '        - HOME=${HOME}'
 	@echo '        - PWD=${PWD}'
+	@echo '        - PYTHON=${PYTHON}'
+	@echo '        - PYTHON3=${PYTHON3}'
+	@echo '        - PIP=${PIP}'
+	@echo '        - PIP3=${PIP3}'
 	@echo '        - UMBREL=${UMBREL}'
 	@echo '        - THIS_FILE=${THIS_FILE}'
 	@echo '        - TIME=${TIME}'
@@ -272,12 +294,34 @@ ifneq ($(shell id -u),0)
 	@echo 'sudo make init #try if permissions issue'
 endif
 	@echo 'init'
+	mkdir -p volumes/tor_datadir
+	mkdir -p volumes/tor_servicesdir
+	touch volumes/tor_datadir/.gitkeep
+	touch volumes/tor_servicesdir/.gitkeep
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
+ifneq ($(PIP3),)
+	$(PIP3) install -r requirements.txt
+	pushd docs && $(PIP3) install -r requirements.txt && popd
+else
+	$(PIP) install -r requirements.txt
+	pushd docs && $(PIP) install -r requirements.txt && popd
+endif
+	
 else
 	        bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 endif
+#######################
+.PHONY: install
+install: init
+
+	bash -c './install.sh $(ARCH)'
+#######################
+.PHONY: uninstall
+uninstall:
+
+	bash -c './uninstall.sh $(ARCH)'
 #######################
 .PHONY: build-shell
 build-shell:
@@ -301,15 +345,16 @@ else
 	@echo ''
 endif
 
-.PHONY: signin
-signin:
-	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX) -u $(GIT_USER_NAME) --password-stdin'
-
 .PHONY: run
-run: init
+run: docs init
 	@echo 'run'
-	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up &
+	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
 	@echo ''
+.PHONY: docs
+docs:
+	install -v README.md docs/docs/index.md
+	sed 's/\/images/.\/images/' README.md > docs/docs/index.md
+	cp -R ./images ./docs/docs/images
 
 #######################
 #.PHONY: run
@@ -359,8 +404,6 @@ clean:
 	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down --remove-orphans --rmi all 2>/dev/null \
 	&& echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" removed.' \
 	|| echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" already removed.'
-	@rm -f $(DOCKERFILE)*
-	@rm -f shell
 #######################
 .PHONY: prune
 prune:

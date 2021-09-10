@@ -1,2 +1,4 @@
 requests
 argparse
+mkdocs
+mkdocs-material

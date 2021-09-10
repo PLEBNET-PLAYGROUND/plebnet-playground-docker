@@ -13,6 +13,7 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 - You will need to setup LND wallet from scratch, instructions below
 - PM [@xenonfun](t.me/xenonfun) on Telegram to get access to the Plebnet Playground Telegram group
 - All ports are completely exposed to local host, this is mostly to make it easy for end-users to tinker, and as the signet coins in the playground are worthless so there is little risk of hacking. You can modify the ```docker-compose.yaml``` should these cause conflicts.
+- For Windows users you will need to use something like git bash until we make some powershell scripts to provide cleaner functionality 
 ## Basic Setup
 ***
 ### Clone Repo
@@ -35,7 +36,7 @@ cd plebnet-playground-docker
 ### Install and start containers (Intel x64 example)
 ***
 ```
-docker-compose build --build-arg ARCH=x86_64-linux-gnu
+./install.sh x86_64-linux-gnu
 docker-compose up -d
 ```
 ### Stop containers
@@ -48,19 +49,17 @@ docker-compose stop
 ```
 docker-compose up -d
 ```
-### Full removal of Plebnet Playground (this deletes all volumes)
+### Full removal of Plebnet Playground (this deletes all data out of volumes directory)
 ***
 ```
-docker-compose down -v
+./uninstall.sh
 ```
 ### Setup bash aliases for your convenience
 ***
 ```
 alias lncli='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
 
-alias create-lnd-wallet='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon create'
-
-alias unlock-lnd='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon unlock'
+alias change-password-playground='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon changepassword'
 
 alias connect-playground='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon connect 03ee9d906caa8e8e66fe97d7a76c2bd9806813b0b0f1cee8b9d03904b538f53c4e@104.131.10.218:9735'
 
@@ -84,21 +83,15 @@ alias restart-rtl='docker restart playground-rtl'
 
 alias restart-thub='docker restart playground-thub'
 
-alias bos="docker run -it --rm -v $PWD/volumes/lnd_datadir:/root/.lnd/:ro -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
+alias bos="docker run -it --rm -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
 ```
-### Create your first playground LND wallet
+### Your first playground LND wallet
 ***
-```
-create-lnd-wallet
-```
-![create lnd wallet image](/images/create-wallet.png)
 
-### Modify your lnd.conf to auto unlock your wallet in future
-***
-- Create a password file like ```unlock.password``` in your lnd docker volume (```volumes/lnd_datadir```), the only content of this file will be your plaintext password you used to generate your wallet in prior step. 
-- Edit ```lnd.conf``` file and add ```wallet-unlock-password-file=/root/.lnd/unlock.password``` within the first group of parameters (Application Options) so that it points pointing to the LND container relative path you created in prior step.
-- ```docker restart playground-lnd``` and your lnd container should now automatically unlock your wallet on startup
+The wallet will automatically be made for you and use the default password  is ```12345678```
+You can change the password with the ```change-password-playground``` alias. If you do change your password make sure to update the ```unlock.password``` file with your new password.
 
+ 
 ### Make your first peer with the seed node for Plebnet Playground Signet
 ***
 - ```connect-playground```
@@ -108,13 +101,6 @@ create-lnd-wallet
 ### Get some coins
 Install requirements ```pip3 install -r requirements.txt```
 Run the ```./getcoins.py``` script and you will get 1tBTC put into your lightning on-chain wallet.
-## GUI Setup
-****
-Start GUI containers
-```
-docker start playground-thub
-docker start playground-rtl
-```
 ### RTL Setup
 ***
 - RTL will at ```http://localhost:3000```, the default password is ```password``` and it will ask you to change this on first login.
@@ -122,6 +108,20 @@ docker start playground-rtl
 ***
 - ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```volumes/thub_datadir/thubConfig.yaml```. Change `masterPassword: thunderhub-$2a$12$oRzmFZSOmvYv1heHkU053uv0a1tX9MXNqmcMpZs2hQ0t8k1Onnk1a` to `masterPassword: mynewpassword`. Then restart thunderhub using alias `restart-thub`. The masterPassword entry should automatically be converted to the hashed version of the password.
 
+### How to setup Balance of Satoshis (BOS)
+***
+
+You may install bos only **after** you have generated an lnd wallet with `create-lnd-wallet`.
+
+```console
+sudo python3 ./install_bos.py
+```
+If you created the bos alias above, you should be good to go
+
+```console
+bos --version
+10.9.2
+```
 
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)
@@ -138,5 +138,5 @@ docker start playground-rtl
 - John Doe
 - @rafgxyz
 - [@asherp](https://github.com/asherp)
-- [@RandyMcMillian](https://github.com/randymcmillan)
+- [@RandyMcMillan](https://github.com/randymcmillan)
 - @nitesh_btc
