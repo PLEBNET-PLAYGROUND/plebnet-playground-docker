@@ -146,6 +146,7 @@ services:
     restart: unless-stopped
     ports:
       - "8888:8888"
+      - "8050:8050"
     build:
       context: ./dashboard
       dockerfile: Dockerfile

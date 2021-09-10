@@ -1,3 +1,4 @@
+* got interactive graph exploration working
 
 ### 2021-09-09 19:59:44.110560: clock-in
 

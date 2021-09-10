@@ -31,6 +31,10 @@ request = lnrpc.ChannelGraphRequest(include_unannounced=True)
 response = stub.DescribeGraph(request, metadata=[('macaroon', macaroon)])
 ```
 
+```python
+response
+```
+
 <!-- #region -->
 Response is a object containing:
 ```python
@@ -131,6 +135,83 @@ plot_multipath(path, path_pos, path_edge_pos, [trip[0], trip[1]])
 
 average the x-positions for degree=2. Should be able to linearly interpolate via pandas with gap filling.
 
+
+# Dashboard
+
+The idea is the user selects an origin node and a downstream node.
+
+```python
+from jupyter_dash import JupyterDash
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+
+from psidash import load_app # for production
+from psidash.psidash import get_callbacks, load_conf, load_dash, load_components, assign_callbacks
+import flask
+
+from dash.exceptions import PreventUpdate
+from networkx import NetworkXNoPath, descendants
+
+conf = load_conf('dashboard.yaml')
+
+# app = dash.Dash(__name__, server=server) # call flask server
+
+server = flask.Flask(__name__) # define flask app.server
+
+conf['app']['server'] = server
+
+app = load_dash(__name__, conf['app'], conf.get('import'))
+
+app.layout = load_components(conf['layout'], conf.get('import'))
+
+if 'callbacks' in conf:
+    callbacks = get_callbacks(app, conf['callbacks'])
+    assign_callbacks(callbacks, conf['callbacks'])
+
+# {'label': 'Hello Jessica', 'value': 'id'},
+
+@callbacks.update_node_1_options
+def update_node_select(url):
+    options = [{'label': DG.nodes[node]['alias'], 'value': node} for node in DG.nodes]
+    return options, options[0]['value']
+
+@callbacks.update_node_2_options
+def update_node_select(node_1):
+    if node_1 is None:
+        raise PreventUpdate
+    options = [{'label': DG.nodes[node]['alias'], 'value': node} for node in descendants(DG, node_1)]
+    if len(options) > 0:
+        return options, options[-1]['value']
+    else:
+        return options, ''
+
+@callbacks.update_node_graph
+def render(node_1, node_2):
+    trip = node_1, node_2
+    if (node_1 in DG.nodes) & (node_2 in DG.nodes):
+        pass
+    else:
+        raise PreventUpdate
+    try:
+        path, path_nodes, path_posns = get_path(DG, trip[0], trip[1], 10)
+    except NetworkXNoPath:
+        raise PreventUpdate
+    path_pos = multipath_layout(path, path_nodes, path_posns, iterations=50, seed=1)
+    path_edge_pos = get_edge_posns(path, path_pos)
+    print('{} -> {}'.format(path.nodes[trip[0]]['alias'], path.nodes[trip[1]]['alias']))
+    return plot_multipath(path, path_pos, path_edge_pos, [trip[0], trip[1]])
+
+if __name__ == '__main__':
+    app.run_server(host='0.0.0.0', port=8050, mode='external', debug=True)
+```
+
+```python
+def find_node(G, key, value):
+    for node in G.nodes:
+        if G.nodes[node][key] == value:
+            return node
+```
 
 ## Minimum Spanning Tree
 

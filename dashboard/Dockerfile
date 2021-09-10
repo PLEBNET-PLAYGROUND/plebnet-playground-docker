@@ -5,7 +5,10 @@ RUN conda install -y python=3.7
 RUN conda install jupyter
 RUN conda install jupytext -c conda-forge
 RUN conda install -c conda-forge dash pandas scipy numpy networkx
+RUN pip install jupyter-dash
+RUN pip install dash-bootstrap-components
 RUN pip install git+https://github.com/predsci/psidash.git
+
 
 RUN pip install grpcio grpcio-tools googleapis-common-protos
 
