@@ -161,9 +161,16 @@ services:
     environment:
       JUPYTER_NOTEBOOKS: /dashboard
       JUPYTER_PORT: 8888
-    # need to chmod startup script since permissions get clobbered by bind mount
+      LND_DATADIR: /root/.lnd
+      GRAPH_TEST_DATA: describegraph.json
+      USE_TEST_DATA: true
+    working_dir: /dashboard
+    ## use this command to spin up jupyter serving on localhost:8888
+    # command:
+    #   - sh
+    #   - -c
+    #   - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
     command:
-      - sh
-      - -c
-      - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
+      - python
+      - dashboard.py
 

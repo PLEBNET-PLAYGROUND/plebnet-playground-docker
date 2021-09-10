@@ -13,7 +13,8 @@
 # ---
 
 # %%
-import networkx as nx
+import sys, os
+import json
 
 # %%
 from plotly.offline import iplot, init_notebook_mode
@@ -33,6 +34,76 @@ from collections.abc import Iterable
 import numpy as np
 
 import sys
+
+# %%
+from jupyter_dash import JupyterDash
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+
+from psidash import load_app # for production
+from psidash.psidash import get_callbacks, load_conf, load_dash, load_components, assign_callbacks
+import flask
+
+from dash.exceptions import PreventUpdate
+import networkx as nx
+from networkx import NetworkXNoPath, descendants
+
+import logging
+
+LND_DIR = os.environ.get('LND_DATADIR', '/root/.lnd')
+
+use_test_data = os.environ.get('USE_TEST_DATA', 'False').lower() == 'true'
+
+
+from collections import namedtuple
+# Compiled grpc modules are located in `/grpc`
+sys.path.append('/grpc')
+import codecs, grpc
+# See https://github.com/lightningnetwork/lnd/blob/master/docs/grpc/python.md for instructions.
+import lightning_pb2 as lnrpc, lightning_pb2_grpc as lightningstub
+
+# %%
+Response = namedtuple('Response', ['nodes', 'edges'] )
+Node = namedtuple('Node', ['last_update', 'pub_key', 'alias', 'addresses', 'color', 'features'])
+Edge = namedtuple('Edge', ['channel_id', 'chan_point', 'last_update', 'node1_pub', 'node2_pub', 'capacity', 'node1_policy', 'node2_policy'])
+RoutingPolicy = namedtuple('RoutingPolicy', ['time_lock_delta', 'min_htlc', 'fee_base_msat', 'fee_rate_milli_msat', 'max_htlc_msat', 'last_update', 'disabled'])
+
+
+# %%
+def get_describegraph_json(filename):
+        # set up namedtuples so we can access the sample data in the same manner as grpc response data
+        with open(filename) as f:
+            dg = json.load(f)
+        nodes = [Node(**node) for node in dg['nodes']]
+        edges = []
+        for edge in dg['edges']:
+            for policy in 'node1_policy', 'node2_policy':
+                if edge[policy] is not None:
+                    try:
+                        edge[policy] = RoutingPolicy(**edge[policy])
+                    except:
+                        print(edge[policy])
+                        raise
+            edges.append(Edge(**edge))
+        return Response(nodes, edges)
+
+if use_test_data:
+    describe_graph_fname = os.environ.get('GRAPH_TEST_DATA', 'describegraph.json')
+    if os.path.exists(describe_graph_fname):
+        print('found graph data: {}'.format(describe_graph_fname))
+        response = get_describegraph_json(describe_graph_fname)
+    else:
+        raise IOError("{} does not exist".format(describe_graph_fname))
+else:
+    macaroon = codecs.encode(open(LND_DIR+'/data/chain/bitcoin/signet/admin.macaroon', 'rb').read(), 'hex')
+    os.environ['GRPC_SSL_CIPHER_SUITES'] = 'HIGH+ECDSA'
+    cert = open(LND_DIR+'/tls.cert', 'rb').read()
+    ssl_creds = grpc.ssl_channel_credentials(cert)
+    channel = grpc.secure_channel('playground-lnd:10009', ssl_creds)
+    stub = lightningstub.LightningStub(channel)
+    request = lnrpc.ChannelGraphRequest(include_unannounced=True)
+    response = stub.DescribeGraph(request, metadata=[('macaroon', macaroon)])
 
 
 # %%
@@ -82,10 +153,10 @@ def get_directed_nodes(MG):
                 capacity += int(v_['capacity'])
                 # running average
                 if v_['node1_policy'] is not None:
-                    avg_fee += (int(v_['node1_policy']['fee_rate_milli_msat']) + avg_fee)/(avg_N+1)
+                    avg_fee += (int(v_['node1_policy'].fee_rate_milli_msat) + avg_fee)/(avg_N+1)
                     avg_N += 1
                 if v_['node2_policy'] is not None:
-                    avg_fee += (int(v_['node2_policy']['fee_rate_milli_msat']) + avg_fee)/(avg_N+1)
+                    avg_fee += (int(v_['node2_policy'].fee_rate_milli_msat) + avg_fee)/(avg_N+1)
                     avg_N += 1
     #             print('\t\t{}: {}'.format(k_, v_))
             DG.add_edge(node,
@@ -95,40 +166,38 @@ def get_directed_nodes(MG):
                       )
     return DG
 
+# def get_directed_nodes(MG):
+#     DG = nx.DiGraph()
 
-# %%
-def get_directed_nodes(MG):
-    DG = nx.DiGraph()
+#     # Insert all node information from multi grid graph
 
-    # Insert all node information from multi grid graph
+#     DG.add_nodes_from(MG.nodes(data=True))
 
-    DG.add_nodes_from(MG.nodes(data=True))
+#     # Accumulate capacity for all duplicate edges.
 
-    # Accumulate capacity for all duplicate edges.
-
-    for node, neighbors in MG.adjacency():
-    #     print(node, MG.nodes[node]['alias'])
-        for neighbor, v in neighbors.items():
-    #         print('\t{}:'.format(neighbor))
-            capacity = 0
-            avg_fee = 0
-            avg_N = 1
-            for k_, v_ in v.items():
-                capacity += int(v_['capacity'])
-                # running average
-                if v_['node1_policy'] is not None:
-                    avg_fee += (int(v_['node1_policy']['fee_rate_milli_msat']) + avg_fee)/(avg_N+1)
-                    avg_N += 1
-                if v_['node2_policy'] is not None:
-                    avg_fee += (int(v_['node2_policy']['fee_rate_milli_msat']) + avg_fee)/(avg_N+1)
-                    avg_N += 1
-    #             print('\t\t{}: {}'.format(k_, v_))
-            DG.add_edge(node,
-                       neighbor,
-                       capacity=capacity,
-                       avg_fee=avg_fee,
-                      )
-    return assign_capacity(DG)
+#     for node, neighbors in MG.adjacency():
+#     #     print(node, MG.nodes[node]['alias'])
+#         for neighbor, v in neighbors.items():
+#     #         print('\t{}:'.format(neighbor))
+#             capacity = 0
+#             avg_fee = 0
+#             avg_N = 1
+#             for k_, v_ in v.items():
+#                 capacity += int(v_['capacity'])
+#                 # running average
+#                 if v_['node1_policy'] is not None:
+#                     avg_fee += (int(v_['node1_policy']['fee_rate_milli_msat']) + avg_fee)/(avg_N+1)
+#                     avg_N += 1
+#                 if v_['node2_policy'] is not None:
+#                     avg_fee += (int(v_['node2_policy']['fee_rate_milli_msat']) + avg_fee)/(avg_N+1)
+#                     avg_N += 1
+#     #             print('\t\t{}: {}'.format(k_, v_))
+#             DG.add_edge(node,
+#                        neighbor,
+#                        capacity=capacity,
+#                        avg_fee=avg_fee,
+#                       )
+#     return assign_capacity(DG)
 
 
 # %% [markdown]
@@ -329,3 +398,70 @@ def plot_multipath(path, pos, edge_pos, highlight):
                                 plot_bgcolor='white'),
                     data=traces)
     return fig
+
+
+# %%
+def find_node(G, key, value):
+    for node in G.nodes:
+        if G.nodes[node][key] == value:
+            return node
+
+
+# %%
+MG = get_node_multigraph(response)
+DG = assign_capacity(get_directed_nodes(MG))
+
+# %%
+conf = load_conf('dashboard.yaml')
+
+# app = dash.Dash(__name__, server=server) # call flask server
+
+server = flask.Flask(__name__) # define flask app.server
+
+conf['app']['server'] = server
+
+app = load_dash(__name__, conf['app'], conf.get('import'))
+
+app.layout = load_components(conf['layout'], conf.get('import'))
+
+if 'callbacks' in conf:
+    callbacks = get_callbacks(app, conf['callbacks'])
+    assign_callbacks(callbacks, conf['callbacks'])
+
+# {'label': 'Hello Jessica', 'value': 'id'},
+
+@callbacks.update_node_1_options
+def update_node_select(url):
+    options = [{'label': DG.nodes[node]['alias'], 'value': node} for node in DG.nodes]
+    return options, options[0]['value']
+
+@callbacks.update_node_2_options
+def update_node_select(node_1):
+    if node_1 is None:
+        raise PreventUpdate
+    options = [{'label': DG.nodes[node]['alias'], 'value': node} for node in descendants(DG, node_1)]
+    if len(options) > 0:
+        return options, options[-1]['value']
+    else:
+        return options, ''
+
+@callbacks.update_node_graph
+def render(node_1, node_2):
+    trip = node_1, node_2
+    if (node_1 in DG.nodes) & (node_2 in DG.nodes):
+        pass
+    else:
+        raise PreventUpdate
+    try:
+        path, path_nodes, path_posns = get_path(DG, trip[0], trip[1], 10)
+    except NetworkXNoPath:
+        raise PreventUpdate
+    path_pos = multipath_layout(path, path_nodes, path_posns, iterations=50, seed=1)
+    path_edge_pos = get_edge_posns(path, path_pos)
+    logging.info('{} -> {}'.format(path.nodes[trip[0]]['alias'], path.nodes[trip[1]]['alias']))
+    return plot_multipath(path, path_pos, path_edge_pos, [trip[0], trip[1]])
+
+if __name__ == '__main__':
+    app.run_server(host='0.0.0.0', port=8050, mode='external', debug=True)
+
+# %%
