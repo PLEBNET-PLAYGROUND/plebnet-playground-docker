@@ -18,15 +18,15 @@ ARCH                                    :=aarch64-linux-gnu
 export ARCH
 endif
 
-#ifeq ($(user),)
-#HOST_USER								:= root
-#HOST_UID								:= $(strip $(if $(uid),$(uid),0))
-#else
-#HOST_USER								:=  $(strip $(if $(USER),$(USER),nodummy))
-#HOST_UID								:=  $(strip $(if $(shell id -u),$(shell id -u),4000))
-#endif
-#export HOST_USER
-#export HOST_UID
+ifeq ($(user),)
+HOST_USER								:= root
+HOST_UID								:= $(strip $(if $(uid),$(uid),0))
+else
+HOST_USER								:=  $(strip $(if $(USER),$(USER),nodummy))
+HOST_UID								:=  $(strip $(if $(shell id -u),$(shell id -u),4000))
+endif
+export HOST_USER
+export HOST_UID
 
 ifeq ($(target),)
 SERVICE_TARGET							?= shell
@@ -350,11 +350,30 @@ run: docs init
 	@echo 'run'
 	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
 	@echo ''
+#######################
+.PHONY: statoshi
+statoshi:
+	@echo 'statoshi'
+	docker pull ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
+	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) statoshi
+	@echo ''
+#######################
+.PHONY: run-statoshi
+run-statoshi: statoshi
+	@echo 'run'
+	docker run -d --restart=always -p 3333:3000 -p 8333:8333 --name="statoshi-$(TIME)"  -v ${PWD}/volumes/statoshi_datadir:/root/.bitcoin ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
+	@echo 'Give grafana a few minutes to set up...'
+	@echo 'http://localhost:$(PUBLIC_PORT)'
+#######################
 .PHONY: docs
 docs:
 	install -v README.md docs/docs/index.md
 	sed 's/\/images/.\/images/' README.md > docs/docs/index.md
 	cp -R ./images ./docs/docs/images
+
+.PHONY: signin
+signin:
+	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX) -u $(GIT_USER_NAME) --password-stdin'
 
 #######################
 #.PHONY: run
