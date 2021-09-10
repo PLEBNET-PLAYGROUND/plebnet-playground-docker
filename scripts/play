@@ -72,9 +72,9 @@ do
         docker top ${!i}
         exit
 
-    elif [[ ${!i} = start ]]; then
+    elif [[ ${!i} = *start ]]; then
         ((i++))
-        docker start ${!i}
+        docker restart ${!i}
         exit
 
     elif [[ ${!i} = stop ]]; then
@@ -109,23 +109,23 @@ do
         ((i++))
         echo
         echo "play                     ids"
-        echo "play                     top <CONTAINER_ID>"
-        echo "play                      <command> - execute shell command in container"
-        echo "play     -d              '<command>' - send command to bitcoind"
-        echo "play     -cli            '<command>' - send command to bitcoin-cli"
+        echo "play                     top   <CONTAINER_ID>"
+        echo "play                     start <CONTAINER_ID>"
+        echo "play                     stop  <CONTAINER_ID>"
         echo
         echo "Examples:"
         echo
-        echo "play                     ls"
-        echo "play                     cd / & ls -a"
-        echo "play                     -cli gettxoutsetinfo"
-        echo "play                     -cli getmininginfo"
-        echo "play                     -cli 'getblockhash 1000'"
+        echo "docker exec -it <CONTAINER_ID> sh    - enter container shell"
         echo
-        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoind -daemon -prune=550'"
+        echo "playground-bitcoind"
+        echo
+        echo "play -cli gettxoutsetinfo"
         echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli gettxoutsetinfo'"
+        echo "play -cli getmininginfo"
         echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli getmininginfo'"
+        echo "play -cli 'getblockhash 1000'"
         echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli $1'"
+        echo
         exit
 
     elif [ -n ${!i} ]; then
