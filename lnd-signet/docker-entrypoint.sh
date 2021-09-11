@@ -48,4 +48,16 @@ else
   echo "lnd.conf file exists, skipping."
 fi
 
+localhostip=$(hostname -i)
+if [[ -f /root/.lnd/localhostip ]]; then
+  savedip=$(cat /root/.lnd/localhostip)
+  if [[ $savedip != $localhostip ]]; then
+    echo "IP Address changed from ${savedip} to ${localhostip}, cleaning up TLS certs"
+    #ip changed lets cleanup tls stuff
+    rm /root/.lnd/tls.key
+    rm /root/.lnd/tls.cert
+  fi
+fi
+echo $localhostip > /root/.lnd/localhostip
+
 exec "$@"

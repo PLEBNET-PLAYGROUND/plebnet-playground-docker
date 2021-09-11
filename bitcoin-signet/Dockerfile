@@ -27,10 +27,9 @@ LABEL org.opencontainers.image.authors="Richard Safier"
 LABEL org.opencontainers.image.licenses=MIT
 LABEL org.opencontainers.image.source="https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker"
 
-ENV BITCOIN_DIR /root/.bitcoin
-ENV BITCOIN_DATA /data
+ENV BITCOIN_DIR /root/.bitcoin 
 
-VOLUME $BITCOIN_DATA
+VOLUME $BITCOIN_DIR
 EXPOSE 8332 8333 28332 28333 28334 38332 38333 38334
 
 COPY --from=builder "/tmp/bin" /usr/local/bin
