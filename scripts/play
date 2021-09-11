@@ -35,33 +35,51 @@ export TOR_IMAGE
 for ((i=1;i<=$#;i++));
 do
 
-    if [[ ${!i} = *id ]]; then
+    if [[ ${!i} = *ids ]]; then
         ((i++))
+        echo THUNDERHUB_ID:
+        echo $THUNDERHUB_ID
+        echo RTL_ID:
+        echo $RTL_ID
+        echo LND_ID:
+        echo $LND_ID
+        echo DOCS_ID:
+        echo $DOCS_ID
+        echo BITCOIND_ID:
         echo $BITCOIND_ID
+        echo TOR_ID:
+        echo $TOR_ID
         exit
 
-    elif [[ ${!i} = *image ]]; then
+    elif [[ ${!i} = *images ]]; then
         ((i++))
+        echo THUNDERHUB_IMAGE:
+        echo $THUNDERHUB_IMAGE
+        echo RTL_IMAGE:
+        echo $RTL_IMAGE
+        echo LND_IMAGE:
+        echo $LND_IMAGE
+        echo DOCS_IMAGE:
+        echo $DOCS_IMAGE
+        echo BITCOIND_IMAGES:
         echo $BITCOIND_IMAGE
+        echo TOR_IMAGE:
+        echo $TOR_IMAGE
         exit
 
     elif [[ ${!i} = top ]]; then
         ((i++))
-        docker top $BITCOIND_ID
+        docker top ${!i}
         exit
 
-    elif [[ ${!i} = start ]]; then
+    elif [[ ${!i} = *start ]]; then
         ((i++))
-        [ -z "$var" ] && echo "playground-bitcoind not running" && echo "make run from folder" && exit
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/entrypoint &"
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind -daemon -datadir=/home/root/.bitcoin -addnode=umbrel.local &"
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli gettxoutsetinfo"
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli getmininginfo"
+        docker restart ${!i}
         exit
 
     elif [[ ${!i} = stop ]]; then
         ((i++))
-        docker stop $BITCOIND_ID
+        docker stop ${!i}
         exit
 
     elif [[ ${!i} = *cli ]]; then
@@ -90,22 +108,24 @@ do
     elif [[ ${!i} == *help ]]; then
         ((i++))
         echo
-        echo "play                      <command> - execute shell command in container"
-        echo "play     -d              '<command>' - send command to bitcoind"
-        echo "play     -cli            '<command>' - send command to bitcoin-cli"
+        echo "play                     ids"
+        echo "play                     top   <CONTAINER_ID>"
+        echo "play                     start <CONTAINER_ID>"
+        echo "play                     stop  <CONTAINER_ID>"
         echo
         echo "Examples:"
         echo
-        echo "play                     ls"
-        echo "play                     cd / & ls -a"
-        echo "play                     -cli gettxoutsetinfo"
-        echo "play                     -cli getmininginfo"
-        echo "play                     -cli 'getblockhash 1000'"
+        echo "docker exec -it <CONTAINER_ID> sh    - enter container shell"
         echo
-        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoind -daemon -prune=550'"
+        echo "playground-bitcoind"
+        echo
+        echo "play -cli gettxoutsetinfo"
         echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli gettxoutsetinfo'"
+        echo "play -cli getmininginfo"
         echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli getmininginfo'"
+        echo "play -cli 'getblockhash 1000'"
         echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli $1'"
+        echo
         exit
 
     elif [ -n ${!i} ]; then
