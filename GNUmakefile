@@ -366,8 +366,8 @@ statoshi:
 .PHONY: run-statoshi
 run-statoshi: statoshi
 	@echo 'NOT FOR PRODUCTION USE!!! EDUCATIONAL ONLY!!!'
-	#docker run -d --restart=always -p 3333:3000 -p 8333:8333 --name="statoshi-$(TIME)"  -v ${PWD}/volumes/statoshi_datadir:/root/.bitcoin ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
-	docker run -d --restart=always -p 3333:3000 -p 8333:8333 --name="statoshi"  -v ${PWD}/volumes/statoshi_datadir:/root/.bitcoin ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
+	docker run -d --restart=always -p 3333:3000 -p 8333:8333 --name="statoshi-playground-$(TIME)"  -v ${PWD}/volumes/statoshi_datadir:/root/.bitcoin ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
+	#docker run -d --restart=always -p 3333:3000 -p 8333:8333 --name="statoshi-playground"  -v ${PWD}/volumes/statoshi_datadir:/root/.bitcoin ghcr.io/randymcmillan/statoshi.dev/${ARCH}/root:latest
 #run-statoshi: init build
 #	@echo 'run'
 #ifeq ($(CMD_ARGUMENTS),)
