@@ -1,0 +1,76 @@
+import:
+  dcc: dash_core_components
+  html: dash_html_components
+  dbc: dash_bootstrap_components
+
+app:
+  jupyter_dash.JupyterDash:
+    external_stylesheets:
+      - https://codepen.io/chriddyp/pen/bWLwgP.css
+    title: psidash demo
+
+
+
+layout:
+  html.Div:
+    children:
+    - dcc.Location:
+        id: url
+        refresh: False
+    - html.H2: Plebnet Visualizer
+    - html.Div: Shortest paths
+    - dbc.InputGroup:
+        children:
+          - dcc.Dropdown:
+              id: node-1
+              placeholder: node 1
+              searchable: True
+          - dcc.Dropdown:
+              id: node-2
+              placeholder: node 2
+              searchable: True
+    - dcc.Graph:
+        id: node-graph
+        figure:
+          data: []
+          layout:
+            xaxis:
+              showticklabels: False
+              ticks: ''
+              showgrid: False
+              zeroline: False
+            yaxis:
+              showticklabels: False
+              ticks: ''
+              showgrid: False
+              zeroline: False
+
+callbacks:
+  update_node_1_options:
+    input:
+      - id: url
+        attr: pathname
+    output:
+      - id: node-1
+        attr: options
+      - id: node-1
+        attr: value
+  update_node_2_options:
+    input:
+      - id: node-1
+        attr: value
+    output:
+      - id: node-2
+        attr: options
+      - id: node-2
+        attr: value
+  update_node_graph:
+    input:
+      - id: node-1
+        attr: value
+      - id: node-2
+        attr: value
+    output:
+      - id: node-graph
+        attr: figure
+
