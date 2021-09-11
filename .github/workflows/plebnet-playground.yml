@@ -43,6 +43,7 @@ jobs:
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           make init report
+          play
           make install
           #make uninstall
 
@@ -60,6 +61,7 @@ jobs:
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           make init report
+          play
           make install
           #make uninstall
 
