@@ -32,6 +32,11 @@ export TOR_ID
 TOR_IMAGE=$(echo $(docker images | awk '/tor/'|awk ' {print $3}' | awk 'NR==1'))
 export TOR_IMAGE
 
+STATOSHI_ID=$(echo $(docker ps | awk '/statoshi/'|awk ' {print $1}' | awk 'NR==1'))
+export STATOSHI_ID
+STATOSHI_IMAGE=$(echo $(docker images | awk '/statoshi/'|awk ' {print $3}' | awk 'NR==1'))
+export STATOSHI_IMAGE
+
 for ((i=1;i<=$#;i++));
 do
 
