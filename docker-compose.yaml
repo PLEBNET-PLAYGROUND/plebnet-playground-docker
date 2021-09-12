@@ -114,7 +114,7 @@ services:
       - '3001:3000'  
   rtl:
       container_name: playground-rtl
-      links: 
+      links:
         - lnd      
         - bitcoind 
       depends_on: 
@@ -147,6 +147,35 @@ services:
         - type: bind
           source: ${PWD}/volumes/rtl_datadir
           target: /data
+  notebook:
+    container_name: playground-notebook
+    links: 
+      - lnd
+      - bitcoind
+    depends_on:
+      - lnd
+      - bitcoind
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    image: plebnet-playground-docker_dashboard
+    volumes:
+      - type: bind
+        source: ${PWD}/notebooks
+        target: /notebooks
+      - type: bind
+        source: ${PWD}/volumes/lnd_datadir
+        target: /root/.lnd/
+        read_only: true
+    environment:
+      JUPYTER_NOTEBOOKS: /notebooks
+      JUPYTER_PORT: 8888
+      LND_DATADIR: /root/.lnd
+    working_dir: /notebooks
+    command:
+      - sh
+      - -c
+      - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
   dashboard:
     container_name: playground-dashboard
     links: 
@@ -157,11 +186,11 @@ services:
       - bitcoind
     restart: unless-stopped
     ports:
-      - "8888:8888"
       - "8050:8050"
     build:
       context: ./dashboard
       dockerfile: Dockerfile
+    image: plebnet-playground-docker_dashboard
     volumes:
       - type: bind
         source: ${PWD}/dashboard
@@ -172,16 +201,11 @@ services:
         read_only: true
     environment:
       JUPYTER_NOTEBOOKS: /dashboard
-      JUPYTER_PORT: 8888
       LND_DATADIR: /root/.lnd
       GRAPH_TEST_DATA: describegraph.json
       USE_TEST_DATA: ${USE_TEST_DATA}
     working_dir: /dashboard
-    ## use this command to spin up jupyter serving on localhost:8888
-    # command:
-    #   - sh
-    #   - -c
-    #   - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
+    # use this command to spin up jupyter serving on localhost:8888
     command:
       - python
       - dashboard.py
