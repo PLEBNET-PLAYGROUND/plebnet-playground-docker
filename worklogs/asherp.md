@@ -1,3 +1,4 @@
+* added notebook service
 
 ### 2021-09-11 21:01:16.312788: clock-in
 
