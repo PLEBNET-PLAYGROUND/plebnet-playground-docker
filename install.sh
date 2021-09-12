@@ -6,6 +6,7 @@ if [ -z "$1" ]
 fi
 
 TRIPLET=$1
+export TRIPLET
 #Remove any old version
 docker-compose down
 sudo rm -rf volumes
