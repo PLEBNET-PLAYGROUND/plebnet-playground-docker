@@ -54,6 +54,8 @@ do
         echo $BITCOIND_ID
         echo TOR_ID:
         echo $TOR_ID
+        [ -z "$STATOSHI_ID" ] && echo "try make run-statoshi"|| echo STATOSHI_ID:
+        [ -z "$STATOSHI_ID" ] && echo || echo $STATOSHI_ID
         exit
 
     elif [[ ${!i} = *images ]]; then
@@ -70,6 +72,8 @@ do
         echo $BITCOIND_IMAGE
         echo TOR_IMAGE:
         echo $TOR_IMAGE
+        [ -z "$STATOSHI_IMAGE" ] && echo "try 'make statoshi'"|| echo STATOSHI_ID:
+        [ -z "$STATOSHI_IMAGE" ] && echo || echo $STATOSHI_ID
         exit
 
     elif [[ ${!i} = top ]]; then
@@ -89,26 +93,30 @@ do
 
     elif [[ ${!i} = *cli ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli ${!i}"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli $2 $3 $4"
+        [ -z "$STATOSHI_ID" ] && echo || docker exec -it $STATOSHI_ID sh -c  "/usr/local/bin/bitcoin-cli $2 $3 $4"
         exit
 
     elif [[ ${!i} = *d ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind ${!i}"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind $2 $3 $4"
+        [ -z "$STATOSHI_ID" ] && echo || docker exec -it $STATOSHI_ID sh -c  "/usr/local/bin/bitcoind $2 $3 $4"
         exit
 
-    elif [[ ${!i} = *ep ]]; then
+    elif [[ ${!i} = *shell ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/entrypoint &"
+        docker exec -it $2 sh
         exit
 
     elif [[ ${!i} = *console ]]; then
         ((i++))
         docker exec -it $BITCOIND_ID bash
+        [ -z "$STATOSHI_ID" ] && echo || docker exec -it $STATOSHI_ID bash
 
     elif [[ ${!i} = *debug ]]; then
         ((i++))
         docker exec -it $BITCOIND_ID sh -c "tail -f /home/root/.bitcoin"
+        [ -z "$STATOSHI_ID" ] && echo || docker exec -it $STATOSHI_ID sh -c  "tail -f /home/root/.bitcoin"
 
     elif [[ ${!i} == *help ]]; then
         ((i++))
@@ -129,6 +137,10 @@ do
         echo "play -cli getmininginfo"
         echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli getmininginfo'"
         echo "play -cli 'getblockhash 1000'"
+        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli getblockhash 1000'"
+        echo "play -cli -netinfo"
+        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli -netinfo'"
+        echo "play -cli help"
         echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli $1'"
         echo
         exit
@@ -136,10 +148,12 @@ do
     elif [ -n ${!i} ]; then
         ((i++))
         docker exec -it $BITCOIND_ID sh -c  "$1"
+        [ -z "$STATOSHI_ID" ] && echo || docker exec -it $STATOSHI_ID sh -c  "$1"
         exit
     fi
 
 done;
 play help;
+play ids;
 fi #end if docker hash
 
