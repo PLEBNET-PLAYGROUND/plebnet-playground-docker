@@ -1,3 +1,10 @@
+### 2021-09-12 00:59:52.378945: clock-out: T-1h 
+
+* running notebook server
+* added notebook service
+
+### 2021-09-11 21:01:16.312788: clock-in
+
 ### 2021-09-10 15:25:25.628446: clock-out
 
 * image link
