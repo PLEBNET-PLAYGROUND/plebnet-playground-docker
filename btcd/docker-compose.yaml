@@ -1,0 +1,26 @@
+version: "3"
+networks: {}
+services:
+  btcd:
+    restart: unless-stopped
+    container_name: playground-btcd
+    environment:
+      - ARCH=${ARCH}
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - ARCH=${ARCH}
+        - BTCD_DATADIR=${BTCD_DATADIR}
+    command:  ["btcd"]
+    expose:
+    - "38332"
+    - "38333"
+    - "38334"
+    ports:
+    - "38333:38333"
+    volumes:
+      - type: bind
+        source: ../volumes/btcd_datadir
+        target: /root/.bitcoin
+

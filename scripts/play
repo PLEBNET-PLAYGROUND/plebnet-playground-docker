@@ -32,6 +32,11 @@ export TOR_ID
 TOR_IMAGE=$(echo $(docker images | awk '/tor/'|awk ' {print $3}' | awk 'NR==1'))
 export TOR_IMAGE
 
+BTCD_ID=$(echo $(docker ps | awk '/btcd/'|awk ' {print $1}' | awk 'NR==1'))
+export BTCD_ID
+BTCD_IMAGE=$(echo $(docker images | awk '/btcd/'|awk ' {print $3}' | awk 'NR==1'))
+export BTCD_IMAGE
+
 for ((i=1;i<=$#;i++));
 do
 
@@ -49,6 +54,8 @@ do
         echo $BITCOIND_ID
         echo TOR_ID:
         echo $TOR_ID
+        [ -z "$BTCD_ID" ] && echo "try 'make btcd'"|| echo BTCD_ID:
+        [ -z "$BTCD_ID" ] && echo || echo $BTCD_ID
         exit
 
     elif [[ ${!i} = *images ]]; then
@@ -65,6 +72,8 @@ do
         echo $BITCOIND_IMAGE
         echo TOR_IMAGE:
         echo $TOR_IMAGE
+        [ -z "$BTCD_IMAGE" ] && echo "try 'make btcd'"|| echo BTCD_IMAGE:
+        [ -z "$BTCD_IMAGE" ] && echo || echo $BTCD_IMAGE
         exit
 
     elif [[ ${!i} = top ]]; then
@@ -84,22 +93,20 @@ do
 
     elif [[ ${!i} = *cli ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli ${!i}"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli $2 $3 $4"
+        [ -z "$BTCD_ID" ] && echo || docker exec -it $BTCD_ID sh -c  "/usr/local/bin/bitcoin-cli $2 $3 $4"
         exit
 
     elif [[ ${!i} = *d ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind ${!i}"
+        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind $2 $3 $4"
+        [ -z "$BTCD_ID" ] && echo || docker exec -it $BTCD_ID sh -c  "/usr/local/bin/bitcoind $2 $3 $4"
         exit
 
-    elif [[ ${!i} = *ep ]]; then
+    elif [[ ${!i} = *shell ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/entrypoint &"
+        [ -z "$2" ] && echo "try 'play ids' then 'make shell <CONTAINER_ID>'" || docker exec -it $2 sh
         exit
-
-    elif [[ ${!i} = *console ]]; then
-        ((i++))
-        docker exec -it $BITCOIND_ID bash
 
     elif [[ ${!i} = *debug ]]; then
         ((i++))
@@ -110,6 +117,7 @@ do
         echo
         echo "play                     ids"
         echo "play                     top   <CONTAINER_ID>"
+        echo "play                     shell <CONTAINER_ID>"
         echo "play                     start <CONTAINER_ID>"
         echo "play                     stop  <CONTAINER_ID>"
         echo
