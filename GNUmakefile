@@ -352,9 +352,11 @@ run: docs init
 	@echo ''
 .PHONY: docs
 docs:
+	@echo "Use 'make docs nocache=true' to force docs rebuild..."
 	install -v README.md docs/docs/index.md
 	sed 's/images/.\/images/' README.md > docs/docs/index.md
 	cp -R ./images ./docs/docs
+	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) docs
 
 #######################
 #.PHONY: run

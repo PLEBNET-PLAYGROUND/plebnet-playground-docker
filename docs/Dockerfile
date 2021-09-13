@@ -19,17 +19,17 @@
 # IN THE SOFTWARE.
 
 FROM python:3.9.2-alpine3.13
-
 # Build-time flags
 ARG WITH_PLUGINS=true
-
 # Environment variables
 ENV PACKAGES=/usr/local/lib/python3.9/site-packages
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Set build directory
+RUN apk add git
+RUN git clone https://github.com/mkdocs/mkdocs.git /tmp
+RUN apk del git
 WORKDIR /tmp
-
 # Copy files necessary for build
 COPY material material
 COPY MANIFEST.in MANIFEST.in
