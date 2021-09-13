@@ -25,7 +25,7 @@ cd plebnet-playground-docker
 
 ### Supported System Architectures
 
-| Architecture      | ARCH build-arg |
+| Architecture      | TRIPLET build-arg |
 | ----------- | ----------- |
 |  Intel x64  | x86_64-linux-gnu |
 |  OSX 64-bit | aarch64-linux-gnu  |
