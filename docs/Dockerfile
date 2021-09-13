@@ -27,8 +27,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 # Set build directory
 RUN apk add git
-#ARG MKDOCS_VERSION=52ed45a58cbec0d9860d13e5ac123d6fd14aeca6
-#RUN git clone  -b ${MKDOCS_VERSION} https://github.com/mkdocs/mkdocs.git /tmp
 RUN git clone https://github.com/mkdocs/mkdocs.git /tmp
 RUN apk del git
 WORKDIR /tmp
