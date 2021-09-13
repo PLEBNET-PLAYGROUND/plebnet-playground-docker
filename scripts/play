@@ -105,8 +105,7 @@ do
 
     elif [[ ${!i} = *shell ]]; then
         ((i++))
-        docker exec -it $2 sh
-        [ -z "$2" ] && echo || docker exec -it sh $2
+        [ -z "$2" ] && echo "try 'play ids' then 'make shell <CONTAINER_ID>'" || docker exec -it $2 sh
         exit
 
     elif [[ ${!i} = *debug ]]; then
