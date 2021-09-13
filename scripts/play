@@ -92,9 +92,9 @@ do
         docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind ${!i}"
         exit
 
-    elif [[ ${!i} = *ep ]]; then
+    elif [[ ${!i} = *shell ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/entrypoint &"
+        [ -z "$2" ] && echo "try 'play ids' then 'make shell <CONTAINER_ID>'" || docker exec -it $2 sh
         exit
 
     elif [[ ${!i} = *console ]]; then
@@ -110,6 +110,7 @@ do
         echo
         echo "play                     ids"
         echo "play                     top   <CONTAINER_ID>"
+        echo "play                     shell <CONTAINER_ID>"
         echo "play                     start <CONTAINER_ID>"
         echo "play                     stop  <CONTAINER_ID>"
         echo
