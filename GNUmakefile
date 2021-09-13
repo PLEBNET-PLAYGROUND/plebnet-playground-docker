@@ -267,27 +267,6 @@ ifneq ($(shell id -u),0)
 #.ONESHELL:
 	sudo -s
 endif
-#######################
-#######################
-# Backup $HOME/.bitcoin
-########################
-#backup:
-#	@echo ''
-#	bash -c 'mkdir -p $(HOME)/.bitcoin'
-##	bash -c 'conf/get_size.sh'
-#	bash -c 'tar czv --exclude=*.log --exclude=banlist.dat \
-#			--exclude=fee_exstimates.dat --exclude=mempool.dat \
-#			--exclude=peers.dat --exclude=.cookie --exclude=database \
-#			--exclude=.lock --exclude=.walletlock --exclude=.DS_Store\
-#			-f $(HOME)/.bitcoin-$(TIME).tar.gz $(HOME)/.bitcoin'
-#	bash -c 'openssl md5 $(HOME)/.bitcoin-$(TIME).tar.gz > $(HOME)/bitcoin-$(TIME).tar.gz.md5'
-#	bash -c 'openssl md5 -c $(HOME)/bitcoin-$(TIME).tar.gz.md5'
-#	@echo ''
-#######################
-# Some initial setup
-########################
-#######################
-
 .PHONY: init
 init: report
 ifneq ($(shell id -u),0)
@@ -315,41 +294,20 @@ endif
 #######################
 .PHONY: install
 install: init
-
 	bash -c './install.sh $(ARCH)'
+	bash -c 'make btcd'
 #######################
 .PHONY: uninstall
 uninstall:
-
 	bash -c './uninstall.sh $(ARCH)'
 #######################
-.PHONY: build-shell
-build-shell:
-	@echo ''
-	bash -c 'cat ./docker/shell                > shell'
-	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) shell
-	@echo ''
-#######################
-.PHONY: shell
-shell: report build-shell
-	@echo 'shell'
-ifeq ($(CMD_ARGUMENTS),)
-	# no command is given, default to shell
-	@echo ''
-	$(DOCKER_COMPOSE) $(VERBOSE) -p $(PROJECT_NAME)_$(HOST_UID) run --rm shell sh
-	@echo ''
-else
-	# run the command
-	@echo ''
-	$(DOCKER_COMPOSE) $(VERBOSE) -p $(PROJECT_NAME)_$(HOST_UID) run --rm shell sh -c "$(CMD_ARGUMENTS)"
-	@echo ''
-endif
-
 .PHONY: run
 run: docs init
-	@echo 'run'
 	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
-	@echo ''
+#######################
+.PHONY: btcd
+btcd:
+	bash -c "cd btcd && make btcd && cd .."
 .PHONY: docs
 docs:
 	@echo "Use 'make docs nocache=true' to force docs rebuild..."
@@ -409,32 +367,14 @@ clean:
 #######################
 .PHONY: prune
 prune:
-	@echo 'prune'
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
 	docker system prune -af
 #######################
 .PHONY: prune-network
 prune-network:
-	@echo 'prune-network'
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
 	docker network prune -f
 #######################
-.PHONY: readme
-readme:
-#$ make report no-cache=true verbose=true cmd='make doc' user=root doc
-#SHELL := /bin/bash
-	@echo 'readme'
-	bash -c "if pgrep MacDown; then pkill MacDown; fi"
-	bash -c "curl https://raw.githubusercontent.com/jlopp/statoshi/master/README.md -o ./docker/README.md"
-	bash -c "cat ./docker/README.md >  README.md"
-	bash -c "cat ./docker/DOCKER.md >> README.md"
-#	bash -c "echo '<insert string>' >> README.md"
-	bash -c "echo '----' >> README.md"
-	bash -c "echo '## [$(PROJECT_NAME)]($(GIT_SERVER)/$(GIT_PROFILE)/$(PROJECT_NAME)) [$(GIT_HASH)]($(GIT_SERVER)/$(GIT_PROFILE)/$(PROJECT_NAME)/commit/$(GIT_HASH))' >> README.md"
-	bash -c "echo '##### &#36; <code>make</code>' >> README.md"
-	bash -c "make report >> README.md"
-	bash -c "make help   >> README.md"
-	bash -c "if hash open 2>/dev/null; then open README.md; fi || echo failed to open README.md"
 .PHONY: push
 push:
 	@echo 'push'
@@ -466,9 +406,5 @@ ifeq ($(slim),true)
 	make package-all slim=false
 endif
 	make header package-header build package-statoshi
-
-
 ########################
--include funcs.mk
--include Makefile
 
