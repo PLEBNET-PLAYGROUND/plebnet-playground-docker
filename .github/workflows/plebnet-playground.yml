@@ -79,7 +79,8 @@ jobs:
           git checkout -f upstream/master
           git diff HEAD~1 > diff.log
           tree >> tree.log
-          sudo tar -cvf log.tar *.log docs/docs
+          HAST=$(git rev-parse --short HEAD) && export HASH
+          sudo tar -cvf log-$HASH.tar *.log docs/docs
       - name: upload-logs-tar
         uses: actions/upload-artifact@v2
         with:
@@ -131,7 +132,7 @@ jobs:
           git diff HEAD~1 > diff.log
           tree >> tree.log
           HAST=$(git rev-parse --short HEAD) && export HASH
-          tar -cvf log-$HASH.tar *.log docs/docs
+          sudo tar -cvf log-$HASH.tar *.log docs/docs
       - name: upload-logs-tar
         uses: actions/upload-artifact@v2
         with:
