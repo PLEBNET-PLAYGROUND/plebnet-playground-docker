@@ -1,13 +1,19 @@
 name: "codeql-analysis.yml"
 
 on:
+  pull_request:
+    branches:       #[ master ]
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - 'master'    # includes master
+      - 'main'      # includes main
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     #paths:
     #  - '.github/workflows/automate.yml'
-    schedule:
-      - cron: "*/5 * * * *"
-
+    #schedule:
+    #  - cron: "*/5 * * * *"
     branches:       #[ master ]
       - '*'         # matches every branch that doesn't contain a '/'
       - '*/*'       # matches every branch containing a single '/'
