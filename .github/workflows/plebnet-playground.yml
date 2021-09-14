@@ -53,9 +53,9 @@ jobs:
         run: |
           curl -fsSL https://get.docker.com -o get-docker.sh
           sudo sh get-docker.sh
-          docker --version
+          docker --version > docker-version.log
           sudo apt-get install docker-compose
-          docker-compose -v
+          docker-compose --version > docker-compose-version.log
       - name: Enable experimental features in Docker
         run: |
           sudo rm -rf /etc/docker/daemon.json
@@ -65,22 +65,29 @@ jobs:
         run: |
           git remote add upstream https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker.git
           git fetch --all
-      - name: install, build, and test
+      - name: install, log versions
         run: |
           sudo apt install python python3
           sudo apt install -y mkdocs
-          pip install -r docs/requirements.txt
+          pip     install -r         requirements.txt
+          pip     install -r    docs/requirements.txt
+          python  --version  >  python-version.log
+          python3 --version >>  python-version.log
+          mkdocs  --version  >  mkdocs-version.log
+      - name: make init install
+        run: |
           make init report
-          play
-          make install
+          make install & wait 100 &
+          play               >  play-command.log
+          play ids          >>  play-command.log
+
       - name: archive
         run: |
           tree  > tree.log
           git checkout -f upstream/master
           git diff HEAD~1 > diff.log
           tree >> tree.log
-          HAST=$(git rev-parse --short HEAD) && export HASH
-          sudo tar -cvf log-$HASH.tar *.log docs/docs
+          sudo tar -cvf log.tar *.log docs/docs
       - name: upload-logs-tar
         uses: actions/upload-artifact@v2
         with:
@@ -117,25 +124,31 @@ jobs:
         run: |
           git remote add upstream https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker.git
           git fetch --all
-      - name: install, build, and test
+      - name: install, log versions
         run: |
           sudo apt install python python3
           sudo apt install -y mkdocs
-          pip install -r docs/requirements.txt
+          pip     install -r         requirements.txt
+          pip     install -r    docs/requirements.txt
+          python  --version  >  python-version.log
+          python3 --version >>  python-version.log
+          mkdocs  --version  >  mkdocs-version.log
+      - name: make init install
+        run: |
           make init report
-          play
           make install & wait 100 &
+          play               >  play-command.log
+          play ids          >>  play-command.log
       - name: archive
         run: |
           tree  > tree.log
           git checkout -f upstream/master
           git diff HEAD~1 > diff.log
           tree >> tree.log
-          HAST=$(git rev-parse --short HEAD) && export HASH
-          sudo tar -cvf log-$HASH.tar *.log docs/docs
+          sudo tar -cvf log.tar *.log docs/docs
       - name: upload-logs-tar
         uses: actions/upload-artifact@v2
         with:
-          path: log-$(git rev-parse --short HEAD).tar
-          name: log-$(git rev-parse --short HEAD).tar
+          path: log.tar
+          name: log.tar
 
