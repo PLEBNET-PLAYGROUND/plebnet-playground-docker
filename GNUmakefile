@@ -18,15 +18,15 @@ ARCH                                    :=aarch64-linux-gnu
 export ARCH
 endif
 
-#ifeq ($(user),)
-#HOST_USER								:= root
-#HOST_UID								:= $(strip $(if $(uid),$(uid),0))
-#else
-#HOST_USER								:=  $(strip $(if $(USER),$(USER),nodummy))
-#HOST_UID								:=  $(strip $(if $(shell id -u),$(shell id -u),4000))
-#endif
-#export HOST_USER
-#export HOST_UID
+ifeq ($(user),)
+HOST_USER								:= root
+HOST_UID								:= $(strip $(if $(uid),$(uid),0))
+else
+HOST_USER								:=  $(strip $(if $(USER),$(USER),nodummy))
+HOST_UID								:=  $(strip $(if $(shell id -u),$(shell id -u),4000))
+endif
+export HOST_USER
+export HOST_UID
 
 ifeq ($(target),)
 SERVICE_TARGET							?= shell
@@ -387,20 +387,41 @@ push:
 .PHONY: push-docs
 push-docs: statoshi-docs push
 	@echo 'push-docs'
+
+SIGNIN=randymcmillan
+export SIGNIN
+
+.PHONY: signin
+signin:
+	bash -c 'cat ~/GH_TOKEN.txt | docker login ghcr.io -u $(SIGNIN) --password-stdin'
+	#docker tag $(PROJECT_NAME):$(HOST_USER) $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER):$(TIME)
 #######################
-package-statoshi: signin
+package-plebnet: signin
 
 	touch TIME && echo $(TIME) > TIME && git add -f TIME
 	#legit . -m "make package-header at $(TIME)" -p 00000
 	git commit --amend --no-edit --allow-empty
-	bash -c 'docker tag $(PROJECT_NAME):$(HOST_USER) $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker push                             $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag $(PROJECT_NAME):$(HOST_USER) $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER)' #defaults to latest
-	bash -c 'docker push                             $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER)'
+
+	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/thunderhub-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/thunderhub-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_dashboard    $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/dashboard-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/dashboard-$(ARCH)/$(HOST_USER):$(TIME)'
+	#bash -c 'docker tag  $(PROJECT_NAME)_notebook     $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/notebook-$(ARCH)/$(HOST_USER):$(TIME)'
+	#bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/notebook-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_bitcoind     $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/bitcoind-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/bitcoind-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_docs         $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/docs-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/docs-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_tor          $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/tor-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/tor-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_lnd          $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/lnd-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/lnd-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_rtl          $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
 
 ########################
 .PHONY: package-all
-package-all: init header package-header build package-statoshi
+package-all: init package-plebnet
 
 ifeq ($(slim),true)
 	make package-all slim=false
