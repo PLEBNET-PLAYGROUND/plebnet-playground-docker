@@ -43,6 +43,28 @@ jobs:
           access_token: ${{ github.token }}
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: nuke docker
+        run: |
+          sudo systemctl stop docker
+          sudo rm -rf /var/lib/docker
+          sudo rm -rf /etc/docker
+          sudo apt-get purge docker-ce docker-ce-cli containerd.io moby-engine moby-cli
+      - name: Re-install Docker
+        run: |
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          docker --version
+          sudo apt-get install docker-compose
+          docker-compose -v
+      - name: Enable experimental features in Docker
+        run: |
+          sudo rm -rf /etc/docker/daemon.json
+          echo '{"experimental": true}' | sudo tee -a /etc/docker/daemon.json
+          sudo systemctl restart docker
+      - name: git-remote-add plebnet
+        run: |
+          git remote add upstream https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker.git
+          git fetch --all
       - name: install, build, and test
         run: |
           sudo apt install python python3
@@ -51,7 +73,18 @@ jobs:
           make init report
           play
           make install
-          #make uninstall
+      - name: archive
+        run: |
+          tree  > tree.log
+          git checkout -f upstream/master
+          git diff HEAD~1 > diff.log
+          tree >> tree.log
+          sudo tar -cvf log.tar *.log docs/docs
+      - name: upload-logs-tar
+        uses: actions/upload-artifact@v2
+        with:
+          path: log.tar
+          name: log.tar
 
   ubuntu-20-build_and_test:
     runs-on: ubuntu-20.04
@@ -61,6 +94,28 @@ jobs:
           access_token: ${{ github.token }}
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: nuke docker
+        run: |
+          sudo systemctl stop docker
+          sudo rm -rf /var/lib/docker
+          sudo rm -rf /etc/docker
+          sudo apt-get purge docker-ce docker-ce-cli containerd.io moby-engine moby-cli
+      - name: Re-install Docker
+        run: |
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          docker --version
+          sudo apt-get install docker-compose
+          docker-compose -v
+      - name: Enable experimental features in Docker
+        run: |
+          sudo rm -rf /etc/docker/daemon.json
+          echo '{"experimental": true}' | sudo tee -a /etc/docker/daemon.json
+          sudo systemctl restart docker
+      - name: git-remote-add plebnet
+        run: |
+          git remote add upstream https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker.git
+          git fetch --all
       - name: install, build, and test
         run: |
           sudo apt install python python3
@@ -68,6 +123,18 @@ jobs:
           pip install -r docs/requirements.txt
           make init report
           play
-          make install
-          #make uninstall
+          make install & wait 100 &
+      - name: archive
+        run: |
+          tree  > tree.log
+          git checkout -f upstream/master
+          git diff HEAD~1 > diff.log
+          tree >> tree.log
+          HAST=$(git rev-parse --short HEAD) && export HASH
+          tar -cvf log-$HASH.tar *.log docs/docs
+      - name: upload-logs-tar
+        uses: actions/upload-artifact@v2
+        with:
+          path: log-$(git rev-parse --short HEAD).tar
+          name: log-$(git rev-parse --short HEAD).tar
 
