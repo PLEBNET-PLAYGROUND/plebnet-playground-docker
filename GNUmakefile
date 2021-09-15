@@ -318,7 +318,7 @@ run: docs init
 #######################
 .PHONY: btcd
 btcd:
-	bash -c "pushd btcd && make btcd && popd"
+	$(DOCKER_COMPOSE) $(VERBOSE) btcd $(NOCACHE) --remove-orphans &
 .PHONY: docs
 docs:
 	@echo "Use 'make docs nocache=true' to force docs rebuild..."
