@@ -21,5 +21,5 @@ FROM alpine:3.12
 COPY --from=build-container /go/bin /bin
 #EXPOSE 8332 8333 28332 28333 28334 38332 38333 38334
 EXPOSE 38334
-ENTRYPOINT ["btcd","--signet","addpeer=104.131.10.218:38333","txindex=1","nodnsseed=1","whitelist=0.0.0.0/0"]
-#,"signetchallenge=512102ee856c56a5aaadd1656f849bafa4c9dacc86a2878fe546c6189185f842ae2c1851ae"]
+#ENTRYPOINT ["btcd","--signet","addpeer=104.131.10.218:38333","txindex=1","nodnsseed=1","whitelist=0.0.0.0/0"]
+ENTRYPOINT ["btcd","--signet","addpeer=104.131.10.218:38333","txindex=1","whitelist=0.0.0.0/0","signetchallenge=512102ee856c56a5aaadd1656f849bafa4c9dacc86a2878fe546c6189185f842ae2c1851ae",""]
