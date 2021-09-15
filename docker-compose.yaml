@@ -251,11 +251,4 @@ services:
     - "38334"
     ports:
     - "38334:38334"
-    volumes:
-      - type: bind
-        source: ${PWD}/volumes/btcd_datadir
-        target: /root/.bitcoin/
-      - type: bind
-        source: ${PWD}/btcd
-        target: /btcd
 
