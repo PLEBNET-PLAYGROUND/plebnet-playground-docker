@@ -1,13 +1,19 @@
 name: "codeql-analysis.yml"
 
 on:
+  pull_request:
+    branches:       #[ master ]
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - 'master'    # includes master
+      - 'main'      # includes main
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     #paths:
     #  - '.github/workflows/automate.yml'
-    schedule:
-      - cron: "*/5 * * * *"
-
+    #schedule:
+    #  - cron: "*/5 * * * *"
     branches:       #[ master ]
       - '*'         # matches every branch that doesn't contain a '/'
       - '*/*'       # matches every branch containing a single '/'
@@ -42,7 +48,7 @@ jobs:
 
     # If this run was triggered by a pull request event, then checkout
     # the head of the pull request instead of the merge commit.
-    - run: git checkout HEAD^2
+    - run: git checkout
       if: ${{ github.event_name == 'pull_request' }}
 
     # Initializes the CodeQL tools for scanning.
@@ -53,9 +59,37 @@ jobs:
 
     - run: |
             make
-            make report
-            make install
-            make uninstall
+            make init
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+
+  pylint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+    - name: Analysing the code with pylint
+      run: |
+        # make explicite to each directory
+        # We don't want this to fail CI
+        cd $PWD      && pylint -s n --exit-zero `ls -R|grep .py$|xargs` > pylint.log && cat pylint.log
+        cd dashboard && pylint -s n --exit-zero `ls -R|grep .py$|xargs` > pylint.log && cat pylint.log
+    - name: upload-pylint.log
+      uses: actions/upload-artifact@v2
+      with:
+        path: pylint.log
+        name: pylint.log
+    - name: upload-dashbaord-pylint.log
+      uses: actions/upload-artifact@v2
+      with:
+        path: dashboard/pylint.log
+        name: dashboard-pylint.log
+
