@@ -232,6 +232,10 @@ services:
         source: ${PWD}/docs
         target: /docs
   btcd:
+    links:
+      - bitcoind
+    depends_on:
+      - bitcoind
     restart: unless-stopped
     container_name: playground-btcd
     environment:
