@@ -246,7 +246,7 @@ services:
     - "38333"
     - "38334"
     ports:
-    - "38333:38333"
+    - "38334:38334"
     volumes:
       - type: bind
         source: ${PWD}/volumes/btcd_datadir
