@@ -242,6 +242,9 @@ services:
       args:
         - ARCH=${ARCH}
     command:  ["btcd"]
+    command:  ["--signet"]
+      #command:  ["--rpcuser=[CHOOSE_A_USERNAME]"]
+      #command:  ["--rpcpass=[CREATE_A_VERY_HARD_PASSWORD]"]
     expose:
     - "38332"
     - "38333"
@@ -251,5 +254,8 @@ services:
     volumes:
       - type: bind
         source: ${PWD}/volumes/btcd_datadir
-        target: /root/.bitcoin
+        target: /root/.bitcoin/
+      - type: bind
+        source: ${PWD}/btcd
+        target: /btcd
 
