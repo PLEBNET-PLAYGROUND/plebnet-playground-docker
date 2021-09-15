@@ -314,7 +314,7 @@ uninstall:
 #######################
 .PHONY: run
 run: docs init
-	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
+	$(DOCKER_COMPOSE) $(VERBOSE) up $(NOCACHE) --remove-orphans &
 #######################
 .PHONY: btcd
 btcd:
@@ -326,7 +326,6 @@ docs:
 	sed 's/images/.\/images/' README.md > docs/docs/index.md
 	cp -R ./images ./docs/docs
 	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) docs
-
 #######################
 #.PHONY: run
 #run: build
@@ -352,22 +351,6 @@ extract:
 	docker run --name $(DOCKERFILE_EXTRACT) $(DOCKERFILE_EXTRACT) /bin/true
 	docker rm $(DOCKERFILE_EXTRACT)
 	rm -f  $(DOCKERFILE_EXTRACT)
-#######################
-.PHONY: torproxy
-torproxy:
-	@echo ''
-	#REF: https://hub.docker.com/r/dperson/torproxy
-	#bash -c 'docker run -it -p 8118:8118 -p 9050:9050 -p 9051:9051 -d dperson/torproxy'
-	@echo ''
-ifneq ($(shell id -u),0)
-	bash -c 'sudo make torproxy user=root &'
-endif
-ifeq ($(CMD_ARGUMENTS),)
-	$(DOCKER_COMPOSE) $(VERBOSE) -f docker-compose.yml -p $(PROJECT_NAME)_$(HOST_UID) run --publish 8118:8118 --publish 9050:9050  --publish 9051:9051 --rm torproxy
-else
-	$(DOCKER_COMPOSE) $(VERBOSE) -f docker-compose.yml -p $(PROJECT_NAME)_$(HOST_UID) run --publish 8118:8118 --publish 9050:9050  --publish 9051:9051 --rm torproxy sh -c "$(CMD_ARGUMENTS)"
-endif
-	@echo ''
 #######################
 .PHONY: clean
 clean:
