@@ -1,4 +1,4 @@
-version: "3"
+version: "3.4"
 networks: {}
 services:
   btcd:
@@ -21,6 +21,6 @@ services:
     - "38333:38333"
     volumes:
       - type: bind
-        source: ../volumes/btcd_datadir
+        source: ${PWD}/volumes/btcd_datadir
         target: /root/.bitcoin
 
