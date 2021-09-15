@@ -241,10 +241,6 @@ services:
       dockerfile: Dockerfile
       args:
         - ARCH=${ARCH}
-    command:  ["btcd"]
-    command:  ["--signet"]
-      #command:  ["--rpcuser=[CHOOSE_A_USERNAME]"]
-      #command:  ["--rpcpass=[CREATE_A_VERY_HARD_PASSWORD]"]
     expose:
     - "38332"
     - "38333"
