@@ -304,7 +304,7 @@ else
 endif
 #######################
 .PHONY: install
-install: init
+install: prune-network
 	bash -c './install.sh $(ARCH)'
 	bash -c 'make btcd'
 #######################
@@ -318,7 +318,7 @@ run: docs init
 #######################
 .PHONY: btcd
 btcd:
-	bash -c "cd btcd && make btcd && cd .."
+	bash -c "pushd btcd && make btcd && popd"
 .PHONY: docs
 docs:
 	@echo "Use 'make docs nocache=true' to force docs rebuild..."
@@ -372,36 +372,34 @@ endif
 .PHONY: clean
 clean:
 	# remove created images
-	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down --remove-orphans --rmi all 2>/dev/null \
-	&& echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" removed.' \
-	|| echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" already removed.'
+	@$(DOCKER_COMPOSE) -p  $(PROJECT_NAME) down --remove-orphans --rmi all 2>/dev/null \
+	&& echo 'Image(s) for "$(PROJECT_NAME)" removed.' \
+	|| echo 'Image(s) for "$(PROJECT_NAME)" already removed.'
+	bash -c 'rm -rf volumes'
 #######################
 .PHONY: prune
 prune:
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
 	docker system prune -af
 #######################
 .PHONY: prune-network
 prune-network:
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
 	docker network prune -f
 #######################
-.PHONY: push
-push:
-	@echo 'push'
-	#bash -c "git reset --soft HEAD~1 || echo failed to add docs..."
-	#bash -c "git add README.md docker/README.md docker/DOCKER.md *.md docker/*.md || echo failed to add docs..."
-	#bash -c "git commit --amend --no-edit --allow-empty -m '$(GIT_HASH)'          || echo failed to commit --amend --no-edit"
-	#bash -c "git commit         --no-edit --allow-empty -m '$(GIT_PREVIOUS_HASH)' || echo failed to commit --amend --no-edit"
-	bash -c "git push -f --all git@github.com:$(GIT_PROFILE)/$(PROJECT_NAME).git || echo failed to push docs"
-	bash -c "git push -f --all git@github.com:bitcoincore-dev/statoshi.host.git || echo failed to push to statoshi.host"
-.PHONY: push-docs
-push-docs: statoshi-docs push
-	@echo 'push-docs'
-
-SIGNIN=randymcmillan
-export SIGNIN
-
+.PHONY: clean-all
+clean-all: prune-network prune clean
+########################
+#.PHONY: push
+#push:
+#	@echo 'push'
+#	#bash -c "git reset --soft HEAD~1 || echo failed to add docs..."
+#	#bash -c "git add README.md docker/README.md docker/DOCKER.md *.md docker/*.md || echo failed to add docs..."
+#	#bash -c "git commit --amend --no-edit --allow-empty -m '$(GIT_HASH)'          || echo failed to commit --amend --no-edit"
+#	#bash -c "git commit         --no-edit --allow-empty -m '$(GIT_PREVIOUS_HASH)' || echo failed to commit --amend --no-edit"
+#	bash -c "git push -f --all git@github.com:$(GIT_PROFILE)/$(PROJECT_NAME).git || echo failed to push docs"
+#	bash -c "git push -f --all git@github.com:bitcoincore-dev/statoshi.host.git || echo failed to push to statoshi.host"
+########################
 .PHONY: signin
 signin:
 #Place a file named GH_TOKEN.txt in your $HOME - create in https://github.com/settings/tokens (Personal access tokens)
