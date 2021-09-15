@@ -16,7 +16,7 @@ RUN set -ex \
   && echo "Compiling for $GOARCH" \
   && go install -v . ./cmd/...
 
-FROM $ARCH/alpine:3.12
+FROM alpine:3.12
 
 COPY --from=build-container /go/bin /bin
 ARG BTCD_DATADIR=${BTCD_DATADIR}
