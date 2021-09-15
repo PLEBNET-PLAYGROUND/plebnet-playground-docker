@@ -398,9 +398,9 @@ signin:
 #######################
 package-plebnet: signin
 
-	touch TIME && echo $(TIME) > TIME && git add -f TIME
+	#touch TIME && echo $(TIME) > TIME && git add -f TIME
 	#legit . -m "make package-header at $(TIME)" -p 00000
-	git commit --amend --no-edit --allow-empty
+	#git commit --amend --no-edit --allow-empty
 
 	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/thunderhub-$(ARCH)/$(HOST_USER):$(TIME)'
 	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/thunderhub-$(ARCH)/$(HOST_USER):$(TIME)'
@@ -416,16 +416,13 @@ package-plebnet: signin
 	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/tor-$(ARCH)/$(HOST_USER):$(TIME)'
 	bash -c 'docker tag  $(PROJECT_NAME)_lnd          $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/lnd-$(ARCH)/$(HOST_USER):$(TIME)'
 	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/lnd-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag  $(PROJECT_NAME)_rtl          $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  shahanafarooqui/rtl:0.11.0   $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
 	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(SIGNIN)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
 
 ########################
 .PHONY: package-all
 package-all: init package-plebnet
-
-ifeq ($(slim),true)
-	make package-all slim=false
-endif
-	make header package-header build package-statoshi
+#INSERT other scripting here 
+	bash -c "echo"
 ########################
 
