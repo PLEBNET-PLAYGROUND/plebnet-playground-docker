@@ -34,6 +34,7 @@ initial_lnd_file()
     tor.control=${torcontrol}
     tor.password=hello
     tor.v3=true
+    tor.skip-proxy-for-clearnet-targets=true
     protocol.wumbo-channels=true
     " >> /root/.lnd/lnd.conf
 }
