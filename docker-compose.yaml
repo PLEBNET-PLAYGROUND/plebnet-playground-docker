@@ -231,5 +231,25 @@ services:
       - type: bind
         source: ${PWD}/docs
         target: /docs
-
+  btcd:
+    restart: unless-stopped
+    container_name: playground-btcd
+    environment:
+      - ARCH=${ARCH}
+    build:
+      context: ./btcd
+      dockerfile: Dockerfile
+      args:
+        - ARCH=${ARCH}
+    command:  ["btcd"]
+    expose:
+    - "38332"
+    - "38333"
+    - "38334"
+    ports:
+    - "38333:38333"
+    volumes:
+      - type: bind
+        source: ${PWD}/volumes/btcd_datadir
+        target: /root/.bitcoin
 
