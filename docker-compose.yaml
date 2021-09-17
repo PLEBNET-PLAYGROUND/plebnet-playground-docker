@@ -9,7 +9,8 @@ services:
     restart: unless-stopped
     container_name: playground-bitcoind
     environment:
-      - ARCH=${ARCH}
+      ARCH: ${ARCH}
+      GET_COINS_ON_STARTUP: 'true'
     build: 
       context: ./bitcoin-signet
       dockerfile: Dockerfile
