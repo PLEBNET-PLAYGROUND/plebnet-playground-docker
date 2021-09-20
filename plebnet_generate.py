@@ -31,34 +31,47 @@ conf = OmegaConf.load('docker-compose.yaml.template')
 conf = OmegaConf.merge(OmegaConf.create(dict(ARCH=arch)), conf)
 
 
-try:
-    services = cli_args['services'].split(',')
-except KeyError:
+if 'services' in cli_args:
+    services = cli_args['services']
+    if services is None:
+        services = [service for service in conf.services]
+    else:
+        services = cli_args['services'].split(',')
+else:
     print('Using default services')
     services = [service for service in conf.services]
 
+
 print('requested services:\t{}'.format(', '.join(sorted(services))))
 
-required_services = set()
 
-for service_name in services:
-    if service_name in conf.services:
-        required_services.add(service_name)
-        depends = conf.services[service_name].get('depends_on', [])
-        for service in depends:
-            required_services.add(service)
-        links = conf.services[service_name].get('links', [])
-        for service in links:
-            required_services.add(service)
-    else:
-        print('{} service not yet available in plebnet-playground!'.format(
-            service_name))
-        print('available services:')
-        for service in conf.services:
-            print('\t{}'.format(service))
-        print('Add the configuration for {} to docker-compose.yaml.template and run again.'.format(
-            service_name))
-        sys.exit()
+
+def get_services(services, required_services=set()):
+    """recursively retrieve dependent services"""
+    # print('retrieving requirements for {}'.format(', '.join(sorted(services))))
+    for service_name in list(services):
+        if service_name in conf.services:
+            required_services.add(service_name)
+            depends = conf.services[service_name].get('depends_on', [])
+            for service in depends:
+                required_services.add(service)
+            links = conf.services[service_name].get('links', [])
+            for service in links:
+                required_services.add(service)
+        else:
+            print('{} service not yet available in plebnet-playground!'.format(
+                service_name))
+            print('available services:')
+            for service in conf.services:
+                print('\t{}'.format(service))
+            print('Add the configuration for {} to docker-compose.yaml.template and run again.'.format(
+                service_name))
+            sys.exit()
+    if set(services) == required_services:
+        return required_services
+    return get_services(required_services, required_services)
+
+required_services = get_services(services)
 
 print('required services:\t{}'.format(', '.join(sorted(required_services))))
 
