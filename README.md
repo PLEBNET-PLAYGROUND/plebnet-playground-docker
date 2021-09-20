@@ -32,6 +32,17 @@ cd plebnet-playground-docker
 |  arm 32-bit linux | arm-linux-gnueabihf |
 | ARM64 linux |  aarch64-linux-gnu |
 
+### Services
+| Service      | Description  |
+| ----------- | ----------- |
+|  bitcoind | Bitcoin Core Daemon |
+|  lnd | Lightning Labs LND Daemon  |
+|  tor | tor network daemon |
+| rtl |  Ride The Lightning Daemon |
+| thunderhub |  Thunderhub Lightning UI |
+| docs |  MKDocs documentation |
+| notebook |  Jupyter Notebook environment setup for lightning development |
+| dashboard |  Jupyter Dashboard |
 
 ### Install and start all services (Intel x64 example)
 ***
@@ -40,10 +51,9 @@ cd plebnet-playground-docker
 ARCH=x86_64-linux-gnu ./install.sh   
 ```
 
-### Install and start just the `rtl` service (ride-the-lightning)
-***
+### Install and start just the `bitcoind`,`lnd` services (comma seperate them)
 ```sh
-ARCH=x86_64-linux-gnu services=rtl ./install.sh   
+ARCH=x86_64-linux-gnu services=bitcoind,lnd ./install.sh   
 ```
 
 ### Stop containers

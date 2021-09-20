@@ -74,9 +74,6 @@ services:
       expose:
       - 9050
       - 9051
-      ports:
-      - "9050:9050"
-      - "9051:9051"
       volumes:
         - type: bind
           source: ${oc.env:PWD}/volumes/tor_datadir
