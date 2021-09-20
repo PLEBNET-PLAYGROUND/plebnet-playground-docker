@@ -1,3 +1,4 @@
+* default omegaconf version
 * requirements for plebnet_generate.py
 * omegaconf
 * instructions for installing specific services only

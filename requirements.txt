@@ -2,4 +2,4 @@ requests
 argparse
 mkdocs
 mkdocs-material
-omegaconf==1.4.0
+omegaconf
