@@ -1,3 +1,4 @@
+* instructions for installing specific services only
 * recursively resolve dependencies
 * cli for user-requested services
 
