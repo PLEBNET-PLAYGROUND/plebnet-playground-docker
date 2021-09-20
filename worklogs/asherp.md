@@ -1,3 +1,4 @@
+* cli for user-requested services
 
 ### 2021-09-19 21:15:56.114833: clock-in
 
