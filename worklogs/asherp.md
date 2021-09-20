@@ -1,3 +1,6 @@
+
+### 2021-09-19 21:15:56.114833: clock-in
+
 ### 2021-09-12 00:59:52.378945: clock-out: T-1h 
 
 * running notebook server
