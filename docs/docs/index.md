@@ -32,17 +32,28 @@ cd plebnet-playground-docker
 |  arm 32-bit linux | arm-linux-gnueabihf |
 | ARM64 linux |  aarch64-linux-gnu |
 
+### Services
+| Service      | Description  |
+| ----------- | ----------- |
+|  bitcoind | Bitcoin Core Daemon |
+|  lnd | Lightning Labs LND Daemon  |
+|  tor | tor network daemon |
+| rtl |  Ride The Lightning Daemon |
+| thunderhub |  Thunderhub Lightning UI |
+| docs |  MKDocs documentation |
+| notebook |  Jupyter Notebook environment setup for lightning development |
+| dashboard |  Jupyter Dashboard |
+
 ### Install and start all services (Intel x64 example)
 ***
 
 ```sh
-ARCH=x86_64-linux-gnu ./install.sh   
+TRIPLET=x86_64-linux-gnu ./install.sh   
 ```
 
-### Install and start just the `rtl` service (ride-the-lightning)
-***
+### Install and start just the `bitcoind`,`lnd` services (comma separate them)
 ```sh
-ARCH=x86_64-linux-gnu services=rtl ./install.sh   
+TRIPLET=x86_64-linux-gnu services=bitcoind,lnd ./install.sh   
 ```
 
 ### Stop containers
@@ -141,16 +152,6 @@ USE_TEST_DATA=TRUE docker-compose up dashboard
 ```
 
 ![Plebnet Dashboard](./images/plebnet_dashboard.png)
-
-### How to run development notebook
-
-If you ran `docker-compose up -d` above, the notebook server should be running at `localhost:8888` and the default password is `plebnet`. Any notebooks created within the container should be accessable from your host machine in the in this repo's `notebooks/` subdirectory. At present, the notebooks container has the following packages pre-installed:
-
-* [networkx](https://networkx.org/) - graph construction and analysis
-* [plotly/dash](https://dash.plotly.com/) - visualization framework/data-driven graphical user interfaces
-* [pandas](https://pandas.pydata.org/pandas-docs/stable/getting_started/overview.html) - data analysis/manipulation
-* [numpy](https://numpy.org/doc/stable/user/whatisnumpy.html) array manipulation
-* [scipy](https://docs.scipy.org/doc/scipy/reference/dev/index.html#scipy-development) scientific data analysis
 
 ### Additional reference material
 - [Plebnet Wiki](https://plebnet.wiki)
