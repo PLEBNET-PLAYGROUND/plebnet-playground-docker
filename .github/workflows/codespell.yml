@@ -25,7 +25,7 @@ jobs:
           sudo apt install asciidoctor
           pip3 install -U codespell
           go get github.com/client9/misspell/cmd/misspell
-      - name: git-grep
+      - name: markdown-syntax
         run: |
           git grep -n --color $'\r' -- "*.md" && echo "^ Possible Windows style line ending detected. Please use Unix style line endings (\n)." && exit 0 || true
           git grep -n --color ' $' -- "*.md" && echo "^ Trailing space detected at end of line. Please remove." && exit 0 || true
@@ -40,8 +40,9 @@ jobs:
       - name: codespell-html
         run: |
           codespell --config .codespellrc --ignore-words .codespell-ignore ./docs/docs/*.html
-      - name: git-grep-terms
+      - name: git-grep-terms-debug
         run: |
+          echo "change when needed for PRs"
           git grep ARCH
           git grep TRIPLET
 

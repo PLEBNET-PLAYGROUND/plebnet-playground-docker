@@ -2,5 +2,5 @@
 
 skip = ./docs/material,./.github/workflows/codeql-analysis.yml
 
-ignore-words-list = bA, ba, bA, keypair, BA, Wan
+ignore-words-list = qwerty
 
