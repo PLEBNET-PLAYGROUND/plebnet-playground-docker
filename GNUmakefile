@@ -285,10 +285,6 @@ ifneq ($(shell id -u),0)
 	@echo 'sudo make init #try if permissions issue'
 endif
 	@echo 'init'
-	mkdir -p volumes/tor_datadir
-	mkdir -p volumes/tor_servicesdir
-	touch volumes/tor_datadir/.gitkeep
-	touch volumes/tor_servicesdir/.gitkeep
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
@@ -308,12 +304,12 @@ endif
 #######################
 .PHONY: install
 install: init
-	bash -c './install.sh $(ARCH)'
+	bash -c './install.sh $(TRIPLET)'
 	bash -c 'make btcd'
 #######################
 .PHONY: uninstall
 uninstall:
-	bash -c './uninstall.sh $(ARCH)'
+	bash -c './uninstall.sh $(TRIPLET)'
 #######################
 .PHONY: run
 run: docs init
