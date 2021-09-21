@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Generates docker-compose from command line.
 #
 # For each service identified at command line, this we identify other dependent services and add them to the config.
