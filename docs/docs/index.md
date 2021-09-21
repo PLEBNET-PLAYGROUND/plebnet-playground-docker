@@ -32,13 +32,19 @@ cd plebnet-playground-docker
 |  arm 32-bit linux | arm-linux-gnueabihf |
 | ARM64 linux |  aarch64-linux-gnu |
 
-
-### Install and start containers (Intel x64 example)
+### Install and start all services (Intel x64 example)
 ***
+
+```sh
+ARCH=x86_64-linux-gnu ./install.sh   
 ```
-./install.sh x86_64-linux-gnu
-docker-compose up -d
+
+### Install and start just the `rtl` service (ride-the-lightning)
+***
+```sh
+ARCH=x86_64-linux-gnu services=rtl ./install.sh   
 ```
+
 ### Stop containers
 ***
 ```

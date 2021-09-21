@@ -1,3 +1,14 @@
+### 2021-09-19 23:33:00.430605: clock-out
+
+* default omegaconf version
+* requirements for plebnet_generate.py
+* omegaconf
+* instructions for installing specific services only
+* recursively resolve dependencies
+* cli for user-requested services
+
+### 2021-09-19 21:15:56.114833: clock-in
+
 ### 2021-09-12 00:59:52.378945: clock-out: T-1h 
 
 * running notebook server

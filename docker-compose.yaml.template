@@ -2,6 +2,12 @@ version: "3.4"
 networks: {}
 services:
   bitcoind:
+    build: 
+      context: ./bitcoin-signet
+      dockerfile: Dockerfile
+      args:
+        - TRIPLET=${TRIPLET}
+    image: playground-docker-bitcoind
     links:
     - tor
     depends_on: 
@@ -9,13 +15,8 @@ services:
     restart: unless-stopped
     container_name: playground-bitcoind
     environment:
-      ARCH: ${ARCH}
+      TRIPLET: ${TRIPLET}
       GET_COINS_ON_STARTUP: 'true'
-    build: 
-      context: ./bitcoin-signet
-      dockerfile: Dockerfile
-      args:
-        - ARCH=${ARCH}
     expose:
     - "38332"
     - "38333"
@@ -24,7 +25,7 @@ services:
     - "38333:38333"
     volumes:
       - type: bind
-        source: ${PWD}/volumes/bitcoin_datadir
+        source: ${oc.env:PWD}/volumes/bitcoin_datadir
         target: /root/.bitcoin/
   lnd:
     links:
@@ -34,7 +35,7 @@ services:
     - bitcoind
     - tor
     environment:
-      ARCH: '${ARCH}'
+      TRIPLET: '${TRIPLET}'
       LND_ALIAS: 'NewNode'
       LND_LISTEN: 'playground-lnd:9735'
       LND_RPCLISTEN: 'playground-lnd:10009'
@@ -62,7 +63,7 @@ services:
     - "10009:10009"
     volumes:
       - type: bind
-        source: ${PWD}/volumes/lnd_datadir
+        source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /root/.lnd/
   tor:
       restart: unless-stopped
@@ -73,18 +74,15 @@ services:
       expose:
       - 9050
       - 9051
-      ports:
-      - "9050:9050"
-      - "9051:9051"
       volumes:
         - type: bind
-          source: ${PWD}/volumes/tor_datadir
+          source: ${oc.env:PWD}/volumes/tor_datadir
           target: /home/tor/.tor
         - type: bind
-          source: ${PWD}/volumes/tor_torrcdir
+          source: ${oc.env:PWD}/volumes/tor_torrcdir
           target: /usr/local/etc/tor
         - type: bind
-          source: ${PWD}/volumes/tor_servicesdir
+          source: ${oc.env:PWD}/volumes/tor_servicesdir
           target: /var/lib/tor/hidden_services
   thunderhub:
     container_name: playground-thub
@@ -105,11 +103,11 @@ services:
       LOG_LEVEL: debug
     volumes:
       - type: bind
-        source: ${PWD}/volumes/lnd_datadir
+        source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /etc/lnd
         read_only: true
       - type: bind
-        source: ${PWD}/volumes/thub_datadir
+        source: ${oc.env:PWD}/volumes/thub_datadir
         target: /data
     ports:
       - '3001:3000'  
@@ -138,15 +136,15 @@ services:
       image: shahanafarooqui/rtl:0.11.0 
       volumes:
         - type: bind
-          source: ${PWD}/volumes/lnd_datadir
+          source: ${oc.env:PWD}/volumes/lnd_datadir
           target: /root/.lnd/
           read_only: true
         - type: bind
-          source: ${PWD}/volumes/bitcoin_datadir
+          source: ${oc.env:PWD}/volumes/bitcoin_datadir
           target: /etc/bitcoin/
           read_only: true
         - type: bind
-          source: ${PWD}/volumes/rtl_datadir
+          source: ${oc.env:PWD}/volumes/rtl_datadir
           target: /data
   notebook:
     container_name: playground-notebook
@@ -162,10 +160,10 @@ services:
     image: plebnet-playground-docker_dashboard
     volumes:
       - type: bind
-        source: ${PWD}/notebooks
+        source: ${oc.env:PWD}/notebooks
         target: /notebooks
       - type: bind
-        source: ${PWD}/volumes/lnd_datadir
+        source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /root/.lnd/
         read_only: true
     environment:
@@ -194,10 +192,10 @@ services:
     image: plebnet-playground-docker_dashboard
     volumes:
       - type: bind
-        source: ${PWD}/dashboard
+        source: ${oc.env:PWD}/dashboard
         target: /dashboard
       - type: bind
-        source: ${PWD}/volumes/lnd_datadir
+        source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /root/.lnd/
         read_only: true
     environment:
@@ -218,19 +216,19 @@ services:
     restart: unless-stopped
     container_name: playground-docs
     environment:
-      - ARCH=${ARCH}
+      - TRIPLET=${TRIPLET}
     build: 
-      context: ${PWD}/docs
+      context: ${oc.env:PWD}/docs
       dockerfile: Dockerfile
       args:
-        - ARCH=${ARCH}
+        - TRIPLET=${TRIPLET}
     expose:
     - "8000"
     ports:
     - "8000:8000"
     volumes:
       - type: bind
-        source: ${PWD}/docs
+        source: ${oc.env:PWD}/docs
         target: /docs
 
 
