@@ -305,7 +305,7 @@ endif
 .PHONY: install
 install: init
 	bash -c './install.sh $(TRIPLET)'
-	bash -c 'make btcd'
+	#bash -c 'make btcd'
 #######################
 .PHONY: uninstall
 uninstall:
