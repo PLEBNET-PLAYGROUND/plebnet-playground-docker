@@ -51,7 +51,7 @@ cd plebnet-playground-docker
 TRIPLET=x86_64-linux-gnu ./install.sh   
 ```
 
-### Install and start just the `bitcoind`,`lnd` services (comma seperate them)
+### Install and start just the `bitcoind`,`lnd` services (comma separate them)
 ```sh
 TRIPLET=x86_64-linux-gnu services=bitcoind,lnd ./install.sh   
 ```
