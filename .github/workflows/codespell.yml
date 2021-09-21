@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-name: workflow-matrix
+name: codespell
 
 # Controls when the action will run. 
 on: [push, pull_request]
@@ -34,17 +34,14 @@ jobs:
           for FILE in $(git ls-files -- "*.md"); do if [[ $(tail -c1 $FILE) != "" ]]; then echo "File ${FILE} does not end with a newline character (\n)."; exit 0; fi; done
           git grep "" -- "*.md" | uniq -c | grep -1 "^      [2-9] " | cut -b9- | sed 's/:$/:[more-than-one-blank-line-here-please-remove]/' \ 
           | grep ":" && echo "^ Multiple blank lines detected. Please use only one blank line between paragraphs." && exit 0 || true
-      - name: codespell-asciidoc
+      - name: codespell-py-md
         run: |
-          codespell --config .codespellrc --ignore-words .codespell-ignore $(git ls-files -- "*.asciidoc" "*.md")
-      - name: run-asciidoctor
-        run: |
-          asciidoctor -D html *.asciidoc
-          asciidoctor -D html/contrib ./contrib/*.asciidoc
+          codespell --config .codespellrc --ignore-words .codespell-ignore $(git ls-files -- "*.py" "*.md")
       - name: codespell-html
         run: |
-          codespell --config .codespellrc --ignore-words .codespell-ignore ./html/*.html
-      - name: git-grep-lighting
+          codespell --config .codespellrc --ignore-words .codespell-ignore ./docs/docs/*.html
+      - name: git-grep-terms
         run: |
-          git grep lighting
+          git grep ARCH
+          git grep TRIPLET
 
