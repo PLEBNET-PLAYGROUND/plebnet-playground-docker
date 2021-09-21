@@ -48,12 +48,12 @@ cd plebnet-playground-docker
 ***
 
 ```sh
-ARCH=x86_64-linux-gnu ./install.sh   
+TRIPLET=x86_64-linux-gnu ./install.sh   
 ```
 
 ### Install and start just the `bitcoind`,`lnd` services (comma seperate them)
 ```sh
-ARCH=x86_64-linux-gnu services=bitcoind,lnd ./install.sh   
+TRIPLET=x86_64-linux-gnu services=bitcoind,lnd ./install.sh   
 ```
 
 ### Stop containers

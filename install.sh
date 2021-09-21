@@ -1,19 +1,19 @@
 # if [ -z "$1" ]
 #     then 
-#     echo 'You must provide ARCH as first parameter'
+#     echo 'You must provide TRIPLET as first parameter'
 #     echo './install.sh x86_64-linux-gnu'
 #     exit;
 # fi
 
-# ARCH=$1
+# TRIPLET=$1
 
-: ${ARCH:=x86_64-linux-gnu}
+: ${TRIPLET:=x86_64-linux-gnu}
 : ${services:=Null}
 
 #Remove any old version
 docker-compose down 
 
-python plebnet_generate.py ARCH=$ARCH services=$services
+python plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
 sudo rm -rf volumes
 
@@ -27,5 +27,5 @@ mkdir volumes/tor_datadir
 mkdir volumes/tor_servicesdir
 mkdir volumes/tor_torrcdir
 
-docker-compose build --build-arg ARCH=$ARCH
+docker-compose build --build-arg TRIPLET=$TRIPLET
 docker-compose up --remove-orphans -d

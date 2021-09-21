@@ -18,17 +18,17 @@ architectures = {
 cli_args = OmegaConf.from_cli()
 
 try:
-    arch = cli_args['ARCH']
+    triplet = cli_args['TRIPLET']
 except KeyError:
-    print('Need to supply ARCH. Supported architectures:')
+    print('Need to supply TRIPLET. Supported architectures:')
     for k, v in architectures.items():
-        print('\t{}: ARCH={}'.format(k, v))
+        print('\t{}: TRIPLET={}'.format(k, v))
     sys.exit()
 
 conf = OmegaConf.load('docker-compose.yaml.template')
 
 # merge in architecture
-conf = OmegaConf.merge(OmegaConf.create(dict(ARCH=arch)), conf)
+conf = OmegaConf.merge(OmegaConf.create(dict(TRIPLET=triplet)), conf)
 
 
 if 'services' in cli_args:
@@ -80,7 +80,7 @@ for service_name in list(conf.services):
         conf.services.pop(service_name)
 
 # dashboard keyword
-conf['USE_TEST_DATA'] = cli_args.get('ARCH', False)
+conf['USE_TEST_DATA'] = cli_args.get('TRIPLET', False)
 
 try:
     OmegaConf.resolve(conf)
@@ -88,7 +88,7 @@ except:
     print(OmegaConf.to_yaml(conf))
     raise
 
-conf.pop('ARCH')
+conf.pop('TRIPLET')
 conf.pop('USE_TEST_DATA')
 
 with open('docker-compose.yaml', 'w') as f:

@@ -6,7 +6,7 @@ services:
       context: ./bitcoin-signet
       dockerfile: Dockerfile
       args:
-        - ARCH=${ARCH}
+        - TRIPLET=${TRIPLET}
     image: playground-docker-bitcoind
     links:
     - tor
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
     container_name: playground-bitcoind
     environment:
-      ARCH: ${ARCH}
+      TRIPLET: ${TRIPLET}
       GET_COINS_ON_STARTUP: 'true'
     expose:
     - "38332"
@@ -35,7 +35,7 @@ services:
     - bitcoind
     - tor
     environment:
-      ARCH: '${ARCH}'
+      TRIPLET: '${TRIPLET}'
       LND_ALIAS: 'NewNode'
       LND_LISTEN: 'playground-lnd:9735'
       LND_RPCLISTEN: 'playground-lnd:10009'
@@ -216,12 +216,12 @@ services:
     restart: unless-stopped
     container_name: playground-docs
     environment:
-      - ARCH=${ARCH}
+      - TRIPLET=${TRIPLET}
     build: 
       context: ${oc.env:PWD}/docs
       dockerfile: Dockerfile
       args:
-        - ARCH=${ARCH}
+        - TRIPLET=${TRIPLET}
     expose:
     - "8000"
     ports:
