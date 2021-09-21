@@ -293,9 +293,11 @@ ifneq ($(shell id -u),0)
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 ifneq ($(PIP3),)
 	$(PIP3) install -r requirements.txt
+	$(PYTHON3) ./plebnet_generate.py
 	pushd docs && $(PIP3) install -r requirements.txt && popd
 else
 	$(PIP) install -r requirements.txt
+	$(PYTHON) ./plebnet_generate.py
 	pushd docs && $(PIP) install -r requirements.txt && popd
 endif
 	
