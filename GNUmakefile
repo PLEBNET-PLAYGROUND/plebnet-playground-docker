@@ -10,12 +10,12 @@ export TIME
 ARCH                                    :=$(shell uname -m)
 export ARCH
 ifeq ($(ARCH),x86_64)
-ARCH                                    :=x86_64-linux-gnu
-export ARCH
+TRIPLET                                 :=x86_64-linux-gnu
+export TRIPLET
 endif
 ifeq ($(ARCH),arm64)
-ARCH                                    :=aarch64-linux-gnu
-export ARCH
+TRIPLET                                 :=aarch64-linux-gnu
+export TRIPLET
 endif
 
 ifeq ($(user),)
@@ -233,6 +233,7 @@ report:
 	@echo '        - TIME=${TIME}'
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
+	@echo '        - TRIPLET=${TRIPLET}'
 	@echo '        - HOST_USER=${HOST_USER}'
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
@@ -293,11 +294,11 @@ ifneq ($(shell id -u),0)
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 ifneq ($(PIP3),)
 	$(PIP3) install -r requirements.txt
-	$(PYTHON3) ./plebnet_generate.py
+	$(PYTHON3) ./plebnet_generate.py TRIPLET=$(TRIPLET)
 	pushd docs && $(PIP3) install -r requirements.txt && popd
 else
 	$(PIP) install -r requirements.txt
-	$(PYTHON) ./plebnet_generate.py
+	$(PYTHON) ./plebnet_generate.py TRIPLET=$(TRIPLET)
 	pushd docs && $(PIP) install -r requirements.txt && popd
 endif
 	
