@@ -49,8 +49,9 @@ jobs:
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
-          make init report
+          make init help report
           play
+          make build nocache=true
           make install
           #make uninstall
 
@@ -68,8 +69,9 @@ jobs:
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
-          make init report
+          make init help report
           play
+          make build nocache=true
           make install
           #make uninstall
 
