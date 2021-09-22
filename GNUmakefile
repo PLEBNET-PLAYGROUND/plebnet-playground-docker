@@ -120,6 +120,12 @@ else
 NOCACHE						    		:=	
 PARALLEL                                :=
 endif
+ifeq ($(parallel),true)
+PARALLEL                                := --parallel
+endif
+ifeq ($(para),true)
+PARALLEL                                := --parallel
+endif
 export NOCACHE
 export PARALLEL
 
