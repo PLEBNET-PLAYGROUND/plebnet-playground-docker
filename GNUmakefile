@@ -114,10 +114,14 @@ export BITCOIN_DATA_DIR
 
 ifeq ($(nocache),true)
 NOCACHE					     			:= --no-cache
+#Force parallel build when --no-cache to speed up build
+PARALLEL                                := --parallel
 else
 NOCACHE						    		:=	
+PARALLEL                                :=
 endif
 export NOCACHE
+export PARALLEL
 
 ifeq ($(verbose),true)
 VERBOSE									:= --verbose
@@ -175,39 +179,41 @@ help:
 	@echo ''
 	@echo '	[USAGE]: make [COMMAND] [EXTRA_ARGUMENTS]	'
 	@echo ''
-	@echo '		 make init'
-	@echo '		 make report'
-	@echo '		 make header'
+	@echo ''
+	@echo '		 make '
+	@echo '		 make help             print help'
+	@echo '		 make init             initialize basic dependencies'
+	@echo '		 make report           print environment variables'
 	@echo '		 make build'
 	@echo '		 make run'
 	@echo '		                       user=root uid=0 nocache=false verbose=false'
 	@echo ''
 	@echo '	[DEV ENVIRONMENT]:	'
 	@echo ''
-	@echo '		 make shell            compiling environment on host machine'
+#	@echo '		 make shell            compiling environment on host machine'
 	@echo '		 make signin           ~/GH_TOKEN.txt required from github.com'
-	@echo '		 make header package-header'
+#	@echo '		 make header package-header'
 	@echo '		 make build'
-	@echo '		 make build package-statoshi'
+#	@echo '		 make build package-statoshi'
 	@echo '		 make package-all'
 	@echo ''
-	@echo '	[EXTRA_ARGUMENTS]:	set build variables	'
-	@echo ''
-	@echo '		nocache=true'
-	@echo '		            	add --no-cache to docker command and apk add $(NOCACHE)'
-	@echo '		port=integer'
-	@echo '		            	set PUBLIC_PORT default 80'
-	@echo ''
-	@echo '		nodeport=integer'
-	@echo '		            	set NODE_PORT default 8333'
-	@echo ''
-	@echo '		            	TODO'
-	@echo ''
-	@echo '	[DOCKER COMMANDS]:	push a command to the container	'
-	@echo ''
-	@echo '		cmd=command 	'
-	@echo '		cmd="command"	'
-	@echo '		             	send CMD_ARGUMENTS to the [TARGET]'
+#	@echo '	[EXTRA_ARGUMENTS]:	set build variables	'
+#	@echo ''
+#	@echo '		nocache=true'
+#	@echo '		            	add --no-cache to docker command and apk add $(NOCACHE)'
+#	@echo '		port=integer'
+#	@echo '		            	set PUBLIC_PORT default 80'
+#	@echo ''
+#	@echo '		nodeport=integer'
+#	@echo '		            	set NODE_PORT default 8333'
+#	@echo ''
+#	@echo '		            	TODO'
+#	@echo ''
+#	@echo '	[DOCKER COMMANDS]:	push a command to the container	'
+#	@echo ''
+#	@echo '		cmd=command 	'
+#	@echo '		cmd="command"	'
+#	@echo '		             	send CMD_ARGUMENTS to the [TARGET]'
 	@echo ''
 	@echo '	[EXAMPLES]:'
 	@echo ''
@@ -314,6 +320,10 @@ uninstall:
 .PHONY: run
 run: docs init
 	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
+#######################
+.PHONY: build
+build: init
+	$(DOCKER_COMPOSE) $(VERBOSE) build $(PARALLEL) --no-rm $(NOCACHE)
 #######################
 .PHONY: btcd
 btcd:
