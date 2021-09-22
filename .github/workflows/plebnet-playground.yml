@@ -52,7 +52,7 @@ jobs:
           make init help report
           play
           make build nocache=true
-          make install
+          make install verbose=true
           make uninstall
 
   ubuntu-20-build_and_test:
@@ -72,6 +72,6 @@ jobs:
           make init help report
           play
           make build nocache=true
-          make install
+          make install verbose=true
           make uninstall
 
