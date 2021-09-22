@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
       args:
         - TRIPLET=${TRIPLET}
-    image: playground-docker-bitcoind
     links:
     - tor
     depends_on: 
