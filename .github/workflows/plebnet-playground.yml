@@ -52,6 +52,7 @@ jobs:
           make init help report
           play
           make build nocache=true
+          make build para=true
           make install verbose=true
           make uninstall
 
@@ -72,6 +73,7 @@ jobs:
           make init help report
           play
           make build nocache=true
+          make build para=true
           make install verbose=true
           make uninstall
 
