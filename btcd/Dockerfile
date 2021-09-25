@@ -1,4 +1,4 @@
-ARG ARCH=amd64
+ARG TRIPLET=amd64
 FROM golang:1.14-alpine3.12 AS build-container
 USER root
 ENV GO111MODULE=on
@@ -10,9 +10,9 @@ WORKDIR /root/btcd
 ARG BTCD_VERSION=63438c6d3661a7dec09013f7731035abdf1eb4bc
 RUN git fetch --all && git checkout ${BTCD_VERSION}
 RUN set -ex \
-  && if [ "${ARCH}" = "amd64" ]; then export GOARCH=amd64; fi \
-  && if [ "${ARCH}" = "arm32v7" ]; then export GOARCH=arm; fi \
-  && if [ "${ARCH}" = "arm64v8" ]; then export GOARCH=arm64; fi \
+  && if [ "${TRIPLET}" = "amd64" ]; then export GOARCH=amd64; fi \
+  && if [ "${TRIPLET}" = "arm32v7" ]; then export GOARCH=arm; fi \
+  && if [ "${TRIPLET}" = "arm64v8" ]; then export GOARCH=arm64; fi \
   && echo "Compiling for $GOARCH" \
   && go install -v . ./cmd/...
 

@@ -10,12 +10,12 @@ export TIME
 ARCH                                    :=$(shell uname -m)
 export ARCH
 ifeq ($(ARCH),x86_64)
-ARCH                                    :=x86_64-linux-gnu
-export ARCH
+TRIPLET                                 :=x86_64-linux-gnu
+export TRIPLET
 endif
 ifeq ($(ARCH),arm64)
-ARCH                                    :=aarch64-linux-gnu
-export ARCH
+TRIPLET                                 :=aarch64-linux-gnu
+export TRIPLET
 endif
 
 ifeq ($(user),)
@@ -114,10 +114,20 @@ export BITCOIN_DATA_DIR
 
 ifeq ($(nocache),true)
 NOCACHE					     			:= --no-cache
+#Force parallel build when --no-cache to speed up build
+PARALLEL                                := --parallel
 else
 NOCACHE						    		:=	
+PARALLEL                                :=
+endif
+ifeq ($(parallel),true)
+PARALLEL                                := --parallel
+endif
+ifeq ($(para),true)
+PARALLEL                                := --parallel
 endif
 export NOCACHE
+export PARALLEL
 
 ifeq ($(verbose),true)
 VERBOSE									:= --verbose
@@ -175,39 +185,41 @@ help:
 	@echo ''
 	@echo '	[USAGE]: make [COMMAND] [EXTRA_ARGUMENTS]	'
 	@echo ''
-	@echo '		 make init'
-	@echo '		 make report'
-	@echo '		 make header'
+	@echo ''
+	@echo '		 make '
+	@echo '		 make help             print help'
+	@echo '		 make init             initialize basic dependencies'
+	@echo '		 make report           print environment variables'
 	@echo '		 make build'
 	@echo '		 make run'
 	@echo '		                       user=root uid=0 nocache=false verbose=false'
 	@echo ''
 	@echo '	[DEV ENVIRONMENT]:	'
 	@echo ''
-	@echo '		 make shell            compiling environment on host machine'
+#	@echo '		 make shell            compiling environment on host machine'
 	@echo '		 make signin           ~/GH_TOKEN.txt required from github.com'
-	@echo '		 make header package-header'
+#	@echo '		 make header package-header'
 	@echo '		 make build'
-	@echo '		 make build package-statoshi'
+#	@echo '		 make build package-statoshi'
 	@echo '		 make package-all'
 	@echo ''
-	@echo '	[EXTRA_ARGUMENTS]:	set build variables	'
-	@echo ''
-	@echo '		nocache=true'
-	@echo '		            	add --no-cache to docker command and apk add $(NOCACHE)'
-	@echo '		port=integer'
-	@echo '		            	set PUBLIC_PORT default 80'
-	@echo ''
-	@echo '		nodeport=integer'
-	@echo '		            	set NODE_PORT default 8333'
-	@echo ''
-	@echo '		            	TODO'
-	@echo ''
-	@echo '	[DOCKER COMMANDS]:	push a command to the container	'
-	@echo ''
-	@echo '		cmd=command 	'
-	@echo '		cmd="command"	'
-	@echo '		             	send CMD_ARGUMENTS to the [TARGET]'
+#	@echo '	[EXTRA_ARGUMENTS]:	set build variables	'
+#	@echo ''
+#	@echo '		nocache=true'
+#	@echo '		            	add --no-cache to docker command and apk add $(NOCACHE)'
+#	@echo '		port=integer'
+#	@echo '		            	set PUBLIC_PORT default 80'
+#	@echo ''
+#	@echo '		nodeport=integer'
+#	@echo '		            	set NODE_PORT default 8333'
+#	@echo ''
+#	@echo '		            	TODO'
+#	@echo ''
+#	@echo '	[DOCKER COMMANDS]:	push a command to the container	'
+#	@echo ''
+#	@echo '		cmd=command 	'
+#	@echo '		cmd="command"	'
+#	@echo '		             	send CMD_ARGUMENTS to the [TARGET]'
 	@echo ''
 	@echo '	[EXAMPLES]:'
 	@echo ''
@@ -233,6 +245,7 @@ report:
 	@echo '        - TIME=${TIME}'
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
+	@echo '        - TRIPLET=${TRIPLET}'
 	@echo '        - HOST_USER=${HOST_USER}'
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
@@ -284,18 +297,16 @@ ifneq ($(shell id -u),0)
 	@echo 'sudo make init #try if permissions issue'
 endif
 	@echo 'init'
-	mkdir -p volumes/tor_datadir
-	mkdir -p volumes/tor_servicesdir
-	touch volumes/tor_datadir/.gitkeep
-	touch volumes/tor_servicesdir/.gitkeep
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 ifneq ($(PIP3),)
 	$(PIP3) install -r requirements.txt
+	$(PYTHON3) ./plebnet_generate.py TRIPLET=$(TRIPLET)
 	pushd docs && $(PIP3) install -r requirements.txt && popd
 else
 	$(PIP) install -r requirements.txt
+	$(PYTHON) ./plebnet_generate.py TRIPLET=$(TRIPLET)
 	pushd docs && $(PIP) install -r requirements.txt && popd
 endif
 	
@@ -305,16 +316,21 @@ endif
 #######################
 .PHONY: install
 install: init
-	bash -c './install.sh $(ARCH)'
-	bash -c 'make btcd'
+	bash -c './install.sh $(TRIPLET)'
+	#bash -c 'make btcd'
 #######################
 .PHONY: uninstall
 uninstall:
-	bash -c './uninstall.sh $(ARCH)'
+	bash -c './uninstall.sh $(TRIPLET)'
 #######################
 .PHONY: run
 run: docs init
 	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
+#######################
+.PHONY: build
+build: init
+	docker pull  shahanafarooqui/rtl:0.11.0
+	$(DOCKER_COMPOSE) $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)
 #######################
 .PHONY: btcd
 btcd:
@@ -413,27 +429,27 @@ package-plebnet: signin
 	#legit . -m "make package-header at $(TIME)" -p 00000
 	#git commit --amend --no-edit --allow-empty
 
-	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag  $(PROJECT_NAME)_dashboard    $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(ARCH)/$(HOST_USER):$(TIME)'
-	#bash -c 'docker tag  $(PROJECT_NAME)_notebook    $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(ARCH)/$(HOST_USER):$(TIME)'
-	#bash -c 'docker push                             $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag  $(PROJECT_NAME)_bitcoind     $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag  $(PROJECT_NAME)_docs         $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag  $(PROJECT_NAME)_tor          $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag  $(PROJECT_NAME)_lnd          $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag  shahanafarooqui/rtl:0.11.0   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip thunderhub'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip thunderhub'
+	bash -c 'docker tag  $(PROJECT_NAME)_dashboard    $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip dashboard'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip dashboard'
+	bash -c 'docker tag  $(PROJECT_NAME)_notebook     $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip notebook'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip notebook'
+	bash -c 'docker tag  $(PROJECT_NAME)_bitcoind     $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip bitcoind'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip bitcoind'
+	bash -c 'docker tag  $(PROJECT_NAME)_docs         $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip docs'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip docs'
+	bash -c 'docker tag  $(PROJECT_NAME)_tor          $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip tor'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip tor'
+	bash -c 'docker tag  $(PROJECT_NAME)_lnd          $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip lnd'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip lnd'
+	bash -c 'docker tag  shahanafarooqui/rtl:0.11.0   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip rtl'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip rtl'
 
 ########################
 .PHONY: package-all
 package-all: init package-plebnet
 #INSERT other scripting here 
-	bash -c "echo"
+	bash -c "echo insert more scripting here..."
 ########################
 

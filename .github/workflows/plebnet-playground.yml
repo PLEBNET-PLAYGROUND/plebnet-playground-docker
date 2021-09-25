@@ -48,10 +48,13 @@ jobs:
           sudo apt install python python3
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
-          make init report
+          pip install -r requirements.txt
+          make init help report
           play
-          make install
-          #make uninstall
+          make build nocache=true
+          make build para=true
+          make install verbose=true
+          make uninstall
 
   ubuntu-20-build_and_test:
     runs-on: ubuntu-20.04
@@ -66,8 +69,11 @@ jobs:
           sudo apt install python python3
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
-          make init report
+          pip install -r requirements.txt
+          make init help report
           play
-          make install
-          #make uninstall
+          make build nocache=true
+          make build para=true
+          make install verbose=true
+          make uninstall
 

@@ -1,0 +1,6 @@
+[codespell]
+
+skip = ./docs/material,./.github/workflows/codeql-analysis.yml
+
+ignore-words-list = qwerty
+
