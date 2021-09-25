@@ -1,3 +1,13 @@
+### 2021-09-25 14:59:37.408376: clock-out
+
+* converted to undirected graph to capture all routes
+* adding dashboard to notebook container path
+* May not be capturing all routes since using directed graph
+* Converting from Directed Graph to Undirected Graph
+
+### 2021-09-25 13:44:27.854547: clock-in
+
+
 ### 2021-09-19 23:33:00.430605: clock-out
 
 * default omegaconf version
@@ -8,6 +18,7 @@
 * cli for user-requested services
 
 ### 2021-09-19 21:15:56.114833: clock-in
+
 
 ### 2021-09-12 00:59:52.378945: clock-out: T-1h 
 

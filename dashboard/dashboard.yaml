@@ -7,7 +7,7 @@ app:
   jupyter_dash.JupyterDash:
     external_stylesheets:
       - https://codepen.io/chriddyp/pen/bWLwgP.css
-    title: psidash demo
+    title: Plebnet Visualizer
 
 
 

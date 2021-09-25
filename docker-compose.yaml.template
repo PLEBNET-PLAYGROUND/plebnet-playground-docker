@@ -162,14 +162,17 @@ services:
         source: ${oc.env:PWD}/notebooks
         target: /notebooks
       - type: bind
+        source: ${oc.env:PWD}/dashboard
+        target: /dashboard
+      - type: bind
         source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /root/.lnd/
         read_only: true
     environment:
-      JUPYTER_NOTEBOOKS: /notebooks
+      JUPYTER_NOTEBOOKS: /
       JUPYTER_PORT: 8888
       LND_DATADIR: /root/.lnd
-    working_dir: /notebooks
+    working_dir: /
     command:
       - sh
       - -c
