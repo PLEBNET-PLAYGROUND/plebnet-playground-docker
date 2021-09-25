@@ -1,3 +1,6 @@
+* adding dashboard to notebook container path
+* May not be capturing all routes since using directed graph
+* Converting from Directed Graph to Undirected Graph
 
 ### 2021-09-25 13:44:27.854547: clock-in
 
