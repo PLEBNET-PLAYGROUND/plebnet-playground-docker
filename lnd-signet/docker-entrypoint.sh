@@ -34,6 +34,7 @@ initial_lnd_file()
     tor.control=${torcontrol}
     tor.password=hello
     tor.v3=true
+    tor.skip-proxy-for-clearnet-targets=true
     protocol.wumbo-channels=true
     " >> /root/.lnd/lnd.conf
 }
@@ -54,8 +55,8 @@ if [[ -f /root/.lnd/localhostip ]]; then
   if [[ $savedip != $localhostip ]]; then
     echo "IP Address changed from ${savedip} to ${localhostip}, cleaning up TLS certs"
     #ip changed lets cleanup tls stuff
-    rm /root/.lnd/tls.key
-    rm /root/.lnd/tls.cert
+    rm -f /root/.lnd/tls.key
+    rm -f /root/.lnd/tls.cert
   fi
 fi
 echo $localhostip > /root/.lnd/localhostip

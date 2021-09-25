@@ -18,15 +18,15 @@ ARCH                                    :=aarch64-linux-gnu
 export ARCH
 endif
 
-#ifeq ($(user),)
-#HOST_USER								:= root
-#HOST_UID								:= $(strip $(if $(uid),$(uid),0))
-#else
-#HOST_USER								:=  $(strip $(if $(USER),$(USER),nodummy))
-#HOST_UID								:=  $(strip $(if $(shell id -u),$(shell id -u),4000))
-#endif
-#export HOST_USER
-#export HOST_UID
+ifeq ($(user),)
+HOST_USER								:= root
+HOST_UID								:= $(strip $(if $(uid),$(uid),0))
+else
+HOST_USER								:=  $(strip $(if $(USER),$(USER),nodummy))
+HOST_UID								:=  $(strip $(if $(shell id -u),$(shell id -u),4000))
+endif
+export HOST_USER
+export HOST_UID
 
 ifeq ($(target),)
 SERVICE_TARGET							?= shell
@@ -78,10 +78,21 @@ export GIT_SERVER
 GIT_REPO_NAME							:= $(PROJECT_NAME)
 export GIT_REPO_NAME
 
-ifeq ($(GIT_REPO_NAME),plebnet-playground-docker)
+#Usage
+#make package-all profile=rsafier
+#make package-all profile=asherp
+#note on GH_TOKEN.txt file below
+ifeq ($(profile),)
+ifeq ($(GIT_REPO_ORIGIN),git@github.com:PLEBNET_PLAYGROUND/plebnet-playground-docker.dev.git)
 GIT_PROFILE								:= PLEBNET-PLAYGROUND
-export GIT_PROFILE
 endif
+ifeq ($(GIT_REPO_ORIGIN),https://github.com/PLEBNET_PLAYGROUND/plebnet-playground-docker.dev.git)
+GIT_PROFILE								:= PLEBNET-PLAYGROUND
+endif
+else
+GIT_PROFILE								:= $(profile)
+endif
+export GIT_PROFILE
 
 GIT_BRANCH								:= $(shell git rev-parse --abbrev-ref HEAD)
 export GIT_BRANCH
@@ -387,24 +398,42 @@ push:
 .PHONY: push-docs
 push-docs: statoshi-docs push
 	@echo 'push-docs'
-#######################
-package-statoshi: signin
 
-	touch TIME && echo $(TIME) > TIME && git add -f TIME
+SIGNIN=randymcmillan
+export SIGNIN
+
+.PHONY: signin
+signin:
+#Place a file named GH_TOKEN.txt in your $HOME - create in https://github.com/settings/tokens (Personal access tokens)
+	bash -c 'cat ~/GH_TOKEN.txt | docker login ghcr.io -u $(GIT_PROFILE) --password-stdin'
+#######################
+package-plebnet: signin
+
+	#touch TIME && echo $(TIME) > TIME && git add -f TIME
 	#legit . -m "make package-header at $(TIME)" -p 00000
-	git commit --amend --no-edit --allow-empty
-	bash -c 'docker tag $(PROJECT_NAME):$(HOST_USER) $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker push                             $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER):$(TIME)'
-	bash -c 'docker tag $(PROJECT_NAME):$(HOST_USER) $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER)' #defaults to latest
-	bash -c 'docker push                             $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/$(ARCH)/$(HOST_USER)'
+	#git commit --amend --no-edit --allow-empty
+
+	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_dashboard    $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(ARCH)/$(HOST_USER):$(TIME)'
+	#bash -c 'docker tag  $(PROJECT_NAME)_notebook    $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(ARCH)/$(HOST_USER):$(TIME)'
+	#bash -c 'docker push                             $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_bitcoind     $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_docs         $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_tor          $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  $(PROJECT_NAME)_lnd          $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker tag  shahanafarooqui/rtl:0.11.0   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
+	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(ARCH)/$(HOST_USER):$(TIME)'
 
 ########################
 .PHONY: package-all
-package-all: init header package-header build package-statoshi
-
-ifeq ($(slim),true)
-	make package-all slim=false
-endif
-	make header package-header build package-statoshi
+package-all: init package-plebnet
+#INSERT other scripting here 
+	bash -c "echo"
 ########################
 
