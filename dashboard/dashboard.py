@@ -414,6 +414,10 @@ def find_node(G, key, value):
 # %%
 MG = get_node_multigraph(response)
 DG = assign_capacity(get_directed_nodes(MG))
+G = DG.to_undirected()
+
+# %%
+# hello_jessica = find_node(G, 'alias', 'HelloJessica')
 
 # %%
 conf = load_conf('dashboard.yaml')
@@ -436,14 +440,15 @@ if 'callbacks' in conf:
 
 @callbacks.update_node_1_options
 def update_node_select(url):
-    options = [{'label': DG.nodes[node]['alias'], 'value': node} for node in DG.nodes]
+    options = [{'label': G.nodes[node]['alias'], 'value': node} for node in G.nodes]
     return options, options[0]['value']
 
 @callbacks.update_node_2_options
 def update_node_select(node_1):
+    logging.info('update_node_select for {}'.format(node_1))
     if node_1 is None:
         raise PreventUpdate
-    options = [{'label': DG.nodes[node]['alias'], 'value': node} for node in descendants(DG, node_1)]
+    options = [{'label': G.nodes[node]['alias'], 'value': node} for node in descendants(G, node_1)]
     if len(options) > 0:
         return options, options[-1]['value']
     else:
@@ -452,12 +457,12 @@ def update_node_select(node_1):
 @callbacks.update_node_graph
 def render(node_1, node_2):
     trip = node_1, node_2
-    if (node_1 in DG.nodes) & (node_2 in DG.nodes):
+    if (node_1 in G.nodes) & (node_2 in G.nodes):
         pass
     else:
         raise PreventUpdate
     try:
-        path, path_nodes, path_posns = get_path(DG, trip[0], trip[1], 10)
+        path, path_nodes, path_posns = get_path(G, trip[0], trip[1], 10)
     except NetworkXNoPath:
         raise PreventUpdate
     path_pos = multipath_layout(path, path_nodes, path_posns, iterations=50, seed=1)
