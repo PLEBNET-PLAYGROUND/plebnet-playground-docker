@@ -21,6 +21,6 @@ services:
     - "38333:38333"
     volumes:
       - type: bind
-        source: ${PWD}/volumes/btcd_datadir
-        target: /root/.bitcoin
+        source: ${PWD}
+        target: /root/.btcd
 
