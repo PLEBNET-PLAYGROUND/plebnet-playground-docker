@@ -210,6 +210,18 @@ services:
     command:
       - python
       - dashboard.py
+  lndg:  
+    image: ghcr.io/cryptosharks131/lndg:latest  
+    depends_on:  
+      - lnd  
+    volumes:  
+      - /root/plebnet-playground-docker/volumes/lnd_datadir:/root/.lnd  
+    command:  
+      - sh  
+      - -c  
+      - python initialize.py -net 'signet' -server 'playground-lnd:10009' -d && python manage.py migrate && sleep 20 && supervisord  && python manage.py runserver 0.0.0.0:8000  
+    ports:  
+      - 8888:8000
   docs:
     links:
     - tor
