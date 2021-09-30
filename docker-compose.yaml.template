@@ -247,4 +247,23 @@ services:
         source: ${oc.env:PWD}/docs
         target: /docs
 
+  btcd:
+    restart: unless-stopped
+    container_name: playground-btcd
+    environment:
+      - TRIPLET=${TRIPLET}
+    build:
+      context: ${oc.env:PWD}/btcd
+      dockerfile: Dockerfile
+      args:
+        - TRIPLET=${TRIPLET}
+    command:  ["btcd"]
+    expose:
+    - "38334"
+    ports:
+    - "38334:38334"
+    volumes:
+    - type: bind
+      source: ${oc.env:PWD}/btcd
+      target: /root/.btcd
 
