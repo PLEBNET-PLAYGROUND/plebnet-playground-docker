@@ -39,6 +39,7 @@ mkdir volumes/rtl_datadir
 mkdir volumes/tor_datadir
 mkdir volumes/tor_servicesdir
 mkdir volumes/tor_torrcdir
+mkdir volumes/lndg_datadir
 
 docker-compose build --build-arg TRIPLET=$TRIPLET
 docker-compose up --remove-orphans -d
