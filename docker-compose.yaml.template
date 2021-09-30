@@ -212,10 +212,12 @@ services:
       - dashboard.py
   lndg:  
     image: ghcr.io/cryptosharks131/lndg:latest  
+    container_name: playground-lndg
     depends_on:  
       - lnd  
     volumes:  
       - ${oc.env:PWD}/volumes/lnd_datadir:/root/.lnd  
+      - ${oc.env:PWD}/volumes/lndg_datadir/db.sqlite3:/lndg/db.sqlite3
     command:  
       - sh  
       - -c  
