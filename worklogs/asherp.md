@@ -1,3 +1,5 @@
+* added node hover data
+* bolt spec https://github.com/lightningnetwork/lightning-rfc/blob/master/01-messaging.md
 
 ### 2021-10-03 13:49:00.003873: clock-in
 

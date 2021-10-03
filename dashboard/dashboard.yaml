@@ -29,6 +29,8 @@ layout:
               id: node-2
               placeholder: node 2
               searchable: True
+    - dash_table.DataTable:
+        id: node-table
     - dcc.Graph:
         id: node-graph
         figure:
@@ -44,7 +46,8 @@ layout:
               ticks: ''
               showgrid: False
               zeroline: False
-
+    - dash_table.DataTable:
+        id: node-features
 callbacks:
   update_node_1_options:
     input:
@@ -73,4 +76,18 @@ callbacks:
     output:
       - id: node-graph
         attr: figure
+  update_node_hover:
+    input:
+      - id: node-graph
+        attr: hoverData
+    output:
+      - id: node-table
+        attr: columns
+      - id: node-table
+        attr: data
+      - id: node-features
+        attr: columns
+      - id: node-features
+        attr: data
+
 
