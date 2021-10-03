@@ -1,3 +1,4 @@
+* remove test node0
 * added node hover data
 * bolt spec https://github.com/lightningnetwork/lightning-rfc/blob/master/01-messaging.md
 

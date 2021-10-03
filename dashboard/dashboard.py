@@ -105,8 +105,6 @@ else:
     request = lnrpc.ChannelGraphRequest(include_unannounced=True)
     response = stub.DescribeGraph(request, metadata=[('macaroon', macaroon)])
 
-# %%
-node0
 
 
 # %%
@@ -501,7 +499,7 @@ def update_node_hover(hoverData):
 
     features_ = {features[f_id].name: {'is_required': features[f_id].is_required,
                                        'is_known': features[f_id].is_known,
-                                       'feature_id': f_id} for f_id in features}
+                                       'feature_id': f_id} for f_id in sorted(features)}
     
     features = pd.DataFrame(features_).reset_index()
     features.rename(columns={"index": " ",}, inplace=True)
