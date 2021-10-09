@@ -30,7 +30,6 @@ pip3 install -r requirements.txt
 | ----------- | ----------- |
 |  Intel x64  | x86_64-linux-gnu |
 |  OSX 64-bit | aarch64-linux-gnu  |
-|  arm 32-bit linux | arm-linux-gnueabihf |
 | ARM64 linux |  aarch64-linux-gnu |
 
 ### Services
