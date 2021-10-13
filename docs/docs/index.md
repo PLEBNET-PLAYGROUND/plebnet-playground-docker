@@ -16,11 +16,12 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 - For Windows users you will need to use something like git bash until we make some powershell scripts to provide cleaner functionality 
 ## Basic Setup
 ***
-### Clone Repo
+### Clone Repo & Install Requirements
 ***
 ```
 git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --config core.autocrlf=input
 cd plebnet-playground-docker
+pip3 install -r requirements.txt
 ```
 
 ### Supported System Architectures
@@ -29,7 +30,6 @@ cd plebnet-playground-docker
 | ----------- | ----------- |
 |  Intel x64  | x86_64-linux-gnu |
 |  OSX 64-bit | aarch64-linux-gnu  |
-|  arm 32-bit linux | arm-linux-gnueabihf |
 | ARM64 linux |  aarch64-linux-gnu |
 
 ### Services
