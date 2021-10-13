@@ -90,14 +90,24 @@ export BTCD_IMAGE
         #[ -z "$BTCD_IMAGE" ] && echo || echo $BTCD_IMAGE
         exit
 
-    elif [[ ${!i} = rtl ]]; then
-        ((i++))
-        play-rtl ${!i}
-        exit
-
     elif [[ ${!i} = lnd ]]; then
         ((i++))
         play-lnd ${!i} $3 $4 $5 $6 $7
+        exit
+
+    elif [[ ${!i} = shell ]]; then
+        ((i++))
+        play-lnd shell
+        exit
+
+    elif [[ ${!i} = start ]]; then
+        ((i++))
+        play-lnd start
+        exit
+
+    elif [[ ${!i} = stop ]]; then
+        ((i++))
+        play-lnd stop
         exit
 
     elif [[ ${!i} = bitcoin* ]]; then

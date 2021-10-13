@@ -63,13 +63,15 @@ jobs:
           access_token: ${{ github.token }}
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: make init help report
+        run: |
+          make init help report
       - name: install, build, and test
         run: |
           sudo apt install python python3
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
-          make init help report
           make build nocache=true
           make build para=true
           make install verbose=true
@@ -94,11 +96,10 @@ jobs:
           play lnd
           play lnd top
           play lnd start
+          play lnd lncli
           play lncli
           play lncli --version
-          play 'lncli --version'
           play lnd 'lncli --version'
-          play lnd lncli
 
       - name: uninstall
         run: |
