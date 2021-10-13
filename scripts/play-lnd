@@ -1,0 +1,78 @@
+#!/bin/bash
+
+if hash docker 2>/dev/null; then
+
+LND_ID=$(echo $(docker ps | awk '/docker_lnd/'|awk ' {print $1}' | awk 'NR==1'))
+export LND_ID
+LND_IMAGE=$(echo $(docker images | awk '/docker_lnd/'|awk ' {print $3}' | awk 'NR==1'))
+export LND_IMAGE
+
+for ((i=1;i<=$#;i++));
+do
+
+    if [[ ${!i} = info ]]; then
+        ((i++))
+        echo "!i = ${!i}"
+        echo "0 = $0"
+        echo "1 = $1"
+        echo "2 = $2"
+        echo "3 = $3"
+        echo "4 = $4"
+        echo "5 = $5"
+        echo "6 = $6"
+        echo "7 = $7"
+        echo $LND_ID
+        exit
+
+    elif [[ ${!i} = id ]]; then
+        ((i++))
+        echo $LND_ID
+        exit
+
+
+    elif [[ ${!i} = top ]]; then
+        ((i++))
+        docker top $LND_ID
+        exit
+
+    elif [[ ${!i} = netinfo ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "bitcoin-cli -netinfo $2"
+        exit
+
+    elif [[ ${!i} = *start ]]; then
+        ((i++))
+        docker restart $LND_ID
+        exit
+
+    elif [[ ${!i} = stop ]]; then
+        ((i++))
+        docker stop $LND_ID
+        exit
+
+    elif [[ ${!i} = *shell ]]; then
+        ((i++))
+        docker exec -it $LND_ID sh
+        exit
+
+    elif [[ ${!i} == *help ]]; then
+        ((i++))
+        echo
+        echo "play-lnd             top   "
+        echo "play-lnd             shell "
+        echo "play-lnd             start "
+        echo "play-lnd             stop  "
+        echo
+        echo "play-lnd             '<COMMAND>'"
+        exit
+
+    elif [[ -n ${!i} ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c  "$1 $2 $3 $4"
+        exit
+    fi
+
+done;
+play-lnd help;
+fi #end if docker hash
+
