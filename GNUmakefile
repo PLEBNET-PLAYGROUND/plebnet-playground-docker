@@ -316,6 +316,7 @@ ifneq ($(shell id -u),0)
 ifneq ($(PIP3),)
 	echo $(PIP3)
 	#bash -c "[[ '$(shell whoami)' != 'runner' ]] && $(PYTHON3) -m ensurepip --upgrade --user"
+	$(PIP3) install --upgrade pip
 	$(PYTHON3) -m pip install omegaconf==2.1.1
 	$(PIP3) install -r requirements.txt
 	./plebnet_generate.py TRIPLET=$(TRIPLET)

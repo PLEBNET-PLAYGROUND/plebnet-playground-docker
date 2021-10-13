@@ -77,10 +77,11 @@ jobs:
       - name: play
         run: |
           play
+          play info
           play ids
       - name: bitcoind-commands
         run: |
-          make init
+          play bitcoin
           play bitcoin top
           play bitcoin start
           play bitcoin netinfo 5
@@ -90,7 +91,7 @@ jobs:
       - name: lnd-commands
         run: |
           # play defaults to the lnd container
-          play info
+          play lnd
           play lnd top
           play lnd start
           play lncli
