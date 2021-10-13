@@ -50,11 +50,10 @@ jobs:
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
           make init help report
-          play
           make build nocache=true
           make build para=true
           make install verbose=true
-          make uninstall
+          #make uninstall
 
   ubuntu-20-build_and_test:
     runs-on: ubuntu-20.04
@@ -71,9 +70,36 @@ jobs:
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
           make init help report
-          play
           make build nocache=true
           make build para=true
           make install verbose=true
+          #make uninstall
+      - name: play
+        run: |
+          play
+          play ids
+      - name: bitcoind-commands
+        run: |
+          make init
+          play bitcoin top
+          play bitcoin start
+          play bitcoin netinfo 5
+          play bitcoin gettxoutsetinfo
+          play bitcoin getmininginfo
+          play bitcoin 'bitcoin-cli getblockhash 1000'
+      - name: lnd-commands
+        run: |
+          # play defaults to the lnd container
+          play info
+          play lnd top
+          play lnd start
+          play lncli
+          play lncli --version
+          play 'lncli --version'
+          play lnd 'lncli --version'
+          play lnd lncli
+
+      - name: uninstall
+        run: |
           make uninstall
 
