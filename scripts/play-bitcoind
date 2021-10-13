@@ -1,0 +1,87 @@
+#!/bin/bash
+
+if hash docker 2>/dev/null; then
+
+BITCOIND_ID=$(echo $(docker ps | awk '/playground-bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
+export BITCOIND_ID
+BITCOIND_IMAGE=$(echo $(docker images | awk '/playground-bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
+export BITCOIND_IMAGE
+
+for ((i=1;i<=$#;i++));
+do
+    if [[ ${!i} = info ]]; then
+        ((i++))
+        echo $BITCOIND_ID
+        echo "!i = ${!i}"
+        echo "0 = $0"
+        echo "1 = $1"
+        echo "2 = $2"
+        echo "3 = $3"
+        echo "4 = $4"
+        echo "5 = $5"
+        echo "6 = $6"
+        echo "7 = $7"
+        exit
+
+    elif [[ ${!i} = id ]]; then
+        ((i++))
+        echo $BITCOIND_ID
+        exit
+
+    elif [[ ${!i} = top ]]; then
+        ((i++))
+        docker top $BITCOIND_ID
+        exit
+
+    elif [[ ${!i} = netinfo ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -netinfo $2"
+        exit
+
+    elif [[ ${!i} = gettxoutsetinfo ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli gettxoutsetinfo"
+        exit
+
+    elif [[ ${!i} = getmininginfo ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli getmininginfo"
+        exit
+
+    elif [[ ${!i} = *start ]]; then
+        ((i++))
+        docker restart $BITCOIND_ID
+        exit
+
+    elif [[ ${!i} = stop ]]; then
+        ((i++))
+        docker stop $BITCOIND_ID
+        exit
+
+    elif [[ ${!i} = *shell ]]; then
+        ((i++))
+        docker exec -it $BITCOIND_ID sh
+        exit
+
+    elif [[ ${!i} == *help ]]; then
+        ((i++))
+        echo
+        echo "play-bitcoind             top   "
+        echo "play-bitcoind             netinfo 5 "
+        echo "play-bitcoind             shell "
+        echo "play-bitcoind             start "
+        echo "play-bitcoind             stop  "
+        echo
+        echo "play-bitcoind             '<COMMAND>'"
+        exit
+
+    elif [[ -n ${!i} ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c  "$1 $2 $3 $4 $5 $6 $7"
+        exit
+    fi
+
+done;
+play-bitcoind help;
+fi #end if docker hash
+
