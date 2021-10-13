@@ -1,7 +1,7 @@
 if [ -z "$1" ]
     then
     if [[ "$(echo uname -m)" == "arm64" ]];then
-        TRIPLET=aarch64-linx-gnu
+        TRIPLET="aarch64-linux-gnu"
         echo TRIPLET=$TRIPLET
     else
         #echo 'You must provide TRIPLET as first parameter'
