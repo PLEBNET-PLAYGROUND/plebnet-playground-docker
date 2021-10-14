@@ -33,6 +33,11 @@ do
         docker top $BITCOIND_ID
         exit
 
+    elif [[ ${!i} == iftop ]]; then
+        ((i++))
+        docker exec -it $BITCOIND_ID /bin/bash -c "test -x '$(which iftop)' && iftop $2 $3 $4 $5 || apt update && apt install -qq net-tools iftop > /dev/null && iftop $2 $3 $4 $5"
+        exit
+
     elif [[ ${!i} = netinfo ]]; then
         ((i++))
         docker exec $BITCOIND_ID sh -c "bitcoin-cli -netinfo $2"

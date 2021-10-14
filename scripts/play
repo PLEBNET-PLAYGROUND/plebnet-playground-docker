@@ -132,6 +132,8 @@ export BTCD_IMAGE
         ((i++))
         echo
         echo "play                     info"
+        echo "play                     ifconfig"
+        echo "play                     iftop -i eth0 -P"
         echo "play                     ids"
         echo "play                     top   <CONTAINER_ID>"
         echo "play                     shell <CONTAINER_ID>"
@@ -145,6 +147,7 @@ export BTCD_IMAGE
         echo "play bitcoin gettxoutsetinfo"
         echo "play bitcoin getmininginfo"
         echo "play bitcoin 'bitcoin-cli getblockhash 1000'"
+        echo "play bitcoin iftop -i eth0 -P"
         echo
         echo "play lnd '<COMMAND>'"
         echo "play lnd"
@@ -153,6 +156,11 @@ export BTCD_IMAGE
     elif [[ ${!i} == *shell ]]; then
         ((i++))
         docker exec -it $LND_ID sh
+        exit
+
+    elif [[ ${!i} == iftop ]]; then
+        ((i++))
+        docker exec -it $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop $2 $3 $4 $5 || apk add iftop && iftop $2 $3 $4 $5"
         exit
 
     elif [ -n ${!i} ]; then

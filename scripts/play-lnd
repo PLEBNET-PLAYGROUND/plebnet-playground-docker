@@ -29,7 +29,6 @@ do
         echo $LND_ID
         exit
 
-
     elif [[ ${!i} = top ]]; then
         ((i++))
         docker top $LND_ID
@@ -55,13 +54,20 @@ do
         docker exec -it $LND_ID sh
         exit
 
+    elif [[ ${!i} = iftop ]]; then
+        ((i++))
+        docker exec -it $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop $2 $3 $4 $5 || apk add iftop && iftop $2 $3 $4 $5"
+        exit
+
     elif [[ ${!i} == *help ]]; then
         ((i++))
         echo
-        echo "play-lnd             top   "
-        echo "play-lnd             shell "
-        echo "play-lnd             start "
-        echo "play-lnd             stop  "
+        echo "play-lnd             top"
+        echo "play-lnd             ifconfig"
+        echo "play-lnd             iftop -i eth0 -P"
+        echo "play-lnd             shell"
+        echo "play-lnd             start"
+        echo "play-lnd             stop"
         echo
         echo "play-lnd             '<COMMAND>'"
         exit
