@@ -35,12 +35,12 @@ do
         docker top $LND_ID
         exit
 
-    elif [[ ${!i} = netinfo ]]; then
+    elif [[ ${!i} = start ]]; then
         ((i++))
-        docker exec $LND_ID sh -c "bitcoin-cli -netinfo $2"
+        docker-compose up lnd
         exit
 
-    elif [[ ${!i} = *start ]]; then
+    elif [[ ${!i} = restart ]]; then
         ((i++))
         docker restart $LND_ID
         exit

@@ -92,7 +92,7 @@ export BTCD_IMAGE
 
     elif [[ ${!i} = lnd ]]; then
         ((i++))
-        play-lnd ${!i} $3 $4 $5 $6 $7
+        play-lnd ${!i} $2 $3 $4 $5 $6 $7 &
         exit
 
     elif [[ ${!i} = shell ]]; then
@@ -102,12 +102,25 @@ export BTCD_IMAGE
 
     elif [[ ${!i} = start ]]; then
         ((i++))
-        play-lnd start
+        echo LND_ID = $LND_ID
+        [[ -z $LND_ID ]]   && echo NOT EXIST $LND_ID && docker-compose up lnd &
+        [[ ! -z  $LND_ID ]] && echo NOT $LND_ID
+        [[ ! -z "$LND_ID" ]] && echo QUOTE NOT $LND_ID
+        play-lnd start &
+        exit
+
+    elif [[ ${!i} = restart ]]; then
+        ((i++))
+        echo LND_ID = $LND_ID
+        [[ -z $LND_ID ]]   && echo NOT EXIST $LND_ID && docker-compose up lnd &
+        [[ ! -z  $LND_ID ]] && echo NOT $LND_ID
+        [[ ! -z "$LND_ID" ]] && echo QUOTE NOT $LND_ID
+        play-lnd restart &
         exit
 
     elif [[ ${!i} = stop ]]; then
         ((i++))
-        play-lnd stop
+        play-lnd stop $LND_ID
         exit
 
     elif [[ ${!i} = bitcoin* ]]; then

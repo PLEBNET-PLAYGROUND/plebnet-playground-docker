@@ -94,8 +94,9 @@ jobs:
         run: |
           # play defaults to the lnd container
           play lnd
+          play lnd start &
+          play lnd restart &
           play lnd top
-          play lnd start
           play lnd lncli
           play lncli
           play lncli --version

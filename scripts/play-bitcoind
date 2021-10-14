@@ -48,7 +48,12 @@ do
         docker exec $BITCOIND_ID sh -c "bitcoin-cli getmininginfo"
         exit
 
-    elif [[ ${!i} = *start ]]; then
+    elif [[ ${!i} = start ]]; then
+        ((i++))
+        docker-compose up bitcoind
+        exit
+
+    elif [[ ${!i} = restart ]]; then
         ((i++))
         docker restart $BITCOIND_ID
         exit
