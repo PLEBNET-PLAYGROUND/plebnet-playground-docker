@@ -34,14 +34,9 @@ do
         docker top $LND_ID
         exit
 
-    elif [[ ${!i} = start ]]; then
+    elif [[ ${!i} = *start ]]; then
         ((i++))
-        docker-compose up lnd
-        exit
-
-    elif [[ ${!i} = restart ]]; then
-        ((i++))
-        docker restart $LND_ID
+        docker-compose up lnd &
         exit
 
     elif [[ ${!i} = stop ]]; then
@@ -77,6 +72,11 @@ do
         echo "play-lnd             stop"
         echo
         echo "play-lnd             '<COMMAND>'"
+        echo "play-lnd             balance"
+        echo
+        echo EXAMPLE:
+        echo
+        echo "play-lnd cd root && ./getcoins.py"
         exit
 
     elif [[ -n ${!i} ]]; then

@@ -52,7 +52,7 @@ export BTCD_IMAGE
         echo "ARGS:"
         echo
         echo "!i = ${!i}"
-        echo "0 = ${0}"
+        echo "0 = ${0}" #/usr/local/bin/play
         echo "1 = ${1}"
         echo "2 = ${2}"
         echo "3 = ${3}"
@@ -91,8 +91,11 @@ export BTCD_IMAGE
         exit
 
     elif [[ ${!i} = lnd ]]; then
+        #access play-lnd
+        #NOTE: $0 /usr/local/bin/play
+        #      $1 lnd
         ((i++))
-        play-lnd ${!i} $2 $3 $4 $5 $6 $7 &
+        play-lnd $2 $3 $4 $5 $6 $7 &
         exit
 
     elif [[ ${!i} = shell ]]; then
@@ -139,6 +142,7 @@ export BTCD_IMAGE
         echo "play                     shell <CONTAINER_ID>"
         echo "play                     start <CONTAINER_ID>"
         echo "play                     stop  <CONTAINER_ID>"
+        echo "play                     lncli -n signet walletbalance"
         echo
         echo "Examples:"
         echo
@@ -149,13 +153,19 @@ export BTCD_IMAGE
         echo "play bitcoin 'bitcoin-cli getblockhash 1000'"
         echo "play bitcoin iftop"
         echo
-        echo "play lnd '<COMMAND>'"
         echo "play lnd"
+        echo "play lnd '<COMMAND>'"
+        echo "play lnd id"
+        echo "play lnd top"
+        echo "play lnd info"
+        echo "play lnd ifconfig"
+        echo
+        echo "play-lnd balance"
         exit
 
     elif [[ ${!i} == *shell ]]; then
         ((i++))
-        docker exec -it $LND_ID sh
+        docker exec -it $LND_ID /bin/bash
         exit
 
     elif [[ ${!i} == iftop ]]; then
@@ -165,7 +175,7 @@ export BTCD_IMAGE
 
     elif [[ -n ${!i} ]]; then
         ((i++))
-        docker exec $LND_ID sh -c "$1 $2 $3 $4 $5 $6"
+        docker exec $LND_ID /bin/bash -c "$1 $2 $3 $4 $5 $6"
         exit
     fi
 
