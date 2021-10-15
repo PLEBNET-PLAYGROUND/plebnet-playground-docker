@@ -35,7 +35,7 @@ do
 
     elif [[ ${!i} == iftop ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID /bin/bash -c "test -x '$(which iftop)' && iftop $2 $3 $4 $5 || apt update && apt install -qq net-tools iftop > /dev/null && iftop $2 $3 $4 $5"
+        docker exec -it $BITCOIND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p $2 $3 $4 $5 || apt update && apt install -qq net-tools iftop > /dev/null && iftop -P -p $2 $3 $4 $5"
         exit
 
     elif [[ ${!i} = netinfo ]]; then
@@ -76,11 +76,13 @@ do
     elif [[ ${!i} == *help ]]; then
         ((i++))
         echo
-        echo "play-bitcoind             top   "
-        echo "play-bitcoind             netinfo 5 "
-        echo "play-bitcoind             shell "
-        echo "play-bitcoind             start "
-        echo "play-bitcoind             stop  "
+        echo "play-bitcoind             top"
+        echo "play-bitcoind             ifconfig"
+        echo "play-bitcoind             iftop"
+        echo "play-bitcoind             netinfo 5"
+        echo "play-bitcoind             shell"
+        echo "play-bitcoind             start"
+        echo "play-bitcoind             stop"
         echo
         echo "play-bitcoind             '<COMMAND>'"
         exit

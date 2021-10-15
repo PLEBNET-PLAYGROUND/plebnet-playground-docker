@@ -56,7 +56,14 @@ do
 
     elif [[ ${!i} = iftop ]]; then
         ((i++))
-        docker exec -it $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop $2 $3 $4 $5 || apk add iftop && iftop $2 $3 $4 $5"
+        docker exec -it $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        #docker exec $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        exit
+
+
+    elif [[ ${!i} = *balance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance"
         exit
 
     elif [[ ${!i} == *help ]]; then
@@ -64,7 +71,7 @@ do
         echo
         echo "play-lnd             top"
         echo "play-lnd             ifconfig"
-        echo "play-lnd             iftop -i eth0 -P"
+        echo "play-lnd             iftop"
         echo "play-lnd             shell"
         echo "play-lnd             start"
         echo "play-lnd             stop"
