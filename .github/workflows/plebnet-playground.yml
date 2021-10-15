@@ -85,7 +85,6 @@ jobs:
         run: |
           play bitcoin
           play bitcoin top
-          play bitcoin restart &
           play bitcoin netinfo 5
           play bitcoin gettxoutsetinfo
           play bitcoin getmininginfo
@@ -95,7 +94,6 @@ jobs:
           # play defaults to the lnd container
           play lnd
           play lnd top
-          play lnd restart &
           play lnd lncli
           play lncli
           play lncli --version
