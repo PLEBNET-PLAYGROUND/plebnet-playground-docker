@@ -307,6 +307,7 @@ endif
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
+	sudo -s bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
 #ifneq ($(PIP),)
 #	echo $(PIP)
 #	#bash -c "[[ '$(shell whoami)' != 'runner' ]] && $(PYTHON) -m ensurepip --upgrade --user"
