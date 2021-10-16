@@ -45,6 +45,7 @@ pip3 install -r requirements.txt
 | docs |  MKDocs documentation |
 | notebook |  Jupyter Notebook environment setup for lightning development |
 | dashboard |  Jupyter Dashboard |
+| lndg |  lndg Dashboard (available on port 8889) |
 
 ### Install and start all services (Intel x64 example)
 ***
