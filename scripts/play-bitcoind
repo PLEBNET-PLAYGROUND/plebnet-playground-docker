@@ -76,6 +76,7 @@ do
     elif [[ ${!i} == *help ]]; then
         ((i++))
         echo
+        echo "play-bitcoind             id"
         echo "play-bitcoind             top"
         echo "play-bitcoind             ifconfig"
         echo "play-bitcoind             iftop"

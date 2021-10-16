@@ -64,6 +64,7 @@ do
     elif [[ ${!i} == *help ]]; then
         ((i++))
         echo
+        echo "play-lnd             id"
         echo "play-lnd             top"
         echo "play-lnd             ifconfig"
         echo "play-lnd             iftop"
