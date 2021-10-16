@@ -134,10 +134,11 @@ export BTCD_IMAGE
     elif [[ ${!i} == *help ]]; then
         ((i++))
         echo
-        echo "play                     info"
-        echo "play                     ifconfig"
-        echo "play                     iftop"
         echo "play                     ids"
+        echo "play                     info"
+        echo "play                     iftop"
+        echo "play                     ifconfig"
+        echo "play                     balance"
         echo "play                     top   <CONTAINER_ID>"
         echo "play                     shell <CONTAINER_ID>"
         echo "play                     start <CONTAINER_ID>"
@@ -154,11 +155,12 @@ export BTCD_IMAGE
         echo "play bitcoin iftop"
         echo
         echo "play lnd"
-        echo "play lnd '<COMMAND>'"
         echo "play lnd id"
         echo "play lnd top"
         echo "play lnd info"
         echo "play lnd ifconfig"
+        echo "play lnd balance"
+        echo "play lnd '<COMMAND>'"
         echo
         echo "play-lnd balance"
         exit
@@ -171,6 +173,11 @@ export BTCD_IMAGE
     elif [[ ${!i} == iftop ]]; then
         ((i++))
         docker exec -it $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        exit
+
+    elif [[ ${!i} = *balance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance"
         exit
 
     elif [[ -n ${!i} ]]; then
