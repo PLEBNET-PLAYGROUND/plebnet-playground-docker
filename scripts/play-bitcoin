@@ -95,6 +95,6 @@ do
     fi
 
 done;
-play-bitcoind help;
+play-bitcoin help;
 fi #end if docker hash
 

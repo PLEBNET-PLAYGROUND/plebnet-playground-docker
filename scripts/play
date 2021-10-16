@@ -44,7 +44,6 @@ export BTCD_ID
 BTCD_IMAGE=$(echo $(docker images | awk '/btcd/'|awk ' {print $3}' | awk 'NR==1'))
 export BTCD_IMAGE
 
-
     if [[ ${!i} = info ]]; then
         ((i++))
         play ids
@@ -128,7 +127,7 @@ export BTCD_IMAGE
 
     elif [[ ${!i} = bitcoin* ]]; then
         ((i++))
-        play-bitcoind ${!i} $3 $4 $5 $6 $7
+        play-bitcoin ${!i} $3 $4 $5 $6 $7
         exit
 
     elif [[ ${!i} == *help ]]; then
@@ -144,6 +143,8 @@ export BTCD_IMAGE
         echo "play                     start <CONTAINER_ID>"
         echo "play                     stop  <CONTAINER_ID>"
         echo "play                     lncli -n signet walletbalance"
+        echo
+        echo "play                     tor-iftop"
         echo
         echo "Examples:"
         echo
@@ -173,6 +174,11 @@ export BTCD_IMAGE
     elif [[ ${!i} == iftop ]]; then
         ((i++))
         docker exec -it $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        exit
+
+    elif [[ ${!i} == tor-iftop ]]; then
+        ((i++))
+        docker exec -it $TOR_ID sh -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
         exit
 
     elif [[ ${!i} = *balance ]]; then
