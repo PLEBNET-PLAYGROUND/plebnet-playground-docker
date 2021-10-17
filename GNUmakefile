@@ -51,11 +51,15 @@ export DOCKER_COMPOSE
 
 PYTHON                                  := $(shell which python)
 export PYTHON
+PYTHON2                                 := $(shell which python2)
+export PYTHON2
 PYTHON3                                 := $(shell which python3)
 export PYTHON3
 
 PIP                                     := $(shell which pip)
 export PIP
+PIP2                                    := $(shell which pip2)
+export PIP2
 PIP3                                    := $(shell which pip3)
 export PIP3
 
@@ -237,8 +241,10 @@ report:
 	@echo '        - HOME=${HOME}'
 	@echo '        - PWD=${PWD}'
 	@echo '        - PYTHON=${PYTHON}'
+	@echo '        - PYTHON2=${PYTHON2}'
 	@echo '        - PYTHON3=${PYTHON3}'
 	@echo '        - PIP=${PIP}'
+	@echo '        - PIP2=${PIP2}'
 	@echo '        - PIP3=${PIP3}'
 	@echo '        - UMBREL=${UMBREL}'
 	@echo '        - THIS_FILE=${THIS_FILE}'
@@ -297,18 +303,28 @@ ifneq ($(shell id -u),0)
 	@echo 'sudo make init #try if permissions issue'
 endif
 	@echo 'init'
+	bash -c "./scripts/install-python3.8.sh"
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
+	sudo -s bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
+#ifneq ($(PIP),)
+#	echo $(PIP)
+#	#bash -c "[[ '$(shell whoami)' != 'runner' ]] && $(PYTHON) -m ensurepip --upgrade --user"
+#	$(PIP) install omegaconf==2.1.1
+#	$(PIP) install -r requirements.txt
+#	./plebnet_generate.py TRIPLET=$(TRIPLET)
+#	pushd docs && $(PIP) install -r requirements.txt && popd
 ifneq ($(PIP3),)
+	echo $(PIP3)
+	#bash -c "[[ '$(shell whoami)' != 'runner' ]] && $(PYTHON3) -m ensurepip --upgrade --user"
+	$(PIP3) install --upgrade pip
+	$(PYTHON3) -m pip install omegaconf==2.1.1
 	$(PIP3) install -r requirements.txt
-	$(PYTHON3) ./plebnet_generate.py TRIPLET=$(TRIPLET)
+	./plebnet_generate.py TRIPLET=$(TRIPLET)
 	pushd docs && $(PIP3) install -r requirements.txt && popd
-else
-	$(PIP) install -r requirements.txt
-	$(PYTHON) ./plebnet_generate.py TRIPLET=$(TRIPLET)
-	pushd docs && $(PIP) install -r requirements.txt && popd
 endif
+#endif
 	
 else
 	        bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'

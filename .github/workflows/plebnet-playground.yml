@@ -50,11 +50,10 @@ jobs:
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
           make init help report
-          play
           make build nocache=true
           make build para=true
           make install verbose=true
-          make uninstall
+          #make uninstall
 
   ubuntu-20-build_and_test:
     runs-on: ubuntu-20.04
@@ -64,16 +63,46 @@ jobs:
           access_token: ${{ github.token }}
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: make init help report
+        run: |
+          make init help report
       - name: install, build, and test
         run: |
           sudo apt install python python3
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
-          make init help report
-          play
           make build nocache=true
           make build para=true
           make install verbose=true
+          #make uninstall
+      - name: play
+        run: |
+          make install
+          play
+          play info
+          play ids
+      - name: bitcoind-commands
+        run: |
+          make install
+          play bitcoin
+          play bitcoin top
+          play bitcoin netinfo 5
+          play bitcoin gettxoutsetinfo
+          play bitcoin getmininginfo
+          play bitcoin 'bitcoin-cli getblockhash 1000'
+      - name: lnd-commands
+        run: |
+          make install
+          # play defaults to the lnd container
+          play lnd
+          play lnd top
+          play lnd lncli
+          play lncli
+          play lncli --version
+          play lnd 'lncli --version'
+
+      - name: uninstall
+        run: |
           make uninstall
 

@@ -1,0 +1,92 @@
+#!/bin/bash
+
+if hash docker 2>/dev/null; then
+
+LND_ID=$(echo $(docker ps | awk '/docker_lnd/'|awk ' {print $1}' | awk 'NR==1'))
+export LND_ID
+LND_IMAGE=$(echo $(docker images | awk '/docker_lnd/'|awk ' {print $3}' | awk 'NR==1'))
+export LND_IMAGE
+
+for ((i=1;i<=$#;i++));
+do
+
+    if [[ ${!i} = info ]]; then
+        ((i++))
+        echo "!i = ${!i}"
+        echo "0 = $0"
+        echo "1 = $1"
+        echo "2 = $2"
+        echo "3 = $3"
+        echo "4 = $4"
+        echo "5 = $5"
+        echo "6 = $6"
+        echo "7 = $7"
+        echo $LND_ID
+        exit
+
+    elif [[ ${!i} = id ]]; then
+        ((i++))
+        echo $LND_ID
+        exit
+
+    elif [[ ${!i} = top ]]; then
+        ((i++))
+        docker top $LND_ID
+        exit
+
+    elif [[ ${!i} = *start ]]; then
+        ((i++))
+        docker-compose up lnd &
+        exit
+
+    elif [[ ${!i} = stop ]]; then
+        ((i++))
+        docker stop $LND_ID
+        exit
+
+    elif [[ ${!i} = *shell ]]; then
+        ((i++))
+        docker exec -it $LND_ID sh
+        exit
+
+    elif [[ ${!i} = iftop ]]; then
+        ((i++))
+        docker exec -it $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        #docker exec $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        exit
+
+
+    elif [[ ${!i} = *balance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance"
+        exit
+
+    elif [[ ${!i} == *help ]]; then
+        ((i++))
+        echo
+        echo "play-lnd             id"
+        echo "play-lnd             top"
+        echo "play-lnd             ifconfig"
+        echo "play-lnd             iftop"
+        echo "play-lnd             shell"
+        echo "play-lnd             start"
+        echo "play-lnd             stop"
+        echo
+        echo "play-lnd             '<COMMAND>'"
+        echo "play-lnd             balance"
+        echo
+        echo EXAMPLE:
+        echo
+        echo "play-lnd cd root && ./getcoins.py"
+        exit
+
+    elif [[ -n ${!i} ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c  "$1 $2 $3 $4"
+        exit
+    fi
+
+done;
+play-lnd help;
+fi #end if docker hash
+

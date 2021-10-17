@@ -1,10 +1,12 @@
 #!/bin/bash
 
 if hash docker 2>/dev/null; then
+for ((i=1;i<=$#;i++));
+do
 
-THUNDERHUB_ID=$(echo $(docker ps | awk '/thunderhub/'|awk ' {print $1}' | awk 'NR==1'))
+THUNDERHUB_ID=$(echo $(docker ps | awk '/docker_thunderhub/'|awk ' {print $1}' | awk 'NR==1'))
 export THUNDERHUB_ID
-THUNDERHUB_IMAGE=$(echo $(docker images | awk '/thunderhub/'|awk ' {print $3}' | awk 'NR==1'))
+THUNDERHUB_IMAGE=$(echo $(docker images | awk '/docker_thunderhub/'|awk ' {print $3}' | awk 'NR==1'))
 export THUNDERHUB_IMAGE
 
 RTL_ID=$(echo $(docker ps | awk '/rtl/'|awk ' {print $1}' | awk 'NR==1'))
@@ -12,24 +14,29 @@ export RTL_ID
 RTL_IMAGE=$(echo $(docker images | awk '/rtl/'|awk ' {print $3}' | awk 'NR==1'))
 export RTL_IMAGE
 
-LND_ID=$(echo $(docker ps | awk '/lnd/'|awk ' {print $1}' | awk 'NR==1'))
+LND_ID=$(echo $(docker ps | awk '/docker_lnd/'|awk ' {print $1}' | awk 'NR==1'))
 export LND_ID
-LND_IMAGE=$(echo $(docker images | awk '/lnd/'|awk ' {print $3}' | awk 'NR==1'))
+LND_IMAGE=$(echo $(docker images | awk '/docker_lnd/'|awk ' {print $3}' | awk 'NR==1'))
 export LND_IMAGE
 
-DOCS_ID=$(echo $(docker ps | awk '/docs/'|awk ' {print $1}' | awk 'NR==1'))
+LNDG_ID=$(echo $(docker ps | awk '/cryptosharks131/'|awk ' {print $1}' | awk 'NR==1'))
+export LNDG_ID
+LNDG_IMAGE=$(echo $(docker images | awk '/cryptosharks131/'|awk ' {print $3}' | awk 'NR==1'))
+export LNDG_IMAGE
+
+DOCS_ID=$(echo $(docker ps | awk '/docker_docs/'|awk ' {print $1}' | awk 'NR==1'))
 export DOCS_ID
-DOCS_IMAGE=$(echo $(docker images | awk '/docs/'|awk ' {print $3}' | awk 'NR==1'))
+DOCS_IMAGE=$(echo $(docker images | awk '/docker_docs/'|awk ' {print $3}' | awk 'NR==1'))
 export DOCS_IMAGE
 
-BITCOIND_ID=$(echo $(docker ps | awk '/bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
+BITCOIND_ID=$(echo $(docker ps | awk '/docker_bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
 export BITCOIND_ID
-BITCOIND_IMAGE=$(echo $(docker images | awk '/bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
+BITCOIND_IMAGE=$(echo $(docker images | awk '/docker_bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
 export BITCOIND_IMAGE
 
-TOR_ID=$(echo $(docker ps | awk '/tor/'|awk ' {print $1}' | awk 'NR==1'))
+TOR_ID=$(echo $(docker ps | awk '/docker_tor/'|awk ' {print $1}' | awk 'NR==1'))
 export TOR_ID
-TOR_IMAGE=$(echo $(docker images | awk '/tor/'|awk ' {print $3}' | awk 'NR==1'))
+TOR_IMAGE=$(echo $(docker images | awk '/docker_tor/'|awk ' {print $3}' | awk 'NR==1'))
 export TOR_IMAGE
 
 BTCD_ID=$(echo $(docker ps | awk '/btcd/'|awk ' {print $1}' | awk 'NR==1'))
@@ -37,112 +44,156 @@ export BTCD_ID
 BTCD_IMAGE=$(echo $(docker images | awk '/btcd/'|awk ' {print $3}' | awk 'NR==1'))
 export BTCD_IMAGE
 
-for ((i=1;i<=$#;i++));
-do
-
-    if [[ ${!i} = *ids ]]; then
+    if [[ ${!i} = info ]]; then
         ((i++))
-        echo THUNDERHUB_ID:
-        echo $THUNDERHUB_ID
-        echo RTL_ID:
-        echo $RTL_ID
-        echo LND_ID:
-        echo $LND_ID
-        echo DOCS_ID:
-        echo $DOCS_ID
-        echo BITCOIND_ID:
-        echo $BITCOIND_ID
-        echo TOR_ID:
-        echo $TOR_ID
-        [ -z "$BTCD_ID" ] && echo "try 'make btcd'"|| echo BTCD_ID:
-        [ -z "$BTCD_ID" ] && echo || echo $BTCD_ID
+        play ids
+        echo
+        echo "ARGS:"
+        echo
+        echo "!i = ${!i}"
+        echo "0 = ${0}" #/usr/local/bin/play
+        echo "1 = ${1}"
+        echo "2 = ${2}"
+        echo "3 = ${3}"
+        echo "4 = ${4}"
+        echo "5 = ${5}"
+        echo "6 = ${6}"
+        echo "7 = ${7}"
+        exit
+
+    elif [[ ${!i} = *ids ]]; then
+        ((i++))
+        echo
+        echo "THUNDERHUB_ID:            $THUNDERHUB_ID"
+        echo "RTL_ID:                   $RTL_ID"
+        echo "LND_ID:                   $LND_ID"
+        echo "LNDG_ID:                  $LNDG_ID"
+        echo "DOCS_ID:                  $DOCS_ID"
+        echo "BITCOIND_ID:              $BITCOIND_ID"
+        echo "TOR_ID:                   $TOR_ID"
+        echo
+        #[ -z "$BTCD_ID" ] && echo "try 'make btcd'"|| echo BTCD_ID:
+        #[ -z "$BTCD_ID" ] && echo || echo $BTCD_ID
         exit
 
     elif [[ ${!i} = *images ]]; then
         ((i++))
-        echo THUNDERHUB_IMAGE:
-        echo $THUNDERHUB_IMAGE
-        echo RTL_IMAGE:
-        echo $RTL_IMAGE
-        echo LND_IMAGE:
-        echo $LND_IMAGE
-        echo DOCS_IMAGE:
-        echo $DOCS_IMAGE
-        echo BITCOIND_IMAGES:
-        echo $BITCOIND_IMAGE
-        echo TOR_IMAGE:
-        echo $TOR_IMAGE
-        [ -z "$BTCD_IMAGE" ] && echo "try 'make btcd'"|| echo BTCD_IMAGE:
-        [ -z "$BTCD_IMAGE" ] && echo || echo $BTCD_IMAGE
+        echo "THUNDERHUB_IMAGE:          $THUNDERHUB_IMAGE"
+        echo "RTL_IMAGE:                 $RTL_IMAGE"
+        echo "LND_IMAGE:                 $LND_IMAGE"
+        echo "LNDG_IMAGE:                $LNDG_IMAGE"
+        echo "DOCS_IMAGE:                $DOCS_IMAGE"
+        echo "BITCOIND_IMAGES:           $BITCOIND_IMAGE"
+        echo "TOR_IMAGE:                 $TOR_IMAGE"
+        #[ -z "$BTCD_IMAGE" ] && echo "try 'make btcd'"|| echo BTCD_IMAGE:
+        #[ -z "$BTCD_IMAGE" ] && echo || echo $BTCD_IMAGE
         exit
 
-    elif [[ ${!i} = top ]]; then
+    elif [[ ${!i} = lnd ]]; then
+        #access play-lnd
+        #NOTE: $0 /usr/local/bin/play
+        #      $1 lnd
         ((i++))
-        docker top ${!i}
+        play-lnd $2 $3 $4 $5 $6 $7 &
         exit
 
-    elif [[ ${!i} = *start ]]; then
+    elif [[ ${!i} = shell ]]; then
         ((i++))
-        docker restart ${!i}
+        play-lnd shell
+        exit
+
+    elif [[ ${!i} = start ]]; then
+        ((i++))
+        echo LND_ID = $LND_ID
+        [[ -z $LND_ID ]]   && echo NOT EXIST $LND_ID && docker-compose up lnd &
+        [[ ! -z  $LND_ID ]] && echo NOT $LND_ID
+        [[ ! -z "$LND_ID" ]] && echo QUOTE NOT $LND_ID
+        play-lnd start &
+        exit
+
+    elif [[ ${!i} = restart ]]; then
+        ((i++))
+        echo LND_ID = $LND_ID
+        [[ -z $LND_ID ]]   && echo NOT EXIST $LND_ID && docker-compose up lnd &
+        [[ ! -z  $LND_ID ]] && echo NOT $LND_ID
+        [[ ! -z "$LND_ID" ]] && echo QUOTE NOT $LND_ID
+        play-lnd restart &
         exit
 
     elif [[ ${!i} = stop ]]; then
         ((i++))
-        docker stop ${!i}
+        play-lnd stop $LND_ID
         exit
 
-    elif [[ ${!i} = *cli ]]; then
+    elif [[ ${!i} = bitcoin* ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoin-cli $2 $3 $4"
-        [ -z "$BTCD_ID" ] && echo || docker exec -it $BTCD_ID sh -c  "/usr/local/bin/bitcoin-cli $2 $3 $4"
+        play-bitcoin ${!i} $3 $4 $5 $6 $7
         exit
-
-    elif [[ ${!i} = *d ]]; then
-        ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "/usr/local/bin/bitcoind $2 $3 $4"
-        [ -z "$BTCD_ID" ] && echo || docker exec -it $BTCD_ID sh -c  "/usr/local/bin/bitcoind $2 $3 $4"
-        exit
-
-    elif [[ ${!i} = *shell ]]; then
-        ((i++))
-        [ -z "$2" ] && echo "try 'play ids' then 'make shell <CONTAINER_ID>'" || docker exec -it $2 sh
-        exit
-
-    elif [[ ${!i} = *debug ]]; then
-        ((i++))
-        docker exec -it $BITCOIND_ID sh -c "tail -f /home/root/.bitcoin"
 
     elif [[ ${!i} == *help ]]; then
         ((i++))
         echo
         echo "play                     ids"
+        echo "play                     info"
+        echo "play                     iftop"
+        echo "play                     ifconfig"
+        echo "play                     balance"
         echo "play                     top   <CONTAINER_ID>"
         echo "play                     shell <CONTAINER_ID>"
         echo "play                     start <CONTAINER_ID>"
         echo "play                     stop  <CONTAINER_ID>"
+        echo "play                     lncli -n signet walletbalance"
+        echo
+        echo "play                     tor-iftop"
         echo
         echo "Examples:"
         echo
-        echo "docker exec -it <CONTAINER_ID> sh    - enter container shell"
+        echo "play bitcoin '<COMMAND>'"
+        echo "play bitcoin netinfo 5"
+        echo "play bitcoin gettxoutsetinfo"
+        echo "play bitcoin getmininginfo"
+        echo "play bitcoin 'bitcoin-cli getblockhash 1000'"
+        echo "play bitcoin iftop"
         echo
-        echo "playground-bitcoind"
+        echo "play lnd"
+        echo "play lnd id"
+        echo "play lnd top"
+        echo "play lnd info"
+        echo "play lnd ifconfig"
+        echo "play lnd balance"
+        echo "play lnd '<COMMAND>'"
         echo
-        echo "play -cli gettxoutsetinfo"
-        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli gettxoutsetinfo'"
-        echo "play -cli getmininginfo"
-        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli getmininginfo'"
-        echo "play -cli 'getblockhash 1000'"
-        echo "docker exec -it $BITCOIND_ID sh -c  '/usr/local/bin/bitcoin-cli $1'"
-        echo
+        echo "play-lnd balance"
         exit
 
-    elif [ -n ${!i} ]; then
+    elif [[ ${!i} == *shell ]]; then
         ((i++))
-        docker exec -it $BITCOIND_ID sh -c  "$1"
+        docker exec -it $LND_ID /bin/bash
+        exit
+
+    elif [[ ${!i} == iftop ]]; then
+        ((i++))
+        docker exec -it $LND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        exit
+
+    elif [[ ${!i} == tor-iftop ]]; then
+        ((i++))
+        docker exec -it $TOR_ID sh -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        exit
+
+    elif [[ ${!i} = *balance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance"
+        exit
+
+    elif [[ -n ${!i} ]]; then
+        ((i++))
+        docker exec $LND_ID /bin/bash -c "$1 $2 $3 $4 $5 $6"
         exit
     fi
 
 done;
-play help;
+#play     ids;
+play     help;
 fi #end if docker hash
 
