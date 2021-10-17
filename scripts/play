@@ -133,37 +133,37 @@ export BTCD_IMAGE
     elif [[ ${!i} == *help ]]; then
         ((i++))
         echo
-        echo "play                     ids"
-        echo "play                     info"
-        echo "play                     iftop"
-        echo "play                     ifconfig"
-        echo "play                     balance"
-        echo "play                     top   <CONTAINER_ID>"
-        echo "play                     shell <CONTAINER_ID>"
-        echo "play                     start <CONTAINER_ID>"
-        echo "play                     stop  <CONTAINER_ID>"
-        echo "play                     lncli -n signet walletbalance"
+        echo "	play                     ids"
+        echo "	play                     info"
+        echo "	play                     iftop"
+        echo "	play                     ifconfig"
+        echo "	play                     balance"
+        echo "	play                     top   <CONTAINER_ID>"
+        echo "	play                     shell <CONTAINER_ID>"
+        echo "	play                     start <CONTAINER_ID>"
+        echo "	play                     stop  <CONTAINER_ID>"
+        echo "	play                     lncli -n signet walletbalance"
         echo
-        echo "play                     tor-iftop"
+        echo "	play                     tor-iftop"
         echo
-        echo "Examples:"
+        echo "	Examples:"
         echo
-        echo "play bitcoin '<COMMAND>'"
-        echo "play bitcoin netinfo 5"
-        echo "play bitcoin gettxoutsetinfo"
-        echo "play bitcoin getmininginfo"
-        echo "play bitcoin 'bitcoin-cli getblockhash 1000'"
-        echo "play bitcoin iftop"
+        echo "	play bitcoin '<COMMAND>'"
+        echo "	play bitcoin netinfo 5"
+        echo "	play bitcoin gettxoutsetinfo"
+        echo "	play bitcoin getmininginfo"
+        echo "	play bitcoin 'bitcoin-cli getblockhash 1000'"
+        echo "	play bitcoin iftop"
         echo
-        echo "play lnd"
-        echo "play lnd id"
-        echo "play lnd top"
-        echo "play lnd info"
-        echo "play lnd ifconfig"
-        echo "play lnd balance"
-        echo "play lnd '<COMMAND>'"
+        echo "	play lnd"
+        echo "	play lnd id"
+        echo "	play lnd top"
+        echo "	play lnd info"
+        echo "	play lnd ifconfig"
+        echo "	play lnd balance"
+        echo "	play lnd '<COMMAND>'"
         echo
-        echo "play-lnd balance"
+        echo "	play-lnd balance"
         exit
 
     elif [[ ${!i} == *shell ]]; then

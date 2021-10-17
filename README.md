@@ -59,23 +59,52 @@ TRIPLET=x86_64-linux-gnu ./install.sh
 TRIPLET=x86_64-linux-gnu services=bitcoind,lnd ./install.sh   
 ```
 
-### Stop containers
-***
-```
-docker-compose stop
-```
 ### Start containers
 ***
 ```
 docker-compose up -d
 ```
+
+### Stop containers
+***
+```
+docker-compose stop
+```
+
 ### Full removal of Plebnet Playground (this deletes all data out of volumes directory)
 ***
 ```
 ./uninstall.sh
 ```
-### Setup bash aliases for your convenience
 ***
+
+## [Make](MAKE.md) Command
+
+### Ubuntu Linux
+
+```
+apt install make
+```
+
+### MacOS
+
+#### Install [Homebrew](https://brew.sh)
+
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+```
+brew install make
+```
+
+## [Play](PLAY.md) Command
+
+```
+make init && play help
+```
+***
+
+## Aliases
 ```
 alias lncli='docker exec -it playground-lnd lncli --macaroonpath /root/.lnd/data/chain/bitcoin/signet/admin.macaroon '
 
@@ -105,30 +134,35 @@ alias restart-thub='docker restart playground-thub'
 
 alias bos="docker run -it --rm -v $PWD/volumes/bos_datadir:/home/node/.bos:rw --network plebnet-playground-docker_default alexbosworth/balanceofsatoshis"
 ```
-### Your first playground LND wallet
+***
+
+## Your first playground LND wallet
 ***
 
 The wallet will automatically be made for you and use the default password  is ```12345678```
 You can change the password with the ```change-password-playground``` alias. If you do change your password make sure to update the ```unlock.password``` file with your new password.
 
  
-### Make your first peer with the seed node for Plebnet Playground Signet
+## Make your first peer with the seed node for Plebnet Playground Signet
 ***
 - ```connect-playground```
 - Now you should get some gossip about the network and be able to run something like this ```lncli describegraph | jq .nodes[] | grep "alias"``` and see a list of the various node aliases on the network
 - FYI, your alias is not set in default configuration to avoid confusion, go ahead and edit your ```lnd.conf``` and make an ```alias=YourNewAliasName``` parameter and restart the container.
 - Get into the telegram group and ask for some playground signet coins and go wild.
-### Get some coins
+
+## Get some coins
 Install requirements ```pip3 install -r requirements.txt```
 Run the ```./getcoins.py``` script and you will get 1tBTC put into your lightning on-chain wallet.
-### RTL Setup
+
+## RTL Setup
 ***
 - RTL will at ```http://localhost:3000```, the default password is ```password``` and it will ask you to change this on first login.
-### ThunderHub Setup
+
+## ThunderHub Setup
 ***
 - ThunderHub will at at ```http://localhost:3001```, the default password is ```password```. You can change that by editing the ```volumes/thub_datadir/thubConfig.yaml```. Change `masterPassword: thunderhub-$2a$12$oRzmFZSOmvYv1heHkU053uv0a1tX9MXNqmcMpZs2hQ0t8k1Onnk1a` to `masterPassword: mynewpassword`. Then restart thunderhub using alias `restart-thub`. The masterPassword entry should automatically be converted to the hashed version of the password.
 
-### How to setup Balance of Satoshis (BOS)
+## How to setup Balance of Satoshis (BOS)
 ***
 
 You may install bos only **after** you have generated an lnd wallet with `create-lnd-wallet`.
@@ -143,7 +177,7 @@ bos --version
 10.9.2
 ```
 
-### How to setup plebnet dashboard
+## How to setup plebnet dashboard
 
 The interactive dashboard is an experimental visualization engine for viewing the lightning network.
 If you used the `docker-compose up -d` command above, then the dashboard will run on http://localhost:8050
@@ -156,13 +190,15 @@ USE_TEST_DATA=TRUE docker-compose up dashboard
 
 ![Plebnet Dashboard](images/plebnet_dashboard.png)
 
-### Additional reference material
+## Additional reference material
+
+### Links
 - [Plebnet Wiki](https://plebnet.wiki)
 - [Bitcoin Wiki](https://bitcoin.it)
 - [Lightning Wiki](https://lightningwiki.net/index.php/Main_Page)
 - [Plebnet Telegram](http://plebnet.org/)
   
-### Thanks to the contributors to project development & testing
+### Contributors
 - [Richard Safier](https://github.com/rsafier)
 - [Nan Liu](https://github.com/nanliu)
 - Lamar Wilson
@@ -173,3 +209,4 @@ USE_TEST_DATA=TRUE docker-compose up dashboard
 - [@asherp](https://github.com/asherp)
 - [@RandyMcMillan](https://github.com/randymcmillan)
 - @nitesh_btc
+
