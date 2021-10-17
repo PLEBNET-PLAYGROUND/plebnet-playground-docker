@@ -201,12 +201,12 @@ USE_TEST_DATA=TRUE docker-compose up dashboard
 ### Contributors
 - [Richard Safier](https://github.com/rsafier)
 - [Nan Liu](https://github.com/nanliu)
-- Lamar Wilson
+- [Lamar Wilson](https://twitter.com/bigmarh)
 - [@Exfrog](https://github.com/exfrog)
-- @stflowstate
+- [@stflowstate](https://twitter.com/Stflowstate)
 - John Doe
-- @rafgxyz
+- [@rafgxyz](https://t.me/rafgxyz)
 - [@asherp](https://github.com/asherp)
 - [@RandyMcMillan](https://github.com/randymcmillan)
-- @nitesh_btc
+- [@nitesh_btc](https://twitter.com/nitesh_btc)
 

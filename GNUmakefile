@@ -227,7 +227,7 @@ help:
 	@echo ''
 	@echo '	[EXAMPLES]:'
 	@echo ''
-	@echo '		make run no-cache=true verbose=true'
+	@echo '		make run nocache=true verbose=true'
 	@echo ''
 	@echo '		make init && play help'
 	@echo '	'
