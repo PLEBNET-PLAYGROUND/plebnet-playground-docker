@@ -191,17 +191,17 @@ help:
 	@echo ''
 	@echo ''
 	@echo '		 make '
-	@echo '		 make help             print help'
-	@echo '		 make init             initialize basic dependencies'
-	@echo '		 make report           print environment variables'
+	@echo '		 make help                       print help'
+	@echo '		 make init                       initialize basic dependencies'
+	@echo '		 make report                     print environment variables'
 	@echo '		 make build'
 	@echo '		 make run'
-	@echo '		                       user=root uid=0 nocache=false verbose=false'
+	@echo '		                                 nocache=true verbose=true'
 	@echo ''
 	@echo '	[DEV ENVIRONMENT]:	'
 	@echo ''
 #	@echo '		 make shell            compiling environment on host machine'
-	@echo '		 make signin           ~/GH_TOKEN.txt required from github.com'
+	@echo '		 make signin profile=gh-user     ~/GH_TOKEN.txt required from github.com'
 #	@echo '		 make header package-header'
 	@echo '		 make build'
 #	@echo '		 make build package-statoshi'
@@ -227,8 +227,7 @@ help:
 	@echo ''
 	@echo '	[EXAMPLES]:'
 	@echo ''
-	@echo '		make all run user=root uid=0 no-cache=true verbose=true'
-	@echo '		make report all run user=root uid=0 no-cache=true verbose=true cmd="top"'
+	@echo '		make run nocache=true verbose=true'
 	@echo ''
 	@echo '		make init && play help'
 	@echo '	'
@@ -352,9 +351,16 @@ build: init
 btcd:
 	bash -c "cd btcd && make btcd && cd .."
 .PHONY: docs
-docs:
+docs: init
 	@echo "Use 'make docs nocache=true' to force docs rebuild..."
+	echo "## MAKE COMMAND" > MAKE.md
+	make >> MAKE.md
+	echo "## PLAY COMMAND" > PLAY.md
+	play >> PLAY.md
+
 	install -v README.md docs/docs/index.md
+	install -v MAKE.md docs/docs/MAKE.md
+	install -v PLAY.md docs/docs/PLAY.md
 	sed 's/images/.\/images/' README.md > docs/docs/index.md
 	cp -R ./images ./docs/docs
 	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) docs
