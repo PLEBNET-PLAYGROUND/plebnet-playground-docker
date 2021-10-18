@@ -320,14 +320,15 @@ ifneq ($(PIP3),)
 	$(PIP3) install --upgrade pip
 	$(PYTHON3) -m pip install omegaconf==2.1.1
 	$(PIP3) install -r requirements.txt
-	./plebnet_generate.py TRIPLET=$(TRIPLET)
 	pushd docs && $(PIP3) install -r requirements.txt && popd
 endif
 #endif
 	
 else
-	        bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
+	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
+	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
 endif
+	./plebnet_generate.py TRIPLET=$(TRIPLET)
 #######################
 .PHONY: install
 install: init
