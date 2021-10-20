@@ -114,17 +114,13 @@ extra:
     property: !ENV GOOGLE_ANALYTICS_KEY
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/squidfunk
-    - icon: fontawesome/brands/gitter
-      link: https://gitter.im/squidfunk/mkdocs-material
+      link: https://github.com/PLEBNET-PLAYGROUND
     - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/r/squidfunk/mkdocs-material/
+      link: https://github.com/orgs/PLEBNET-PLAYGROUND/packages
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/squidfunk
-    - icon: fontawesome/brands/linkedin
-      link: https://linkedin.com/in/squidfunk/
-    - icon: fontawesome/brands/instagram
-      link: https://instagram.com/squidfunk
+      link: https://twitter.com/NodeHello
+    - icon: fontawesome/solid/faucet
+      link: https://www.plebnet.fun
 
 # Extensions
 markdown_extensions:

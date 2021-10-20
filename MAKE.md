@@ -20,7 +20,7 @@
 
 	[EXAMPLES]:
 
-		make run no-cache=true verbose=true
+		make run nocache=true verbose=true
 
 		make init && play help
 	
