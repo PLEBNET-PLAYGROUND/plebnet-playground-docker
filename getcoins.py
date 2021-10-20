@@ -10,6 +10,12 @@ import requests
 import sys
 import json
 
+sys.path.append('.')
+sys.path.append("/usr/local/lib/python3.7/site-packages")
+sys.path.append("/usr/local/lib/python3.8/site-packages")
+sys.path.append("/usr/local/lib/python3.9/site-packages")
+#print(sys.path)
+
 parser = argparse.ArgumentParser(description='Script to get coins from a faucet.')
 parser.add_argument('-c', '--cmd', dest='cmd', default='docker', help='bitcoin-cli command to use')
 parser.add_argument('-f', '--faucet', dest='faucet', default='http://signet.xenon.fun:5000/faucet', help='URL of the faucet')
@@ -17,7 +23,7 @@ parser.add_argument('-a', '--address', dest='address', default='', help='Bitcoin
 
 args = parser.parse_args()
 
-if args.address == '': 
+if args.address == '':
     # get address for receiving coins
     args.address = json.loads(subprocess.check_output([args.cmd] + ['exec','-it','playground-lnd', 'lncli', '--macaroonpath', '/root/.lnd/data/chain/bitcoin/signet/admin.macaroon', 'newaddress', 'p2wkh']))["address"]
 
