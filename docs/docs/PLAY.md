@@ -15,12 +15,15 @@
 
 	Examples:
 
-	play bitcoin '<COMMAND>'
+	play bitcoin id
+	play bitcoin iftop
 	play bitcoin netinfo 5
 	play bitcoin gettxoutsetinfo
 	play bitcoin getmininginfo
+
+	play bitcoin '<COMMAND>'
 	play bitcoin 'bitcoin-cli getblockhash 1000'
-	play bitcoin iftop
+	play bitcoin 'bitcoin-cli getblock $(bitcoin-cli getblockhash 0)'
 
 	play lnd
 	play lnd id
