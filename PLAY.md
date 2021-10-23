@@ -5,10 +5,10 @@
 	play                     iftop
 	play                     ifconfig
 	play                     balance
-	play                     top   <CONTAINER_ID>
-	play                     shell <CONTAINER_ID>
-	play                     start <CONTAINER_ID>
-	play                     stop  <CONTAINER_ID>
+	play                     top
+	play                     shell
+	play                     start
+	play                     stop
 	play                     lncli -n signet walletbalance
 
 	play                     tor-iftop
