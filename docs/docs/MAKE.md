@@ -8,6 +8,7 @@
 		 make init                       initialize basic dependencies
 		 make report                     print environment variables
 		 make build
+		 make install
 		 make run
 		                                 nocache=true verbose=true
 

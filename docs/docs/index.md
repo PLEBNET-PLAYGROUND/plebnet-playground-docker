@@ -88,19 +88,29 @@ apt install make
 
 ### MacOS
 
+#### [Change default shell to bash](https://www.howtogeek.com/444596/how-to-change-the-default-shell-to-bash-in-macos-catalina/)
+```
+cat /etc/shells
+chsh -s /bin/bash
+```
+
 #### Install [Homebrew](https://brew.sh)
 
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 ```
-brew install make
+brew install make docker-compose
+brew install --cask docker
+open /Applications/Docker.app
 ```
 
 ## [Play](PLAY.md) Command
 
 ```
-make init && play help
+make
+make init
+make install && play help
 ```
 ***
 
