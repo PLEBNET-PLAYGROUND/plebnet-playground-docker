@@ -240,8 +240,9 @@ services:
         - TRIPLET=${TRIPLET}
     expose:
     - "8000"
+    - "8008"
     ports:
-    - "8000:8000"
+    - "8008:8000"
     volumes:
       - type: bind
         source: ${oc.env:PWD}/docs
