@@ -8,6 +8,7 @@
 		 make report                     print environment variables
 		 make init                       initialize basic dependencies
 		 make build
+		 make build para=true            parallelized build
 		 make install
 		 make run
 		                                 nocache=true verbose=true

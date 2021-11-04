@@ -195,6 +195,7 @@ help:
 	@echo '		 make report                     print environment variables'
 	@echo '		 make init                       initialize basic dependencies'
 	@echo '		 make build'
+	@echo '		 make build para=true            parallelized build'
 	@echo '		 make install'
 	@echo '		 make run'
 	@echo '		                                 nocache=true verbose=true'
@@ -408,19 +409,19 @@ endif
 .PHONY: clean
 clean:
 	# remove created images
-	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down --remove-orphans --rmi all 2>/dev/null \
-	&& echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" removed.' \
-	|| echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" already removed.'
+	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down --remove-orphans --rmi all 2>/dev/null \
+	&& echo 'Image(s) for "$(PROJECT_NAME)" removed.' \
+	|| echo 'Image(s) for "$(PROJECT_NAME)" already removed.'
 #######################
 .PHONY: prune
 prune:
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
-	docker system prune -af
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
+	docker system prune -af &
 #######################
 .PHONY: prune-network
 prune-network:
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
-	docker network prune -f
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
+	docker network prune -f &
 #######################
 .PHONY: push
 push:
