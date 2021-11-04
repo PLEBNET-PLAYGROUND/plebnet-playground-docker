@@ -299,7 +299,7 @@ ifneq ($(shell id -u),0)
 	@echo 'sudo make init #try if permissions issue'
 endif
 	@echo 'init'
-	bash -c "./scripts/install-python3.8.sh"
+	#bash -c "./scripts/install-python3.8.sh"
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
