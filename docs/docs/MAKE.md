@@ -5,8 +5,8 @@
 
 		 make 
 		 make help                       print help
-		 make init                       initialize basic dependencies
 		 make report                     print environment variables
+		 make init                       initialize basic dependencies
 		 make build
 		 make install
 		 make run
