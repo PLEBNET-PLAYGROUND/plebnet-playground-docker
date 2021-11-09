@@ -1,0 +1,4 @@
+*
+!Dockerfile
+!bitcoin.conf
+!docker-entrypoint.sh
