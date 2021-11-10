@@ -20,7 +20,7 @@
 
 # Project information
 site_name: Plebnet Playground
-site_url: https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker/blob/master/docs/docs/index.md
+site_url: http://localhost:8008
 site_author: Richard Safier
 site_description: >-
   Plebnet Playground Sandbox Docker Package
