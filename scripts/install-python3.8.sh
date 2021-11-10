@@ -59,25 +59,48 @@ if [ "${arch_name}" = "x86_64" ]; then
         echo "Running on native Intel"
     fi
 elif [ "${arch_name}" = "arm64" ]; then
-    echo "Running on ARM"
+    echo "Running on arm64"
+elif [ "${arch_name}" = "aarch64" ]; then
+    echo "Running on aarch64"
 else
     echo "Unknown architecture: ${arch_name}"
 fi
 
 
-    if hash brew 2>/dev/null; then
-        brew install awk
-        brew install python@3.8
-        [ -f "/usr/local/opt/python@3.8/bin/python3" ] && python38=/usr/local/opt/python@3.8/bin/python3
-        [ -f "/opt/homebrew/opt/python@3.8/bin/python3" ] && python38=/opt/homebrew/opt/python@3.8/bin/python3
-        export python38
-        $python38 -m pip install --upgrade pip
-        $python38 -m pip install omegaconf
-        echo
-    else
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-        checkbrew
-    fi
+if hash apt-get 2>/dev/null; then
+    sudo apt-get update
+    sudo apt-get install -y build-essential \
+        tk-dev libncurses5-dev libncursesw5-dev \
+        libreadline6-dev libdb5.3-dev libgdbm-dev \
+        libsqlite3-dev libssl-dev libbz2-dev \
+        libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
+    wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
+    tar xf Python-3.8.0.tar.xz
+    cd Python-3.8.0
+    ./configure --enable-optimizations --prefix=/usr
+    make
+    sudo make altinstall
+    cd ..
+    sudo rm -r Python-3.8.0
+    rm Python-3.8.0.tar.xz
+    . ~/.bashrc
+    sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
+    python -V
+fi
+
+if hash brew 2>/dev/null; then
+    brew install awk
+    brew install python@3.8
+    [ -f "/usr/local/opt/python@3.8/bin/python3" ] && python38=/usr/local/opt/python@3.8/bin/python3
+    [ -f "/opt/homebrew/opt/python@3.8/bin/python3" ] && python38=/opt/homebrew/opt/python@3.8/bin/python3
+    export python38
+    $python38 -m pip install --upgrade pip
+    $python38 -m pip install omegaconf
+    echo
+else
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    checkbrew
+fi
 }
 checkraspi(){
 
@@ -107,10 +130,9 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             sudo apt install gawk
             sudo apt update
             sudo apt install software-properties-common
-            sudo add-apt-repository ppa:deadsnakes/ppa
-            sudo apt install python3.8
             report
             echo 'Using apt...'
+            checkbrew
         fi
     fi
     if [[ "$OSTYPE" == "linux-musl" ]]; then
@@ -118,6 +140,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             apk add awk
             report
             echo 'Using apk...'
+            checkbrew
         fi
     fi
     if [[ "$OSTYPE" == "linux-arm"* ]]; then
@@ -126,6 +149,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             apt install awk
             report
             echo 'Using apt...'
+            checkbrew
         fi
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then

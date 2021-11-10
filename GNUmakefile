@@ -363,7 +363,10 @@ docs: init
 	sed 's/images/.\/images/' README.md > docs/docs/index.md
 	cp -R ./images ./docs/docs
 	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) docs
-
+#######################
+.PHONY: install-python38-sh
+install-python38-sh: init
+	bash -c './scripts/install-python3.8.sh'
 #######################
 #.PHONY: run
 #run: build
