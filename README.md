@@ -40,9 +40,9 @@ pip3 install -r requirements.txt
 |  bitcoind | Bitcoin Core Daemon |
 |  lnd | Lightning Labs LND Daemon  |
 |  tor | tor network daemon |
-| rtl |  Ride The Lightning Daemon |
-| thunderhub |  Thunderhub Lightning UI |
-| docs |  MKDocs documentation |
+| [rtl](http://localhost:3000) |  Ride The Lightning Daemon |
+| [thunderhub](http://localhost:3001) |  Thunderhub Lightning UI |
+| [docs](http://localhost:8008) |  MKDocs documentation |
 | notebook |  Jupyter Notebook environment setup for lightning development |
 | dashboard |  Jupyter Dashboard |
 | lndg |  lndg Dashboard (available on port 8889) |
