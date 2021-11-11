@@ -1,14 +1,16 @@
 ## PLAY COMMAND
 
 	play                     ids
-	play                     info
-	play                     iftop
-	play                     ifconfig
-	play                     balance
 	play                     top
 	play                     shell
 	play                     start
 	play                     stop
+	play                     iftop
+	play                     ifconfig
+	play                     newaddress
+	play                     total-balance
+	play                     confirmed-balance
+	play                     unconfirmed-balance
 	play                     lncli -n signet walletbalance
 
 	play                     tor-iftop
@@ -30,7 +32,8 @@
 	play lnd top
 	play lnd info
 	play lnd ifconfig
-	play lnd balance
+	play lnd newaddress
+	play lnd total-balance
 	play lnd '<COMMAND>'
 
 	play-lnd balance
