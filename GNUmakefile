@@ -193,6 +193,7 @@ help:
 	@echo '		 make '
 	@echo '		 make help                       print help'
 	@echo '		 make report                     print environment variables'
+	@echo '		 make initialize                 install dependencies'
 	@echo '		 make init                       initialize basic dependencies'
 	@echo '		 make build'
 	@echo '		 make build para=true            parallelized build'
@@ -327,6 +328,14 @@ else
 	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
 endif
 	./plebnet_generate.py TRIPLET=$(TRIPLET)
+#######################
+.PHONY: initialize
+initialize:
+ifneq ($(shell id -u),0)
+	@echo 'sudo make init #try if permissions issue'
+endif
+	@echo 'initialize'
+	./scripts/initialize
 #######################
 .PHONY: install
 install: init
