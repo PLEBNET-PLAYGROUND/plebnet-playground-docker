@@ -3,3 +3,4 @@ argparse
 mkdocs
 mkdocs-material
 omegaconf>=2.0.0
+jq
