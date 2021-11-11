@@ -60,9 +60,17 @@ do
         docker exec $LND_ID sh -c "lncli -n signet newaddress p2wkh | jq -r .address"
         exit
 
-    elif [[ ${!i} = *balance ]]; then
+    elif [[ ${!i} = total-balance ]]; then
         ((i++))
-        docker exec $LND_ID sh -c "lncli -n signet walletbalance"
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .total_balance"
+        exit
+    elif [[ ${!i} = confirmed-balance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .confirmed_balance"
+        exit
+    elif [[ ${!i} = unconfirmed-balance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .unconfirmed_balance"
         exit
 
     elif [[ ${!i} == *help ]]; then
@@ -78,7 +86,9 @@ do
         echo
         echo "play-lnd             '<COMMAND>'"
         echo "play-lnd             newaddress"
-        echo "play-lnd             balance"
+        echo "play-lnd             total-balance"
+        echo "play-lnd             confirmed-balance"
+        echo "play-lnd             unconfirmed-balance"
         echo
         echo EXAMPLE:
         echo
