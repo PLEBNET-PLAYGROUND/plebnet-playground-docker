@@ -94,12 +94,17 @@ export BTCD_IMAGE
         #NOTE: $0 /usr/local/bin/play
         #      $1 lnd
         ((i++))
-        play-lnd $2 $3 $4 $5 $6 $7 &
+        play-lnd $2 $3 $4 $5 $6 $7
         exit
 
     elif [[ ${!i} = shell ]]; then
         ((i++))
         play-lnd shell
+        exit
+
+    elif [[ ${!i} = newaddress ]]; then
+        ((i++))
+        play-lnd newaddress
         exit
 
     elif [[ ${!i} = start ]]; then
@@ -137,6 +142,7 @@ export BTCD_IMAGE
         echo "	play                     info"
         echo "	play                     iftop"
         echo "	play                     ifconfig"
+        echo "	play                     newaddress"
         echo "	play                     balance"
         echo "	play                     top"
         echo "	play                     shell"
@@ -163,6 +169,7 @@ export BTCD_IMAGE
         echo "	play lnd top"
         echo "	play lnd info"
         echo "	play lnd ifconfig"
+        echo "	play lnd newaddress"
         echo "	play lnd balance"
         echo "	play lnd '<COMMAND>'"
         echo
