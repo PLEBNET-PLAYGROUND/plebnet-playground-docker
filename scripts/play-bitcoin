@@ -53,6 +53,11 @@ do
         docker exec $BITCOIND_ID sh -c "bitcoin-cli getmininginfo"
         exit
 
+    elif [[ ${!i} = list-wallets ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "ls -x /root/.bitcoin/signet/wallets"
+        exit
+
     elif [[ ${!i} = start ]]; then
         ((i++))
         docker-compose up bitcoind
