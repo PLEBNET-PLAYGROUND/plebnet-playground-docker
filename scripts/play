@@ -139,15 +139,16 @@ export BTCD_IMAGE
         ((i++))
         echo
         echo "	play                     ids"
-        echo "	play                     info"
-        echo "	play                     iftop"
-        echo "	play                     ifconfig"
-        echo "	play                     newaddress"
-        echo "	play                     balance"
         echo "	play                     top"
         echo "	play                     shell"
         echo "	play                     start"
         echo "	play                     stop"
+        echo "	play                     iftop"
+        echo "	play                     ifconfig"
+        echo "	play                     newaddress"
+        echo "	play                     total-balance"
+        echo "	play                     confirmed-balance"
+        echo "	play                     unconfirmed-balance"
         echo "	play                     lncli -n signet walletbalance"
         echo
         echo "	play                     tor-iftop"
@@ -170,7 +171,7 @@ export BTCD_IMAGE
         echo "	play lnd info"
         echo "	play lnd ifconfig"
         echo "	play lnd newaddress"
-        echo "	play lnd balance"
+        echo "	play lnd total-balance"
         echo "	play lnd '<COMMAND>'"
         echo
         echo "	play-lnd balance"
@@ -191,9 +192,17 @@ export BTCD_IMAGE
         docker exec -it $TOR_ID sh -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
         exit
 
-    elif [[ ${!i} = *balance ]]; then
+    elif [[ ${!i} = total-balance ]]; then
         ((i++))
-        docker exec $LND_ID sh -c "lncli -n signet walletbalance"
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .total_balance"
+        exit
+    elif [[ ${!i} = confirmed-balance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .confirmed_balance"
+        exit
+    elif [[ ${!i} = unconfirmed-balance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .unconfirmed_balance"
         exit
 
     elif [[ -n ${!i} ]]; then
