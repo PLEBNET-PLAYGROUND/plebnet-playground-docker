@@ -53,6 +53,39 @@ do
         docker exec $BITCOIND_ID sh -c "bitcoin-cli getmininginfo"
         exit
 
+    elif [[ ${!i} = listwallets ]]; then
+        ((i++))
+        #docker exec $BITCOIND_ID sh -c "bitcoin-cli listwallets"
+        docker exec $BITCOIND_ID sh -c "ls /root/.bitcoin/signet/wallets"
+        exit
+
+    elif [[ ${!i} = createwallet ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli createwallet $2 $3 $4 $5 $6 $7"
+        exit
+
+    elif [[ ${!i} = getbalance ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 getbalance"
+        exit
+
+    elif [[ ${!i} = getbalances ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 getbalances"
+        exit
+
+    elif [[ ${!i} = getnewaddress ]]; then
+        ((i++))
+        # bitcoin-cli -rpcwallet=plebnet1 getnewaddress
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 getnewaddress"
+        exit
+
+    elif [[ ${!i} = sendtoaddress ]]; then
+        ((i++))
+        # bitcoin-cli -rpcwallet=plebnet1 sendtoaddress amount feerate
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 sendtoaddress $3 $4"
+        exit
+
     elif [[ ${!i} = start ]]; then
         ((i++))
         docker-compose up bitcoind
