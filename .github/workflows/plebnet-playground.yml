@@ -45,11 +45,11 @@ jobs:
         uses: actions/checkout@v2
       - name: install, build, and test
         run: |
+          make initialize init help report
           sudo apt install python python3
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
-          make init help report
           make build nocache=true
           make build para=true
           make install verbose=true
@@ -63,9 +63,9 @@ jobs:
           access_token: ${{ github.token }}
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: make init help report
+      - name: make initialize init help report
         run: |
-          make init help report
+          make initialize init help report
       - name: install, build, and test
         run: |
           sudo apt install python python3
