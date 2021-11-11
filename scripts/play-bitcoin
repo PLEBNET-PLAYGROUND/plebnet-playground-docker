@@ -58,6 +58,11 @@ do
         docker exec $BITCOIND_ID sh -c "ls -x /root/.bitcoin/signet/wallets"
         exit
 
+    elif [[ ${!i} = create-wallet ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli createwallet $2"
+        exit
+
     elif [[ ${!i} = start ]]; then
         ((i++))
         docker-compose up bitcoind
