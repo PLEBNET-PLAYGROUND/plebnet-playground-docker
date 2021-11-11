@@ -299,33 +299,21 @@ ifneq ($(shell id -u),0)
 	sudo -s
 endif
 .PHONY: init
-init: report
-ifneq ($(shell id -u),0)
-	@echo 'sudo make init #try if permissions issue'
-endif
-	@echo 'init'
-	#bash -c "./scripts/install-python3.8.sh"
+.SILENT:
+init:
+#ifneq ($(shell id -u),0)
+#	@echo 'sudo make init #try if permissions issue'
+#endif
 ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 	sudo -s bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
-#ifneq ($(PIP),)
-#	echo $(PIP)
-#	#bash -c "[[ '$(shell whoami)' != 'runner' ]] && $(PYTHON) -m ensurepip --upgrade --user"
-#	$(PIP) install omegaconf==2.1.1
-#	$(PIP) install -r requirements.txt
-#	./plebnet_generate.py TRIPLET=$(TRIPLET)
-#	pushd docs && $(PIP) install -r requirements.txt && popd
 ifneq ($(PIP3),)
-	echo $(PIP3)
-	#bash -c "[[ '$(shell whoami)' != 'runner' ]] && $(PYTHON3) -m ensurepip --upgrade --user"
-	$(PIP3) install --upgrade pip
-	$(PYTHON3) -m pip install omegaconf==2.1.1
-	$(PIP3) install -r requirements.txt
-	pushd docs && $(PIP3) install -r requirements.txt && popd
+	$(PIP3) install --upgrade -q pip
+	$(PYTHON3) -m pip -q install omegaconf
+	$(PIP3) install -q -r requirements.txt
+	pushd docs && $(PIP3) install -q -r requirements.txt && popd
 endif
-#endif
-	
 else
 	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
@@ -334,11 +322,7 @@ endif
 #######################
 .PHONY: initialize
 initialize:
-ifneq ($(shell id -u),0)
-	@echo 'sudo make init #try if permissions issue'
-endif
-	@echo 'initialize'
-	./scripts/initialize
+	./scripts/initialize  #>&/dev/null
 #######################
 .PHONY: install
 install: init
