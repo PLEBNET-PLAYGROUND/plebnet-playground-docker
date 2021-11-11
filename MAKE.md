@@ -1,4 +1,5 @@
 ## MAKE COMMAND
+make[1]: Entering directory '/root/plebnet-playground-docker'
 
 	[USAGE]: make [COMMAND] [EXTRA_ARGUMENTS]	
 
@@ -19,6 +20,9 @@
 		 make build
 		 make package-all
 
+		 make install-python38-sh
+		 make install-python39-sh
+
 
 	[EXAMPLES]:
 
@@ -26,3 +30,4 @@
 
 		make init && play help
 	
+make[1]: Leaving directory '/root/plebnet-playground-docker'

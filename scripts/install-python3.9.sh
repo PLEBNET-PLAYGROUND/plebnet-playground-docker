@@ -23,30 +23,30 @@ echo "$OSTYPE" | awk '{print tolower($0)}'
 }
 
 #Python has been installed as
-#  /usr/local/opt/python@3.8/bin/python3
+#  /usr/local/opt/python@3.9/bin/python3
 #
 #Unversioned symlinks `python`, `python-config`, `pip` etc. pointing to
 #`python3`, `python3-config`, `pip3` etc., respectively, have been installed into
-#  /usr/local/opt/python@3.8/libexec/bin
+#  /usr/local/opt/python@3.9/libexec/bin
 #
 #You can install Python packages with
-#  /usr/local/opt/python@3.8/bin/pip3 install <package>
+#  /usr/local/opt/python@3.9/bin/pip3 install <package>
 #They will install into the site-package directory
-#  /usr/local/lib/python3.8/site-packages
+#  /usr/local/lib/python3.9/site-packages
 #
 #See: https://docs.brew.sh/Homebrew-and-Python
 #
-#python@3.8 is keg-only, which means it was not symlinked into /usr/local,
+#python@3.9 is keg-only, which means it was not symlinked into /usr/local,
 #because this is an alternate version of another formula.
 #
-#If you need to have python@3.8 first in your PATH, run:
-#  echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> /Users/git/.bash_profile
+#If you need to have python@3.9 first in your PATH, run:
+#  echo 'export PATH="/usr/local/opt/python@3.9/bin:$PATH"' >> /Users/git/.bash_profile
 #
-#For compilers to find python@3.8 you may need to set:
-#  export LDFLAGS="-L/usr/local/opt/python@3.8/lib"
+#For compilers to find python@3.9 you may need to set:
+#  export LDFLAGS="-L/usr/local/opt/python@3.9/lib"
 #
-#For pkg-config to find python@3.8 you may need to set:
-#  export PKG_CONFIG_PATH="/usr/local/opt/python@3.8/lib/pkgconfig"
+#For pkg-config to find python@3.9 you may need to set:
+#  export PKG_CONFIG_PATH="/usr/local/opt/python@3.9/lib/pkgconfig"
 
 checkbrew() {
 
@@ -81,17 +81,17 @@ if hash apt-get 2>/dev/null; then
             libreadline6-dev libdb5.3-dev libgdbm-dev \
             libsqlite3-dev libssl-dev libbz2-dev \
             libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
-        wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tar.xz
-        tar xf Python-3.8.0.tar.xz
-        cd Python-3.8.0
+        wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz
+        tar xf Python-3.9.0.tar.xz
+        cd Python-3.9.0
         ./configure --enable-optimizations --prefix=/usr
         make
         sudo make altinstall
         cd ..
-        sudo rm -r Python-3.8.0
-        rm Python-3.8.0.tar.xz
+        sudo rm -r Python-3.9.0
+        rm Python-3.9.0.tar.xz
         . ~/.bashrc
-        sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
+        sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
         python -V
         exit
     fi
@@ -103,12 +103,12 @@ fi
 
 if hash brew 2>/dev/null; then
     brew install awk
-    brew install python@3.8
-    [ -f "/usr/local/opt/python@3.8/bin/python3" ] && python38=/usr/local/opt/python@3.8/bin/python3
-    [ -f "/opt/homebrew/opt/python@3.8/bin/python3" ] && python38=/opt/homebrew/opt/python@3.8/bin/python3
-    export python38
-    $python38 -m pip install --upgrade pip
-    $python38 -m pip install omegaconf
+    brew install python@3.9
+    [ -f "/usr/local/opt/python@3.9/bin/python3" ] && python39=/usr/local/opt/python@3.9/bin/python3
+    [ -f "/opt/homebrew/opt/python@3.9/bin/python3" ] && python39=/opt/homebrew/opt/python@3.9/bin/python3
+    export python39
+    $python39 -m pip install --upgrade pip
+    $python39 -m pip install omegaconf
     echo
 else
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"

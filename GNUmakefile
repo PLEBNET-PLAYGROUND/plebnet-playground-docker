@@ -209,6 +209,9 @@ help:
 #	@echo '		 make build package-statoshi'
 	@echo '		 make package-all'
 	@echo ''
+	@echo '		 make install-python38-sh'
+	@echo '		 make install-python39-sh'
+	@echo ''
 #	@echo '	[EXTRA_ARGUMENTS]:	set build variables	'
 #	@echo ''
 #	@echo '		nocache=true'
@@ -365,8 +368,13 @@ docs: init
 	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) docs
 #######################
 .PHONY: install-python38-sh
-install-python38-sh: init
+install-python38-sh:
 	bash -c './scripts/install-python3.8.sh'
+	make init
+#######################
+.PHONY: install-python39-sh
+install-python39-sh: init
+	bash -c './scripts/install-python3.9.sh'
 #######################
 #.PHONY: run
 #run: build
