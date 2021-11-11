@@ -7,6 +7,7 @@ make[1]: Entering directory '/root/plebnet-playground-docker'
 		 make 
 		 make help                       print help
 		 make report                     print environment variables
+		 make initialize                 install dependencies
 		 make init                       initialize basic dependencies
 		 make build
 		 make build para=true            parallelized build
