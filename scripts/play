@@ -137,44 +137,49 @@ export BTCD_IMAGE
 
     elif [[ ${!i} == *help ]]; then
         ((i++))
+        echo "play ids"
+        echo "play images"
+        echo "play tor-iftop"
         echo
-        echo "	play                     ids"
-        echo "	play                     top"
-        echo "	play                     shell"
-        echo "	play                     start"
-        echo "	play                     stop"
-        echo "	play                     iftop"
-        echo "	play                     ifconfig"
-        echo "	play                     newaddress"
-        echo "	play                     total-balance"
-        echo "	play                     confirmed-balance"
-        echo "	play                     unconfirmed-balance"
-        echo "	play                     lncli -n signet walletbalance"
+        echo "Examples:"
         echo
-        echo "	play                     tor-iftop"
+        echo "play-bitcoin"
         echo
-        echo "	Examples:"
+        echo "play bitcoin"
+        echo "play bitcoin id"
+        echo "play bitcoin iftop"
+        echo "play bitcoin netinfo 5"
+        echo "play bitcoin gettxoutsetinfo"
+        echo "play bitcoin getmininginfo"
         echo
-        echo "	play bitcoin id"
-        echo "	play bitcoin iftop"
-        echo "	play bitcoin netinfo 5"
-        echo "	play bitcoin gettxoutsetinfo"
-        echo "	play bitcoin getmininginfo"
+        echo "play bitcoin '<COMMAND>'"
+        echo "play bitcoin 'bitcoin-cli getblockhash 1000'"
+        echo "play bitcoin 'bitcoin-cli getblock \$(bitcoin-cli getblockhash 0)'"
         echo
-        echo "	play bitcoin '<COMMAND>'"
-        echo "	play bitcoin 'bitcoin-cli getblockhash 1000'"
-        echo "	play bitcoin 'bitcoin-cli getblock \$(bitcoin-cli getblockhash 0)'"
+        echo "play-lnd"
         echo
-        echo "	play lnd"
-        echo "	play lnd id"
-        echo "	play lnd top"
-        echo "	play lnd info"
-        echo "	play lnd ifconfig"
-        echo "	play lnd newaddress"
-        echo "	play lnd total-balance"
-        echo "	play lnd '<COMMAND>'"
+        echo "play lnd"
+        echo "play lnd id"
+        echo "play lnd iftop"
+        echo "play lnd newaddress"
+        echo "play lnd walletbalance"
+        echo "play lnd total-balance"
+        echo "play lnd '<COMMAND>'"
+        echo "play lnd 'lncli'"
         echo
-        echo "	play-lnd balance"
+        echo "play-lnd balance"
+        echo
+        echo "https://www.plebnet.fun"
+        echo
+        echo "Fund playground_lnd wallet with signet coins"
+        echo "play-getcoins -a \$(play-lnd getnewaddress)"
+        echo
+        echo "Fund playground_bitcoin wallet with signet coins"
+        echo "play-getcoins -a \$(play-bitcoin getnewaddress)"
+        echo
+        echo "Nested Commands:"
+        echo "play-getcoins -a \$(play-bitcoin getnewaddress) &&  play-getcoins -a \$(play-lnd getnewaddress)"
+        echo
         exit
 
     elif [[ ${!i} == *shell ]]; then

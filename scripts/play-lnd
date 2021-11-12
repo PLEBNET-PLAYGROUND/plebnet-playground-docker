@@ -60,6 +60,10 @@ do
         docker exec $LND_ID sh -c "lncli -n signet newaddress p2wkh | jq -r .address"
         exit
 
+    elif [[ ${!i} = walletbalance ]]; then
+        ((i++))
+        docker exec $LND_ID sh -c "lncli -n signet walletbalance"
+        exit
     elif [[ ${!i} = total-balance ]]; then
         ((i++))
         docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .total_balance"
@@ -75,24 +79,25 @@ do
 
     elif [[ ${!i} == *help ]]; then
         ((i++))
+        echo "play-lnd id"
+        echo "play-lnd top"
+        echo "play-lnd ifconfig"
+        echo "play-lnd iftop"
+        echo "play-lnd shell"
+        echo "play-lnd start"
+        echo "play-lnd stop"
         echo
-        echo "play-lnd             id"
-        echo "play-lnd             top"
-        echo "play-lnd             ifconfig"
-        echo "play-lnd             iftop"
-        echo "play-lnd             shell"
-        echo "play-lnd             start"
-        echo "play-lnd             stop"
+        echo "play-lnd '<COMMAND>'"
+        echo "play-lnd newaddress"
+        echo "play-lnd walletbalance"
+        echo "play-lnd total-balance"
+        echo "play-lnd confirmed-balance"
+        echo "play-lnd unconfirmed-balance"
         echo
-        echo "play-lnd             '<COMMAND>'"
-        echo "play-lnd             newaddress"
-        echo "play-lnd             total-balance"
-        echo "play-lnd             confirmed-balance"
-        echo "play-lnd             unconfirmed-balance"
+        echo "https://www.plebnet.fun"
         echo
-        echo EXAMPLE:
-        echo
-        echo "play-lnd cd root && ./getcoins.py"
+        echo "Fund LND signet wallet:"
+        echo "play-getcoins -a \$(play-lnd getnewaddress)"
         exit
 
     elif [[ -n ${!i} ]]; then
