@@ -348,10 +348,26 @@ btcd:
 .PHONY: docs
 docs: init
 	@echo "Use 'make docs nocache=true' to force docs rebuild..."
-	echo "## MAKE COMMAND" > MAKE.md
+
+	echo "## MAKE COMMAND" >> MAKE.md
+	echo '```' > MAKE.md
 	make >> MAKE.md
+	echo '```' >> MAKE.md
+
 	echo "## PLAY COMMAND" > PLAY.md
+	echo '```' >> PLAY.md
 	play >> PLAY.md
+	echo '```' >> PLAY.md
+#
+	echo "## PLAY-BITCOIN COMMAND" >> PLAY.md
+	echo '```' >> PLAY.md
+	play-bitcoin >> PLAY.md
+	echo '```' >> PLAY.md
+#
+	echo "## PLAY-LND COMMAND" >> PLAY.md
+	echo '```' >> PLAY.md
+	play-lnd >> PLAY.md
+	echo '```' >> PLAY.md
 
 	install -v README.md docs/docs/index.md
 	install -v MAKE.md docs/docs/MAKE.md

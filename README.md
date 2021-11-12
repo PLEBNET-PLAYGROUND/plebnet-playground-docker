@@ -110,7 +110,10 @@ open /Applications/Docker.app
 ```
 make
 make init
-make install && play help
+make install
+play help
+play-bitcoin help
+play-lnd help
 ```
 ***
 
