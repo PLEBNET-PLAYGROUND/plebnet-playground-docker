@@ -41,7 +41,8 @@ Fund playground_bitcoin wallet with signet coins
 play-getcoins -a $(play-bitcoin getnewaddress)
 
 Nested Commands:
-play-getcoins -a $(play-bitcoin getnewaddress) &&  play-getcoins -a $(play-lnd getnewaddress)
+play-getcoins -a $(play-bitcoin getnewaddress) && play-getcoins -a $(play-lnd getnewaddress)
+play-getcoins -a $(play-getcoins -r true)
 
 ```
 ## PLAY-BITCOIN COMMAND
