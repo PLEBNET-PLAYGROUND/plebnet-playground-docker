@@ -17,7 +17,22 @@ ifeq ($(ARCH),arm64)
 TRIPLET                                 :=aarch64-linux-gnu
 export TRIPLET
 endif
-
+#available services:
+#	bitcoind
+#	lnd
+#	tor
+#	thunderhub
+#	rtl
+#	notebook
+#	dashboard
+#	lndg
+#	docs
+ifeq ($(services),)
+SERVICES                                :=bitcoind,lnd,rtl,thunderhub,docs
+else
+SERVICES                                :=$(services)
+endif
+export SERVICES
 ifeq ($(user),)
 HOST_USER								:= root
 HOST_UID								:= $(strip $(if $(uid),$(uid),0))
@@ -198,6 +213,7 @@ help:
 	@echo '		 make build'
 	@echo '		 make build para=true            parallelized build'
 	@echo '		 make install'
+	@echo '		                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook'
 	@echo '		 make run'
 	@echo '		                                 nocache=true verbose=true'
 	@echo ''
@@ -257,6 +273,7 @@ report:
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
 	@echo '        - TRIPLET=${TRIPLET}'
+	@echo '        - SERVICES=${SERVICES}'
 	@echo '        - HOST_USER=${HOST_USER}'
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
@@ -318,7 +335,7 @@ else
 	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
 endif
-	./plebnet_generate.py TRIPLET=$(TRIPLET)
+	./plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
 #######################
 .PHONY: initialize
 initialize:
