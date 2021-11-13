@@ -141,44 +141,21 @@ export BTCD_IMAGE
         echo "play images"
         echo "play tor-iftop"
         echo
-        echo "Examples:"
-        echo
         echo "play-bitcoin"
-        echo
         echo "play bitcoin"
         echo "play bitcoin id"
-        echo "play bitcoin iftop"
-        echo "play bitcoin netinfo 5"
-        echo "play bitcoin gettxoutsetinfo"
-        echo "play bitcoin getmininginfo"
-        echo
-        echo "play bitcoin '<COMMAND>'"
-        echo "play bitcoin 'bitcoin-cli getblockhash 1000'"
-        echo "play bitcoin 'bitcoin-cli getblock \$(bitcoin-cli getblockhash 0)'"
         echo
         echo "play-lnd"
-        echo
         echo "play lnd"
         echo "play lnd id"
-        echo "play lnd iftop"
-        echo "play lnd newaddress"
-        echo "play lnd walletbalance"
-        echo "play lnd total-balance"
-        echo "play lnd '<COMMAND>'"
-        echo "play lnd 'lncli'"
-        echo
-        echo "play-lnd balance"
         echo
         echo "https://www.plebnet.fun"
         echo
         echo "Fund playground_lnd wallet with signet coins"
         echo "play-getcoins -a \$(play-lnd getnewaddress)"
         echo
-        echo "Fund playground_bitcoin wallet with signet coins"
-        echo "play-getcoins -a \$(play-bitcoin getnewaddress)"
-        echo
         echo "Nested Commands:"
-        echo "play-getcoins -a \$(play-bitcoin getnewaddress) && play-getcoins -a \$(play-lnd getnewaddress)"
+        echo "play-getcoins -a \$(play-lnd getnewaddress) && play-getcoins -a \$(play-lnd getnewaddress)"
         echo "play-getcoins -a \$(play-getcoins -r true)"
         echo
         exit
