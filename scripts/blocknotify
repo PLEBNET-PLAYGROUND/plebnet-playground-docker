@@ -1,41 +1,128 @@
 #!/bin/bash
-#
-echo "Begin blocknotify script"
-if [[ "$OSTYPE" == "linux"* ]]; then
-    echo $OSTYPE
-    echo this was trigger from blocknotify in bitcoin.conf
-    if [[ "$OSTYPE" == "linux"* ]]; then
-    echo $OSTYPE
-    echo this was trigger from blocknotify in bitcoin.conf
-    fi
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-    echo $OSTYPE
-    echo this was trigger from blocknotify in bitcoin.conf
-else
-    echo TODO add support for $OSTYPE
-    echo this was trigger from blocknotify in bitcoin.conf
-fi
 
-for (( i = 1; i <= 200; i++ ))      ### Outer for loop ###
+cli-automate(){
+
+bitcoin-cli estimaterawfee 10 && echo ","
+bitcoin-cli settxfee 0.0000$i$k > settxfee.log
+bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" \
+    amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
+bitcoin-cli        sendtoaddress         "$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" 1.$k$j \
+>> sendtoaddres.log
+
+bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" amount=0.$k$j conf_target=$i estimate_mode="economical"
+bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" \
+    amount=0.$k$j conf_target=$i estimate_mode="economical" subtractfeefromamount=false \
+    replaceable=true avoid_reuse=false comment="Automated from /usr/local/bin/blocknotify" \
+    comment_to="deepspace.imac" verbose=true
+bitcoin-cli getbalances > getbalances.log
+bitcoin-cli listreceivedbyaddress > listrecievedbyaddress.log
+}
+cli-with-play-commands-automate(){
+
+play-getcoins -a $(/Users/git/gui/src/./bitcoin-cli getnewaddress) >> play-getcoins.log
+
+bitcoin-cli -named sendtoaddress address="$(play-getcoins -r true)" amount=0.$k$j \
+    fee_rate=$i$k >> sendtoaddress.log
+
+bitcoin-cli -named sendtoaddress address="$(play-bitcoin getnewaddress)" \
+    amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
+bitcoin-cli        sendtoaddress         "$(play-bitcoin getnewaddress)" \
+    0.$k$j >> sendtoaddress.log
+bitcoin-cli -named sendtoaddress address="$(play-lnd        newaddress)" \
+    amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
+
+bitcoin-cli        sendtoaddress         "$(play-lnd        newaddress)" \
+    0.$k$j >> sendtoaddress.log
+
+
+}
+play-gitcoins-automate(){
+
+play-getcoins -r true > play-getcoins.log
+play-getcoins -a $(play-lnd getnewaddress) -r true >> play-getcoins.log
+play-getcoins -a $(play-bitcoin getnewaddress) -r true >> play-getcoins.log
+
+play-bitcoin getbalances
+play-lnd walletbalance
+
+play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   10000000" >> \
+sendcoins.log
+play-lnd "lncli -n signet sendcoins         $(play-getcoins -r true)       1000000" >> sendcoins.log
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=1$k" >> \
+sendcoins.log
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=2$k" >> \
+sendcoins.log
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=3$k" >> \
+sendcoins.log
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=4$k" >> \
+sendcoins.log
+
+}
+for (( i = 1; i <= 200; i++ ))      ### i loop
 do
-    for (( j = 1 ; j <= 9999999; j++ )) ### Inner for loop ###
+    export i
+    echo $i
+    for (( j = 1 ; j <= 9999999; j++ )) ### j loop
     do
-        for (( k = 0 ; k <= 9; k++ )) ### Inner for loop ###
+        export j
+        echo $j
+        bitcoin-cli        sendtoaddress         "$(bitcoin-cli getnewaddress)" 0.$j >> sendtoaddress.log
+
+        for (( k = 0 ; k <= 9; k++ )) ### k loop
         do
-            play-getcoins -r true
-            echo -n "feerate=$i$k" && echo
-            echo -n "amount=0.$k$j" && echo
-            play-getcoins -a $(play-lnd getnewaddress) -r true
-            play-getcoins -a $(play-bitcoin getnewaddress) -r true
-            play-getcoins -a $(/Users/git/gui/src/./bitcoin-cli getnewaddress)
+            export k
+            echo $k
+            #bitcoin-cli estimaterawfee 10 && echo ","
+            #bitcoin-cli settxfee 0.0000$i$k > settxfee.log
+            cli-automate
+            cli-with-play-commands-automate
+            play-gitcoins-automate
 
-            /Users/git/gui/src/./bitcoin-cli -named sendtoaddress address="$(play-getcoins -r true)"      amount=$k.$k$j fee_rate=$i$k
-            /Users/git/gui/src/./bitcoin-cli -named sendtoaddress address="$(play-bitcoin getnewaddress)" amount=$k.$k$j fee_rate=$i$k
-            /Users/git/gui/src/./bitcoin-cli -named sendtoaddress address="$(play-lnd newaddress)"        amount=$k.$k$j fee_rate=$i$k
+            #play-getcoins -r true > play-getcoins.log
+            #play-getcoins -a $(play-lnd getnewaddress) -r true >> play-getcoins.log
+            #play-getcoins -a $(play-bitcoin getnewaddress) -r true >> play-getcoins.log
+            #play-getcoins -a $(/Users/git/gui/src/./bitcoin-cli getnewaddress) >> play-getcoins.log
 
-            /Users/git/gui/src/./bitcoin-cli        sendtoaddress         "$(play-lnd        newaddress)"        $k.$k$j
-            /Users/git/gui/src/./bitcoin-cli        sendtoaddress         "$(play-bitcoin getnewaddress)"        $k.$k$j
-            /Users/git/gui/src/./bitcoin-cli        sendtoaddress         "$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" $k.$k$j
+            #bitcoin-cli -named sendtoaddress address="$(play-getcoins -r true)" amount=0.$k$j \
+            #    fee_rate=$i$k >> sendtoaddress.log
+
+            #bitcoin-cli -named sendtoaddress address="$(play-bitcoin getnewaddress)" \
+            #    amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
+            #bitcoin-cli        sendtoaddress         "$(play-bitcoin getnewaddress)" \
+            #    0.$k$j >> sendtoaddress.log
+            #bitcoin-cli -named sendtoaddress address="$(play-lnd        newaddress)" \
+            #    amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
+
+            #bitcoin-cli        sendtoaddress         "$(play-lnd        newaddress)" \
+            #    0.$k$j >> sendtoaddress.log
+
+            #bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" \
+            #    amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
+            #bitcoin-cli        sendtoaddress         "$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" 1.$k$j \
+            #>> sendtoaddres.log
+
+            #bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" amount=0.$k$j conf_target=$i estimate_mode="economical"
+            #bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" \
+            #    amount=0.$k$j conf_target=$i estimate_mode="economical" subtractfeefromamount=false \
+            #    replaceable=true avoid_reuse=false comment="Automated from /usr/local/bin/blocknotify" \
+            #    comment_to="deepspace.imac" verbose=true
+            #bitcoin-cli        getbalances
+
+            #play-bitcoin getbalances
+            #play-lnd walletbalance
+
+            #play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   10000000" >> \
+            #sendcoins.log
+            #play-lnd "lncli -n signet sendcoins         $(play-getcoins -r true)       1000000" >> sendcoins.log
+            #play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=1$k" >> \
+            #sendcoins.log
+            #play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=2$k" >> \
+            #sendcoins.log
+            #play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=3$k" >> \
+            #sendcoins.log
+            #play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=4$k" >> \
+            #sendcoins.log
+
         done
     done
 done
