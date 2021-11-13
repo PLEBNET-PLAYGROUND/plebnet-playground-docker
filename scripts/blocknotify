@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+if [[ "$OSTYPE" == "linux"* ]]; then
+    echo $OSTYPE
+    echo this was trigger from blocknotify in bitcoin.conf
+    if [[ "$OSTYPE" == "linux"* ]]; then
+    echo $OSTYPE
+    echo this was trigger from blocknotify in bitcoin.conf
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    echo $OSTYPE
+    echo this was trigger from blocknotify in bitcoin.conf
+elif [[ "$OSTYPE" == "cygwin" ]]; then
+    echo TODO add support for $OSTYPE
+    echo this was trigger from blocknotify in bitcoin.conf
+elif [[ "$OSTYPE" == "msys" ]]; then
+    echo TODO add support for $OSTYPE
+    echo this was trigger from blocknotify in bitcoin.conf
+elif [[ "$OSTYPE" == "win32" ]]; then
+    echo TODO add support for $OSTYPE
+    echo this was trigger from blocknotify in bitcoin.conf
+elif [[ "$OSTYPE" == "freebsd"* ]]; then
+    echo TODO add support for $OSTYPE
+    echo this was trigger from blocknotify in bitcoin.conf
+else
+    echo TODO add support for $OSTYPE
+    echo this was trigger from blocknotify in bitcoin.conf
+fi
+play-getcoins -a $(play-lnd getnewaddress) && play-getcoins -a $(play-lnd getnewaddress) && play-getcoins -a tb1qdpyjhrl8fgxvcqucc6hd3jqpwlv5mje8kaxfvj
+#
