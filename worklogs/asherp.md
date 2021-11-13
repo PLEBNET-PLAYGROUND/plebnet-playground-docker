@@ -1,4 +1,5 @@
-* docker compose rather than docker-compose
+* hourly service
+* use `docker compose` rather than `docker-compose`
 
 ### 2021-11-13 12:43:23.703385: clock-in: T-13m 
 

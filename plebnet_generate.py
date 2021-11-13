@@ -87,7 +87,7 @@ for service_name in list(conf.services):
         conf.services.pop(service_name)
 
 # dashboard keyword
-conf['USE_TEST_DATA'] = cli_args.get('TRIPLET', False)
+conf['USE_TEST_DATA'] = cli_args.get('USE_TEST_DATA', False)
 
 try:
     OmegaConf.resolve(conf)
@@ -97,6 +97,25 @@ except:
 
 conf.pop('TRIPLET')
 conf.pop('USE_TEST_DATA')
+
+
+if 'hourly' in conf.services:
+    hourly_path = OmegaConf.create(dict(
+                            type='bind',
+                            source='${HOURLY_PATH}',
+                            target='/dashboard'))
+    hourly_workpath = OmegaConf.create(dict(
+                            type='bind',
+                            source='${HOURLY_WORKPATH}',
+                            target='${HOURLY_WORKPATH}'))
+    if conf.services.hourly.environment['HOURLY_PATH'] is not None:
+        # mount hourly dev environment
+        conf.services.hourly.volumes.append(hourly_path)
+    conf.services.hourly.volumes.append(hourly_workpath)
+    conf.services.hourly.environment['GIT_USER_NAME'] = '${GIT_USER_NAME}'
+    conf.services.hourly.environment['GIT_USER_EMAIL'] = '${GIT_USER_EMAIL}'
+    conf.services.hourly.environment['HOURLY_WORKPATH'] = '${HOURLY_WORKPATH}'
+
 
 with open('docker-compose.yaml', 'w') as f:
     f.write(OmegaConf.to_yaml(conf))

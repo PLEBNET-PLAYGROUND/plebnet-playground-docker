@@ -210,6 +210,45 @@ services:
     command:
       - python
       - dashboard.py
+  hourly:
+    container_name: playground-hourly
+    # build:
+    #   context: ${PWD}/../hourly
+    #   dockerfile: ${PWD}/../hourly/Dockerfile
+    restart: unless-stopped
+    depends_on:  
+      - lnd 
+    ports:
+    - "8088:8888"
+    - "8052:8050"
+    image: apembroke/hourly-lightning
+    volumes:
+    # - type: bind
+    #   source: ${oc.env:HOURLY_PATH,null}
+    #   target: /dashboard
+    # - type: bind
+    #   source: "${HOURLY_WORKPATH}"
+    #   target: "${HOURLY_WORKPATH}"
+    - type: bind
+      source: ${oc.env:PWD}/volumes/lnd_datadir
+      target: /root/.lnd/
+      read_only: true
+    environment:
+      HOURLY_PATH: ${oc.env:HOURLY_PATH,null}
+      # HOURLY_WORKPATH: "${HOURLY_WORKPATH}"
+      JUPYTER_NOTEBOOKS: /dashboard
+      JUPYTER_PORT: 8888
+      # GIT_USER_NAME: '${GIT_USER_NAME}'
+      # GIT_USER_EMAIL: '${GIT_USER_EMAIL}'
+    working_dir: /dashboard
+    command:
+      - jupyter
+      - notebook
+      - /dashboard
+      - --port=8888
+      - --no-browser
+      - --ip=0.0.0.0
+      - --allow-root
   lndg:  
     image: ghcr.io/cryptosharks131/lndg:latest  
     container_name: playground-lndg
