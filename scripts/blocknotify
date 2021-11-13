@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+echo "Begin blocknotify script"
 if [[ "$OSTYPE" == "linux"* ]]; then
     echo $OSTYPE
     echo this was trigger from blocknotify in bitcoin.conf
@@ -10,21 +11,34 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo $OSTYPE
     echo this was trigger from blocknotify in bitcoin.conf
-elif [[ "$OSTYPE" == "cygwin" ]]; then
-    echo TODO add support for $OSTYPE
-    echo this was trigger from blocknotify in bitcoin.conf
-elif [[ "$OSTYPE" == "msys" ]]; then
-    echo TODO add support for $OSTYPE
-    echo this was trigger from blocknotify in bitcoin.conf
-elif [[ "$OSTYPE" == "win32" ]]; then
-    echo TODO add support for $OSTYPE
-    echo this was trigger from blocknotify in bitcoin.conf
-elif [[ "$OSTYPE" == "freebsd"* ]]; then
-    echo TODO add support for $OSTYPE
-    echo this was trigger from blocknotify in bitcoin.conf
 else
     echo TODO add support for $OSTYPE
     echo this was trigger from blocknotify in bitcoin.conf
 fi
-play-getcoins -a $(play-lnd getnewaddress) && play-getcoins -a $(play-lnd getnewaddress) && play-getcoins -a tb1qdpyjhrl8fgxvcqucc6hd3jqpwlv5mje8kaxfvj
+
+for (( i = 1; i <= 200; i++ ))      ### Outer for loop ###
+do
+    for (( j = 1 ; j <= 9999999; j++ )) ### Inner for loop ###
+    do
+        for (( k = 0 ; k <= 9; k++ )) ### Inner for loop ###
+        do
+            play-getcoins -r true
+            echo -n "feerate=$i$k" && echo
+            echo -n "amount=0.$k$j" && echo
+            play-getcoins -a $(play-lnd getnewaddress) -r true
+            play-getcoins -a $(play-bitcoin getnewaddress) -r true
+            play-getcoins -a $(/Users/git/gui/src/./bitcoin-cli getnewaddress)
+
+            /Users/git/gui/src/./bitcoin-cli -named sendtoaddress address="$(play-getcoins -r true)"      amount=$k.$k$j fee_rate=$i$k
+            /Users/git/gui/src/./bitcoin-cli -named sendtoaddress address="$(play-bitcoin getnewaddress)" amount=$k.$k$j fee_rate=$i$k
+            /Users/git/gui/src/./bitcoin-cli -named sendtoaddress address="$(play-lnd newaddress)"        amount=$k.$k$j fee_rate=$i$k
+
+            /Users/git/gui/src/./bitcoin-cli        sendtoaddress         "$(play-lnd        newaddress)"        $k.$k$j
+            /Users/git/gui/src/./bitcoin-cli        sendtoaddress         "$(play-bitcoin getnewaddress)"        $k.$k$j
+            /Users/git/gui/src/./bitcoin-cli        sendtoaddress         "$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" $k.$k$j
+        done
+    done
+done
+echo "End blocknotify script"
+blocknotify
 #
