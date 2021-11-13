@@ -206,16 +206,15 @@ USE_TEST_DATA=TRUE docker-compose up dashboard
 ## How to setup hourly-lightning
 
 Hourly is a git-based time-tracking tool for freelancers with instant invoicing over lightning.
-To run the lightning dashboard, create a `.env` file in the base of the plebnet-playground repo:
+You can install just the hourly service like so:
 
 ```sh
 TRIPLET=x86_64-linux-gnu services=hourly ./install.sh   
 ```
-!!! note
-    For developers, set the environment variable `HOURLY_PATH=/path/to/hourly/repo` prior to running the above command.
 
+For developers, set the environment variable `HOURLY_PATH=/path/to/hourly/repo` prior to running the above command.
 
-For all other users, set place the following environment variables in a `.env` at the base of the plebnet-playground repo:
+For all other users, set the following environment variables (or put them in a `.env` at the base of the plebnet-playground repo):
 
 ```sh
 # HOURLY_PATH=/path/to/hourly/repo # uncomment for dev only
@@ -224,8 +223,13 @@ GIT_USER_NAME='FirstName LastName'
 GIT_USER_EMAIL=your_email@some_domain.com
 ```
 
-This will mount your git repo into hourly's container, so you can clock-in, clock-out and generate invoices.
+Now run hourly:
 
+```sh
+docker compose up hourly
+```
+
+This will mount your git repo into hourly's container. While under development, a jupyter notebook will be running - copy the jupyter notebook token from the terminal and navigate to localhost:8088, where you can open `dashboard.py`, execute the cells therein and the dashboard should be visible on localhost:8052 
 
 ## Additional reference material
 
