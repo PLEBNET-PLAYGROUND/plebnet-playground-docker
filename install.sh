@@ -24,7 +24,7 @@ fi
 
 
 #Remove any old version
-docker-compose down
+docker compose down
 
 python plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
@@ -42,5 +42,5 @@ mkdir volumes/tor_torrcdir
 mkdir volumes/lndg_datadir
 touch volumes/lndg_datadir/db.sqlite3
 
-docker-compose build --build-arg TRIPLET=$TRIPLET
-docker-compose up --remove-orphans -d
+docker compose build --build-arg TRIPLET=$TRIPLET
+docker compose up --remove-orphans -d
