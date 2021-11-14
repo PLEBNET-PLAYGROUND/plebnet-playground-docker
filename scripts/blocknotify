@@ -1,5 +1,10 @@
 #!/bin/bash
 echo "{ \"TIME\": $(date +%s) }"
+#padtowidth=8
+#for i in 0 {0..200} {200..1000}; do
+#    fee=$(printf "%0*d\n" $padtowidth $i;)
+#    echo 0.$fee
+#done
 SELF_ADDRESS=$(bitcoin-cli getnewaddress)
 export SELF_ADDRESS
 echo { \"SELF_ADDRESS\": \"$SELF_ADDRESS\" }
@@ -11,101 +16,80 @@ export PLAY_LND_ADDRESS
 echo { \"PLAY_LND_ADDRESS\": \"$PLAY_LND_ADDRESS\" }
 
 cli-automate(){
+################################################################################
 echo "{ \"TIME\": $(date +%s) }"
-#increment fee
-echo "{ \"settxfee 0.000$k\": \"$(bitcoin-cli settxfee 0.000$k)\" }"
-
-TXHASH=$(bitcoin-cli sendtoaddress "$SELF_ADDRESS" 0.0$j)
+echo "{ \"settxfee 0.$k\": \"$(bitcoin-cli settxfee 0.$k)\" }"
+echo "{ \"START_TIME\": $(date +%s) }"
+TXHASH=$(bitcoin-cli sendtoaddress "$SELF_ADDRESS"  0.0$k)
 echo "{ \"TXHASH\": \"$TXHASH\" }"
-
-#override settxfee
 echo "{ \"TIME\": $(date +%s) }"
- #$(echo bitcoin-cli -named sendtoaddress address="$SELF_ADDRESS" amount=0.0$j fee_rate=0$j)
+TXHASH=$(bitcoin-cli sendtoaddress "$PLAY_BITCOIN_ADDRESS"  0.0$k)
+echo "{ \"TXHASH\": \"$TXHASH\" }"
+echo "{ \"TIME\": $(date +%s) }"
+TXHASH=$(bitcoin-cli sendtoaddress "$PLAY_LND_ADDRESS"  0.0$k)
+echo "{ \"TXHASH\": \"$TXHASH\" }"
+echo "{ \"TIME\": $(date +%s) }"
 TXHASH=$(bitcoin-cli -named sendtoaddress address="$SELF_ADDRESS" amount=0.0$j )
 echo "{ \"TXHASH\": \"$TXHASH\" }"
-echo "{ \"TIME\": $(date +%s) }"
-#$(echo bitcoin-cli sendtoaddress "$SELF_ADDRESS" 0.0$j)
-echo "{ \"TIME\": $(date +%s) }"
-
-#REF:
-#bitcoin-cli sendtoaddress tb1qj0hf93zwjusuh54hvkd668l7zsqx59necc0988 0.5 2
-#bitcoin-cli -named sendtoaddress address="$(bitcoin-cli getnewaddress)" amount=0.5 fee_rate=2
-#bitcoin-cli -named sendtoaddress address="$(bitcoin-cli getnewaddress)" amount=0.0$j fee_rate=$j
-#bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" \
-#    amount=0.$k$j conf_target=$i estimate_mode="economical" subtractfeefromamount=false \
-#    replaceable=true avoid_reuse=false comment="Automated from /usr/local/bin/blocknotify" \
-#    comment_to="deepspace.imac" verbose=true
-#bitcoin-cli getbalances > getbalances.log
-#bitcoin-cli getbalances
-#bitcoin-cli listreceivedbyaddress > listrecievedbyaddress.log
-#bitcoin-cli listreceivedbyaddress
-
+TXHASH=$(bitcoin-cli -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.0$j )
+echo "{ \"TXHASH\": \"$TXHASH\" }"
+TXHASH=$(bitcoin-cli -named sendtoaddress address="$PLAY_LND_ADDRESS" amount=0.0$j )
+echo "{ \"TXHASH\": \"$TXHASH\" }"
+echo "{ \"END_TIME\": $(date +%s) }"
+bitcoin-cli getbalances
+bitcoin-cli listreceivedbyaddress
 }
-
+################################################################################
 cli-with-play-commands-automate(){
-
+################################################################################
 play-getcoins -a $SELF_ADDRESS >> play-getcoins.log
-
 bitcoin-cli -named sendtoaddress address="$PLAY_LND_ADDRESS" amount=0.$k$j \
     fee_rate=$i$k >> sendtoaddress.log
-
 bitcoin-cli -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" \
     amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
 bitcoin-cli        sendtoaddress         "$PLAY_BITCOIN_ADDRESS" \
     0.$k$j >> sendtoaddress.log
 bitcoin-cli -named sendtoaddress address="$PLAY_LND_ADDRESS" \
     amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
-
 bitcoin-cli        sendtoaddress         "$PLAY_LND_ADDRESS" \
     0.$k$j >> sendtoaddress.log
-
-
 }
+################################################################################
 play-gitcoins-automate(){
-
+################################################################################
 play-getcoins -r true > play-getcoins.log
-play-getcoins -a $(play-lnd getnewaddress) -r true >> play-getcoins.log
-#play-getcoins -a $(play-bitcoin getnewaddress) -r true >> play-getcoins.log
-
-#play-bitcoin getbalances
+play-getcoins -a $PLAY_LND_ADDRESS -r true
 #play-lnd walletbalance
-
 #play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   100000001" >> \
 #sendcoins.log
-play-lnd "lncli -n signet sendcoins         $(play-getcoins -r true)       100000001" >> sendcoins.log
-#play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 100000001 --conf_target=1$k" >> \
-#sendcoins.log
-#play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 100000001 --conf_target=2$k" >> \
-#sendcoins.log
-#play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 100000001 --conf_target=3$k" >> \
-#sendcoins.log
-#play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 100000001 --conf_target=4$k" >> \
-#sendcoins.log
-
+play-lnd "lncli -n signet sendcoins         $PLAY_LND_ADDRESS       $k"
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt $k --conf_target=1$k" >> \
+sendcoins.log
 }
+################################################################################
 for (( i = 1; i <= 200; i++ ))      ### i loop
 do
     export i
-    echo "{ \"i\": \"$i\" }"
     #echo $i
-    for (( j = 1 ; j <= 9; j++ )) ### j loop
+    for (( j = 5 ; j <= 6; j++ )) ### j loop
     do
         export j
-        echo "{ \"j\": \"$j\" }"
         #echo $j
         #bitcoin-cli        sendtoaddress         "$(bitcoin-cli getnewaddress)" 0.0$j >> sendtoaddress.log
-
-        for (( k = 0 ; k <= 9; k++ )) ### k loop
-        do
-            export k
-            echo "{ \"k\": \"$k\" }"
-            #exit
-            #echo $k
-            cli-automate
-            #cli-with-play-commands-automate
-            play-gitcoins-automate
-
+            padtowidth=$j
+            for z in 0 {1..20} {20..100}; do
+                k=$(printf "%0*d\n" $padtowidth $z;)
+                export k
+                echo "{ \"i\": \"$i\" }"
+                echo "{ \"j\": \"$j\" }"
+                echo "{ \"k\": \"$k\" }"
+                clear
+                cli-automate
+                clear
+                #cli-with-play-commands-automate
+                #play-gitcoins-automate
         done
+                play-gitcoins-automate
     done
 done
 echo "End blocknotify script"
