@@ -1,30 +1,31 @@
 #!/bin/bash
-
-
+echo "{ \"TIME\": $(date +%s) }"
 SELF_ADDRESS=$(bitcoin-cli getnewaddress)
 export SELF_ADDRESS
-echo $SELF_ADDRESS
+echo { \"SELF_ADDRESS\": \"$SELF_ADDRESS\" }
 PLAY_BITCOIN_ADDRESS=$(play-bitcoin getnewaddress)
 export PLAY_BITCOIN_ADDRESS
-echo $PLAY_BITCOIN_ADDRESS
+echo { \"PLAY_BITCOIN_ADDRESS\": \"$PLAY_BITCOIN_ADDRESS\" }
 PLAY_LND_ADDRESS=$(play-lnd newaddress)
 export PLAY_LND_ADDRESS
-echo $PLAY_LND_ADDRESS
+echo { \"PLAY_LND_ADDRESS\": \"$PLAY_LND_ADDRESS\" }
 
-echo "{ \"time\": \"$(date +%s)\" }"
 cli-automate(){
-#bitcoin-cli estimaterawfee 10
-echo "{ \"time\": \"$(date +%s)\" }"
+echo "{ \"TIME\": $(date +%s) }"
 #increment fee
-echo "{ \"settxfee 0.000$j\": \"$(bitcoin-cli settxfee 0.000$j)\" }"
-bitcoin-cli sendtoaddress "$SELF_ADDRESS" 0.0$j
+echo "{ \"settxfee 0.000$k\": \"$(bitcoin-cli settxfee 0.000$k)\" }"
+
+TXHASH=$(bitcoin-cli sendtoaddress "$SELF_ADDRESS" 0.0$j)
+echo "{ \"TXHASH\": \"$TXHASH\" }"
+
 #override settxfee
-echo "{ \"time\": \"$(date +%s)\" }"
-bitcoin-cli -named sendtoaddress address="$SELF_ADDRESS" \
-    amount=0.0$j fee_rate=0$j #>> sendtoaddress.log
-echo "{ \"time\": \"$(date +%s)\" }"
-bitcoin-cli sendtoaddress "$SELF_ADDRESS" 0.0$j
-echo "{ \"time\": \"$(date +%s)\" }"
+echo "{ \"TIME\": $(date +%s) }"
+ #$(echo bitcoin-cli -named sendtoaddress address="$SELF_ADDRESS" amount=0.0$j fee_rate=0$j)
+TXHASH=$(bitcoin-cli -named sendtoaddress address="$SELF_ADDRESS" amount=0.0$j )
+echo "{ \"TXHASH\": \"$TXHASH\" }"
+echo "{ \"TIME\": $(date +%s) }"
+#$(echo bitcoin-cli sendtoaddress "$SELF_ADDRESS" 0.0$j)
+echo "{ \"TIME\": $(date +%s) }"
 
 #REF:
 #bitcoin-cli sendtoaddress tb1qj0hf93zwjusuh54hvkd668l7zsqx59necc0988 0.5 2
