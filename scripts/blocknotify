@@ -1,19 +1,22 @@
 #!/bin/bash
 
-cli-automate(){
 
-bitcoin-cli estimaterawfee 10 && echo ","
-bitcoin-cli settxfee 0.0000$i$k > settxfee.log
+echo "{ \"time\": $(date +%s) }"
+cli-automate(){
+bitcoin-cli estimaterawfee 10
+echo "{ \"time\": $(date +%s) }"
+#bitcoin-cli settxfee 0 > /dev/null 2>&1
 bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" \
     amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
+echo "{ \"time\": $(date +%s) }"
 bitcoin-cli        sendtoaddress         "$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" 1.$k$j \
 >> sendtoaddres.log
-
-bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" amount=0.$k$j conf_target=$i estimate_mode="economical"
-bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" \
-    amount=0.$k$j conf_target=$i estimate_mode="economical" subtractfeefromamount=false \
-    replaceable=true avoid_reuse=false comment="Automated from /usr/local/bin/blocknotify" \
-    comment_to="deepspace.imac" verbose=true
+echo "{ \"time\": $(date +%s) }"
+#bitcoin-cli -named sendtoaddress address="$(bitcoin-cli getnewaddress)" amount=0.$k$j conf_target=$i estimate_mode="economical"
+#bitcoin-cli -named sendtoaddress address="$(/Users/git/gui/src/./bitcoin-cli getnewaddress)" \
+#    amount=0.$k$j conf_target=$i estimate_mode="economical" subtractfeefromamount=false \
+#    replaceable=true avoid_reuse=false comment="Automated from /usr/local/bin/blocknotify" \
+#    comment_to="deepspace.imac" verbose=true
 bitcoin-cli getbalances > getbalances.log
 bitcoin-cli listreceivedbyaddress > listrecievedbyaddress.log
 }
@@ -61,17 +64,17 @@ sendcoins.log
 for (( i = 1; i <= 200; i++ ))      ### i loop
 do
     export i
-    echo $i
+    #echo $i
     for (( j = 1 ; j <= 9999999; j++ )) ### j loop
     do
         export j
-        echo $j
+        #echo $j
         bitcoin-cli        sendtoaddress         "$(bitcoin-cli getnewaddress)" 0.$j >> sendtoaddress.log
 
         for (( k = 0 ; k <= 9; k++ )) ### k loop
         do
             export k
-            echo $k
+            #echo $k
             #bitcoin-cli estimaterawfee 10 && echo ","
             #bitcoin-cli settxfee 0.0000$i$k > settxfee.log
             cli-automate

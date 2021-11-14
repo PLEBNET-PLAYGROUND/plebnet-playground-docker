@@ -337,6 +337,10 @@ else
 endif
 	./plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
 #######################
+.PHONY: blocknotify
+blocknotify:
+	bash -c 'install -v $(PWD)/scripts/blocknotify  /usr/local/bin/blocknotify'
+#######################
 .PHONY: initialize
 initialize:
 	./scripts/initialize  #>&/dev/null
