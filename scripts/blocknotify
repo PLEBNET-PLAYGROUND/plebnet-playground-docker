@@ -36,8 +36,8 @@ echo "{ \"TXHASH\": \"$TXHASH\" }"
 TXHASH=$(bitcoin-cli -named sendtoaddress address="$PLAY_LND_ADDRESS" amount=0.0$j )
 echo "{ \"TXHASH\": \"$TXHASH\" }"
 echo "{ \"END_TIME\": $(date +%s) }"
-bitcoin-cli getbalances
-bitcoin-cli listreceivedbyaddress
+#bitcoin-cli getbalances
+#bitcoin-cli listreceivedbyaddress
 }
 ################################################################################
 cli-with-play-commands-automate(){
@@ -60,10 +60,14 @@ play-gitcoins-automate(){
 play-getcoins -r true > play-getcoins.log
 play-getcoins -a $PLAY_LND_ADDRESS -r true
 #play-lnd walletbalance
-#play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   100000001" >> \
-#sendcoins.log
-play-lnd "lncli -n signet sendcoins         $PLAY_LND_ADDRESS       $k"
-play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt $k --conf_target=1$k" >> \
+
+#pay self from lnd wallet
+play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   100000001" >> \
+sendcoins.log
+play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   100000001"
+
+play-lnd "lncli -n signet sendcoins         $PLAY_LND_ADDRESS       $j$k"
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt $k --conf_target=$j$k" >> \
 sendcoins.log
 }
 ################################################################################
@@ -83,6 +87,8 @@ do
                 echo "{ \"i\": \"$i\" }"
                 echo "{ \"j\": \"$j\" }"
                 echo "{ \"k\": \"$k\" }"
+                bitcoin-cli getbalances
+                play-gitcoins-automate
                 clear
                 cli-automate
                 clear
