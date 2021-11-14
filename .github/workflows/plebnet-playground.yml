@@ -54,6 +54,7 @@ jobs:
           make build nocache=true
           make build para=true
           make install verbose=true
+          blocknotify | jq . & exit
           #make uninstall
 
   ubuntu-20-build_and_test:
@@ -77,6 +78,7 @@ jobs:
           make build nocache=true
           make build para=true
           make install verbose=true
+          blocknotify | jq . & exit
           #make uninstall
       - name: play
         run: |
