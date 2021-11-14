@@ -20,20 +20,20 @@ cli-automate(){
 echo "{ \"TIME\": $(date +%s) }"
 echo "{ \"settxfee 0.$k\": \"$(bitcoin-cli settxfee 0.$k)\" }"
 echo "{ \"START_TIME\": $(date +%s) }"
-TXHASH=$(bitcoin-cli sendtoaddress "$SELF_ADDRESS"  0.0$k)
+TXHASH=$(bitcoin-cli sendtoaddress "$SELF_ADDRESS"  0.$k)
 echo "{ \"TXHASH\": \"$TXHASH\" }"
 echo "{ \"TIME\": $(date +%s) }"
-TXHASH=$(bitcoin-cli sendtoaddress "$PLAY_BITCOIN_ADDRESS"  0.0$k)
+TXHASH=$(bitcoin-cli sendtoaddress "$PLAY_BITCOIN_ADDRESS"  0.$k)
 echo "{ \"TXHASH\": \"$TXHASH\" }"
 echo "{ \"TIME\": $(date +%s) }"
-TXHASH=$(bitcoin-cli sendtoaddress "$PLAY_LND_ADDRESS"  0.0$k)
+TXHASH=$(bitcoin-cli sendtoaddress "$PLAY_LND_ADDRESS"  0.$k)
 echo "{ \"TXHASH\": \"$TXHASH\" }"
 echo "{ \"TIME\": $(date +%s) }"
-TXHASH=$(bitcoin-cli -named sendtoaddress address="$SELF_ADDRESS" amount=0.0$j )
+TXHASH=$(bitcoin-cli -named sendtoaddress address="$SELF_ADDRESS" amount=0.$j )
 echo "{ \"TXHASH\": \"$TXHASH\" }"
-TXHASH=$(bitcoin-cli -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.0$j )
+TXHASH=$(bitcoin-cli -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$j )
 echo "{ \"TXHASH\": \"$TXHASH\" }"
-TXHASH=$(bitcoin-cli -named sendtoaddress address="$PLAY_LND_ADDRESS" amount=0.0$j )
+TXHASH=$(bitcoin-cli -named sendtoaddress address="$PLAY_LND_ADDRESS" amount=0.$j )
 echo "{ \"TXHASH\": \"$TXHASH\" }"
 echo "{ \"END_TIME\": $(date +%s) }"
 #bitcoin-cli getbalances
@@ -67,7 +67,7 @@ sendcoins.log
 play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   100000001"
 
 play-lnd "lncli -n signet sendcoins         $PLAY_LND_ADDRESS       $j$k"
-play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt $k --conf_target=$j$k" >> \
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt $j$k --conf_target=$i" >> \
 sendcoins.log
 }
 ################################################################################
@@ -75,19 +75,21 @@ for (( i = 1; i <= 200; i++ ))      ### i loop
 do
     export i
     #echo $i
-    for (( j = 5 ; j <= 6; j++ )) ### j loop
+    for (( j = 1 ; j <= 9; j++ )) ### j loop
     do
         export j
         #echo $j
         #bitcoin-cli        sendtoaddress         "$(bitcoin-cli getnewaddress)" 0.0$j >> sendtoaddress.log
             padtowidth=$j
-            for z in 0 {1..20} {20..100}; do
+            for z in 0 {1..30} {30..100}; do
                 k=$(printf "%0*d\n" $padtowidth $z;)
                 export k
                 echo "{ \"i\": \"$i\" }"
                 echo "{ \"j\": \"$j\" }"
                 echo "{ \"k\": \"$k\" }"
                 bitcoin-cli getbalances
+                play-bitcoin getbalances
+                play-lnd walletbalance
                 play-gitcoins-automate
                 clear
                 cli-automate
