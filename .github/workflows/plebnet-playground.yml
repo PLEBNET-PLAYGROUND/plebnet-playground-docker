@@ -50,6 +50,7 @@ jobs:
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
+          make blocknotify
           make build nocache=true
           make build para=true
           make install verbose=true
@@ -72,6 +73,7 @@ jobs:
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
+          make blocknotify
           make build nocache=true
           make build para=true
           make install verbose=true
