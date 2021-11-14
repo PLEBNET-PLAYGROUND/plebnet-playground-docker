@@ -48,16 +48,16 @@ play-getcoins -a $(play-bitcoin getnewaddress) -r true >> play-getcoins.log
 play-bitcoin getbalances
 play-lnd walletbalance
 
-play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   10000000" >> \
+play-lnd "lncli -n signet sendcoins         $(bitcoin-cli getnewaddress)   100000000" >> \
 sendcoins.log
-play-lnd "lncli -n signet sendcoins         $(play-getcoins -r true)       1000000" >> sendcoins.log
-play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=1$k" >> \
+play-lnd "lncli -n signet sendcoins         $(play-getcoins -r true)       100000000" >> sendcoins.log
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 100000000 --conf_target=1$k" >> \
 sendcoins.log
-play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=2$k" >> \
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 100000000 --conf_target=2$k" >> \
 sendcoins.log
-play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=3$k" >> \
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 100000000 --conf_target=3$k" >> \
 sendcoins.log
-play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 1000000 --conf_target=4$k" >> \
+play-lnd "lncli -n signet sendcoins --addr  $(play-getcoins -r true) --amt 100000000 --conf_target=4$k" >> \
 sendcoins.log
 
 }
