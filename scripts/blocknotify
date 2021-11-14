@@ -18,7 +18,9 @@ echo "{ \"time\": $(date +%s) }"
 #    replaceable=true avoid_reuse=false comment="Automated from /usr/local/bin/blocknotify" \
 #    comment_to="deepspace.imac" verbose=true
 bitcoin-cli getbalances > getbalances.log
+bitcoin-cli getbalances
 bitcoin-cli listreceivedbyaddress > listrecievedbyaddress.log
+bitcoin-cli listreceivedbyaddress
 }
 cli-with-play-commands-automate(){
 
