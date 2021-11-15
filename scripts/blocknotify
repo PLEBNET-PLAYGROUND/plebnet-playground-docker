@@ -1,0 +1,93 @@
+#!/bin/bash
+#BEGIN OF OBJECT
+echo "{"
+echo "\"blocknotify\":["
+echo "{"
+echo "\"time\":\"$(date +%s)\""
+echo "},"
+SELF_ADDRESS=$(bitcoin-cli -rpcwallet=playground-wallet getnewaddress)
+export SELF_ADDRESS
+echo { \"SELF_ADDRESS\": \"$SELF_ADDRESS\" },
+PLAY_BITCOIN_ADDRESS=$(play-bitcoin getnewaddress)
+export PLAY_BITCOIN_ADDRESS
+echo { \"PLAY_BITCOIN_ADDRESS\": \"$PLAY_BITCOIN_ADDRESS\" },
+#END OF OBJECT
+#BEGIN OF OBJECT
+echo "{"
+echo "\"time\":\"$(date +%s)\""
+echo "},"
+#END OF OBJECT
+
+#BEGIN OF OBJECT inner function
+
+host-cli-automate(){
+################################################################################
+echo "{ \"TIME\": $(date +%s) },"
+echo "{ \"settxfee 0.$k\": \"$(bitcoin-cli settxfee 0.0$k)\" },"
+echo "{ \"TIME\": $(date +%s) },"
+#REF:
+#bitcoin-cli -rpcwallet=playground-wallet sendtoaddress tb1qwqxjzmrdkgk6pjspjgsg3zqhl9ykqd059nhxh9 0.01
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet sendtoaddress "$SELF_ADDRESS"  0.0$j)
+echo "{ \"TXHASH\": \"$TXHASH\" },"
+echo "{ \"TIME\": $(date +%s) },"
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet sendtoaddress "$PLAY_BITCOIN_ADDRESS"  0.0$j)
+echo "{ \"TXHASH\": \"$TXHASH\" },"
+echo "{ \"TIME\": $(date +%s) },"
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$j )
+echo "{ \"TXHASH\": \"$TXHASH\" },"
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$j )
+echo "{ \"TXHASH\": \"$TXHASH\" },"
+#echo "{ \"END_TIME\": $(date +%s) }]}"
+#bitcoin-cli getbalances
+#bitcoin-cli listreceivedbyaddress
+}
+end_time(){
+echo "{ \"END_TIME\": $(date +%s) }]}"
+}
+################################################################################
+cli-with-play-bitcoin(){
+################################################################################
+play-getcoins -a $SELF_ADDRESS >> play-getcoins.log
+#REF:
+#bitcoin-cli -rpcwallet=playground-wallet sendtoaddress tb1qwqxjzmrdkgk6pjspjgsg3zqhl9ykqd059nhxh9 0.01
+bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$k$j fee_rate=$i$k >> sendtoaddress.log
+bitcoin-cli  -rpcwallet=playground-wallet        sendtoaddress         "$PLAY_BITCOIN_ADDRESS" 0.$k$j >> sendtoaddress.log
+}
+################################################################################
+for (( i = 1; i <= 200; i++ ))      ### i loop
+do
+    export i
+    for (( j = 1 ; j <= 9; j++ )) ### j loop
+    do
+        export j
+            padtowidth=$j
+            for z in 0 {1..30} {30..100}; do
+                k=$(printf "%0*d\n" $padtowidth $z;)
+                export k
+                #echo -e '\0033\0143'
+                echo "{ \"i\": \"$i\" },"
+                echo "{ \"j\": \"$j\" },"
+                echo "{ \"k\": \"$k\" },"
+                echo $(bitcoin-cli  -rpcwallet=playground-wallet getbalances),
+                echo $(play-bitcoin getbalances)]
+                echo "},"
+                echo "{ \"end\": ["
+                host-cli-automate
+                #trap1
+                trap 'end_time; exit' SIGINT SIGQUIT
+                count=0
+                while :
+                do
+                    sleep 1
+                    count=$(expr $count + 1)
+                    #echo "{ \"COUNT\": \"$count\" },"
+                    #echo $count
+                    host-cli-automate
+                    #echo "{ \"COUNT\": \"$count\" },"
+                done
+                #cli-with-play-bitcoin
+        done
+    done
+done
+blocknotify
+#

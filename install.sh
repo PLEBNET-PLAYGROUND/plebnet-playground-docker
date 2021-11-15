@@ -26,7 +26,7 @@ fi
 #Remove any old version
 docker-compose down
 
-python plebnet_generate.py TRIPLET=$TRIPLET services=$services
+python3 plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
 sudo rm -rf volumes
 
