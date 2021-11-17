@@ -109,7 +109,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             sudo apt install gawk
             sudo apt update
             sudo apt install software-properties-common
-            sudo apt python3
+            sudo apt install python3
             report
             echo 'Using apt...'
         fi
