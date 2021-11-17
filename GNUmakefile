@@ -208,7 +208,7 @@ help:
 	@echo '		 make '
 	@echo '		 make help                       print help'
 	@echo '		 make report                     print environment variables'
-	@echo '		 make initialize                 install dependencies'
+	@echo '		 make initialize                 install dependencies - ubuntu/macOS'
 	@echo '		 make init                       initialize basic dependencies'
 	@echo '		 make build'
 	@echo '		 make build para=true            parallelized build'
