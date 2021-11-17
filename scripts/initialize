@@ -110,6 +110,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             sudo apt update
             sudo apt install software-properties-common
             sudo apt install python3
+            sudo apt-get install python3-pip
             report
             echo 'Using apt...'
         fi
