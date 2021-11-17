@@ -112,7 +112,6 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             sudo apt python3
             report
             echo 'Using apt...'
-            checkbrew
         fi
     fi
     if [[ "$OSTYPE" == "linux-musl" ]]; then
@@ -120,7 +119,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             apk add awk
             report
             echo 'Using apk...'
-            checkbrew
+
         fi
     fi
     if [[ "$OSTYPE" == "linux-arm"* ]]; then
@@ -129,7 +128,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             apt install awk
             report
             echo 'Using apt...'
-            checkbrew
+
         fi
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then

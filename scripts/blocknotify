@@ -40,9 +40,9 @@ echo "{ \"TXHASH\": \"$TXHASH\" },"
 TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet sendtoaddress "$PLAY_BITCOIN_ADDRESS"  0.$count$k$j)
 echo "{ \"TXHASH\": \"$TXHASH\" },"
 #NAMED
-TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$count$k$j )
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$count$k$j comment=$TIME-$count-$k-$j )
 echo "{ \"TXHASH\": \"$TXHASH\" },"
-TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$count$k$j )
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$count$k$j comment=$TIME-$count-$k-$j )
 echo "{ \"TXHASH\": \"$TXHASH\" },"
 
 
@@ -53,9 +53,9 @@ echo "{ \"TXHASH\": \"$TXHASH\" },"
 TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet sendtoaddress "$PLAY_BITCOIN_ADDRESS"  0.$count$k$j)
 echo "{ \"TXHASH\": \"$TXHASH\" },"
 #NAMED
-TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$count$k$j )
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$count$k$j comment=$TIME-$count-$k-$j )
 echo "{ \"TXHASH\": \"$TXHASH\" },"
-TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$count$k$j )
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$count$k$j comment=$TIME-$count-$k-$j )
 echo "{ \"TXHASH\": \"$TXHASH\" },"
 
 
@@ -66,9 +66,9 @@ echo "{ \"TXHASH\": \"$TXHASH\" },"
 TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet sendtoaddress "$PLAY_BITCOIN_ADDRESS"  0.$count$k$j)
 echo "{ \"TXHASH\": \"$TXHASH\" },"
 #NAMED
-TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$count$k$j )
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$count$k$j comment=$TIME-$count-$k-$j )
 echo "{ \"TXHASH\": \"$TXHASH\" },"
-TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$count$k$j )
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$count$k$j comment=$TIME-$count-$k-$j )
 echo "{ \"TXHASH\": \"$TXHASH\" },"
 
 echo "{ \"settxfee 0.0000$count$k$j\": \"$(bitcoin-cli settxfee 0.0000$count$k$j)\" },"
@@ -78,9 +78,9 @@ echo "{ \"TXHASH\": \"$TXHASH\" },"
 TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet sendtoaddress "$PLAY_BITCOIN_ADDRESS"  0.$count$k$j)
 echo "{ \"TXHASH\": \"$TXHASH\" },"
 #NAMED
-TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$count$k$j )
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$SELF_ADDRESS" amount=0.$count$k$j comment=$TIME-$count-$k-$j )
 echo "{ \"TXHASH\": \"$TXHASH\" },"
-TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$count$k$j )
+TXHASH=$(bitcoin-cli  -rpcwallet=playground-wallet -named sendtoaddress address="$PLAY_BITCOIN_ADDRESS" amount=0.$count$k$j comment=$TIME-$count-$k-$j )
 echo "{ \"TXHASH\": \"$TXHASH\" },"
 
 }

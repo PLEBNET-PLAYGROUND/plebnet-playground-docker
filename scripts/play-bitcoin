@@ -98,6 +98,16 @@ do
     elif [[ ${!i} = sendtoaddress ]]; then
         ((i++))
         # bitcoin-cli -rpcwallet=plebnet1 sendtoaddress amount feerate
+        #play-bitcoin sendtoaddress playground-wallet $(export newaddress=$(bitcoin-cli getnewaddress rpcwallet=playground-wallet); echo $newaddress)
+        #play-bitcoin sendtoaddress playground-wallet 
+        if [ -z $2 ]; then
+            if [ -z $3 ]; then
+                echo "include amount to send..."
+                echo "play-bitcoin sendtoaddress <amount>"
+            fi
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=playground-wallet sendtoaddress $3 $4"
+        exit
+        fi
         docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 sendtoaddress $3 $4"
         exit
 
