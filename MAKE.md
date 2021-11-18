@@ -6,11 +6,12 @@
 		 make 
 		 make help                       print help
 		 make report                     print environment variables
-		 make initialize                 install dependencies
+		 make initialize                 install dependencies - ubuntu/macOS
 		 make init                       initialize basic dependencies
 		 make build
 		 make build para=true            parallelized build
 		 make install
+		                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook
 		 make run
 		                                 nocache=true verbose=true
 

@@ -17,7 +17,22 @@ ifeq ($(ARCH),arm64)
 TRIPLET                                 :=aarch64-linux-gnu
 export TRIPLET
 endif
-
+#available services:
+#	bitcoind
+#	lnd
+#	tor
+#	thunderhub
+#	rtl
+#	notebook
+#	dashboard
+#	lndg
+#	docs
+ifeq ($(services),)
+SERVICES                                :=bitcoind,lnd,rtl,thunderhub,docs
+else
+SERVICES                                :=$(services)
+endif
+export SERVICES
 ifeq ($(user),)
 HOST_USER								:= root
 HOST_UID								:= $(strip $(if $(uid),$(uid),0))
@@ -193,11 +208,12 @@ help:
 	@echo '		 make '
 	@echo '		 make help                       print help'
 	@echo '		 make report                     print environment variables'
-	@echo '		 make initialize                 install dependencies'
+	@echo '		 make initialize                 install dependencies - ubuntu/macOS'
 	@echo '		 make init                       initialize basic dependencies'
 	@echo '		 make build'
 	@echo '		 make build para=true            parallelized build'
 	@echo '		 make install'
+	@echo '		                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook'
 	@echo '		 make run'
 	@echo '		                                 nocache=true verbose=true'
 	@echo ''
@@ -257,6 +273,7 @@ report:
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
 	@echo '        - TRIPLET=${TRIPLET}'
+	@echo '        - SERVICES=${SERVICES}'
 	@echo '        - HOST_USER=${HOST_USER}'
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
@@ -301,30 +318,38 @@ endif
 .PHONY: init
 .SILENT:
 init:
-#ifneq ($(shell id -u),0)
-#	@echo 'sudo make init #try if permissions issue'
-#endif
 ifneq ($(shell id -u),0)
+	@echo 'make super #if permissions issue'
+	@echo 'make init  #if permissions issue'
+endif
+	echo $(PYTHON3)
+	echo $(PIP3)
+#ifneq ($(shell id -u),0)
 	sudo -s bash -c 'rm -f /usr/local/bin/play'
 	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 	sudo -s bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
-ifneq ($(PIP3),)
-	$(PIP3) install --upgrade -q pip
-	$(PYTHON3) -m pip -q install omegaconf
-	$(PIP3) install -q -r requirements.txt
-	pushd docs && $(PIP3) install -q -r requirements.txt && popd
-endif
-else
+#ifneq ($(PIP3),)
+	$(PYTHON3) -m pip install --upgrade pip
+	$(PYTHON3) -m pip install -q omegaconf
+	$(PYTHON3) -m pip install -q -r requirements.txt
+	pushd docs && $(PYTHON3) -m pip install -q -r requirements.txt && popd
+#endif
+#else
 	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
-endif
-	./plebnet_generate.py TRIPLET=$(TRIPLET)
+#endif
+	./plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
+#######################
+.PHONY: blocknotify
+blocknotify:
+	bash -c 'install -v $(PWD)/scripts/blocknotify  /usr/local/bin/blocknotify'
 #######################
 .PHONY: initialize
 initialize:
 	./scripts/initialize  #>&/dev/null
 #######################
 .PHONY: install
+.SILENT:
 install: init
 	bash -c './install.sh $(TRIPLET)'
 	#bash -c 'make btcd'

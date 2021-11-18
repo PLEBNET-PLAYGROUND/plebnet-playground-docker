@@ -50,9 +50,11 @@ jobs:
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
+          make blocknotify
           make build nocache=true
           make build para=true
           make install verbose=true
+          blocknotify | jq . & exit
           #make uninstall
 
   ubuntu-20-build_and_test:
@@ -72,9 +74,11 @@ jobs:
           sudo apt install -y mkdocs
           pip install -r docs/requirements.txt
           pip install -r requirements.txt
+          make blocknotify
           make build nocache=true
           make build para=true
           make install verbose=true
+          blocknotify | jq . & exit
           #make uninstall
       - name: play
         run: |

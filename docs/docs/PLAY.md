@@ -7,41 +7,20 @@ play tor-iftop
 Examples:
 
 play-bitcoin
-
 play bitcoin
 play bitcoin id
-play bitcoin iftop
-play bitcoin netinfo 5
-play bitcoin gettxoutsetinfo
-play bitcoin getmininginfo
-
-play bitcoin '<COMMAND>'
-play bitcoin 'bitcoin-cli getblockhash 1000'
-play bitcoin 'bitcoin-cli getblock $(bitcoin-cli getblockhash 0)'
 
 play-lnd
-
 play lnd
 play lnd id
-play lnd iftop
-play lnd newaddress
-play lnd walletbalance
-play lnd total-balance
-play lnd '<COMMAND>'
-play lnd 'lncli'
-
-play-lnd balance
 
 https://www.plebnet.fun
 
 Fund playground_lnd wallet with signet coins
 play-getcoins -a $(play-lnd getnewaddress)
 
-Fund playground_bitcoin wallet with signet coins
-play-getcoins -a $(play-bitcoin getnewaddress)
-
 Nested Commands:
-play-getcoins -a $(play-bitcoin getnewaddress) && play-getcoins -a $(play-lnd getnewaddress)
+play-getcoins -a $(play-lnd getnewaddress) && play-getcoins -a $(play-lnd getnewaddress)
 play-getcoins -a $(play-getcoins -r true)
 
 ```
@@ -70,6 +49,8 @@ https://www.plebnet.fun
 Fund bitcoin playground-wallet:
 play-getcoins -a $(play-bitcoin getnewaddress)
 
+newaddress=$(bitcoin-cli -signet getnewaddress)
+play-bitcoin sendtoaddress playground-wallet $newaddress 0.01
 ```
 ## PLAY-LND COMMAND
 ```
