@@ -49,6 +49,8 @@ https://www.plebnet.fun
 Fund bitcoin playground-wallet:
 play-getcoins -a $(play-bitcoin getnewaddress)
 
+newaddress=$(bitcoin-cli -signet getnewaddress)
+play-bitcoin sendtoaddress playground-wallet $newaddress 0.01
 ```
 ## PLAY-LND COMMAND
 ```
