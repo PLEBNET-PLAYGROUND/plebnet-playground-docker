@@ -10,7 +10,6 @@ import requests
 import sys
 import json
 from pprint import pprint
-from glom import glom
 
 sys.path.append('.')
 sys.path.append("/usr/local/lib/python3.8/site-packages")
