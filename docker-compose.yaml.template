@@ -71,6 +71,8 @@ services:
       build:
         context: ./tor
         dockerfile: Dockerfile
+      environment:
+        TRIPLET: '${TRIPLET}'
       expose:
       - 9050
       - 9051

@@ -54,8 +54,11 @@ RUN apk --no-cache add --update \
         # /usr/local/etc/tor/torrc.sample
 
 WORKDIR /tmp/bin
-RUN wget -qO gosu "https://github.com/tianon/gosu/releases/download/1.13/gosu-amd64" \
-	&& echo "6f333f520d31e212634c0777213a5d4f8f26bba1ab4b0edbbdf3c8bff8896ecf  gosu" | sha256sum -c -
+RUN  if [ "$TRIPLET" = "x86_64-linux-gnu" ] ; then \
+ wget -qO gosu "https://github.com/tianon/gosu/releases/download/1.13/gosu-amd64" ; \
+  else \ 
+  wget -qO gosu "https://github.com/tianon/gosu/releases/download/1.13/gosu-arm64" ; fi   
+  
 
 FROM alpine:3.13 as playground-tor
 
