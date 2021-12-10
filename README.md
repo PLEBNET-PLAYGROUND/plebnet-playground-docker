@@ -217,10 +217,11 @@ For developers, set the environment variable `HOURLY_PATH=/path/to/hourly/repo` 
 For all other users, set the following environment variables (or put them in a `.env` at the base of the plebnet-playground repo):
 
 ```sh
-# HOURLY_PATH=/path/to/hourly/repo # uncomment for dev only
+# HOURLY_PATH=/path/to/hourly/repo (tabconf_hackathon branch) # uncomment for dev only
 HOURLY_WORKPATH=/path/to/your/git/repo
-GIT_USER_NAME='FirstName LastName'
+GIT_USER_NAME='YourFirstName YourLastName'
 GIT_USER_EMAIL=your_email@some_domain.com
+HOURLY_QR_LOGO=https://url_to_your_company_logo
 ```
 
 Now run hourly:
