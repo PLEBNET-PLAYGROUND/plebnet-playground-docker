@@ -1,3 +1,4 @@
+* parameterized QR code logo
 
 ### 2021-12-10 17:03:26.384096: clock-in
 

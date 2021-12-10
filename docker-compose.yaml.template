@@ -240,6 +240,7 @@ services:
       JUPYTER_PORT: 8888
       # GIT_USER_NAME: '${GIT_USER_NAME}'
       # GIT_USER_EMAIL: '${GIT_USER_EMAIL}'
+      HOURLY_QR_LOGO: ${oc.env:HOURLY_QR_LOGO,null}
     working_dir: /dashboard
     command:
       - jupyter
