@@ -1,3 +1,6 @@
+* unable to connect to bitcoin-cli
+`bitcoin-cli -rpcconnect playground-bitcoind -rpcport 38332 -rpcuser bitcoin -rpcpassword bitcoin`
+* running lightning container `docker compose run --entrypoint bash clightning`
 
 ### 2021-12-26 21:37:39.721294: clock-in
 

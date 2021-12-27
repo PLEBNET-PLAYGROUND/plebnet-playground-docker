@@ -78,7 +78,7 @@ services:
       LIGHTNINGD_DATA: /root/.lightning
       LIGHTNINGD_RPC_PORT: 9835
       LIGHTNINGD_PORT: 9735
-      LIGHTNINGD_NETWORK: bitcoin #?
+      LIGHTNINGD_NETWORK: signet #?
     restart: unless-stopped
     container_name: playground-c-lightning
     expose:
@@ -91,6 +91,10 @@ services:
     - type: bind
       source: ${oc.env:PWD}/volumes/clightning
       target: /root/.lightning/
+    - type: bind
+      read_only: true
+      source: ${oc.env:PWD}/volumes/bitcoin_datadir
+      target: /root/.bitcoin/
   tor:
       restart: unless-stopped
       container_name: playground-tor
