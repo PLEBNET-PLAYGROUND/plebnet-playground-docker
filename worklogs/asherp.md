@@ -1,3 +1,6 @@
+
+### 2021-12-26 19:50:09.021401: clock-in
+
 ### 2021-09-25 14:59:37.408376: clock-out
 
 * converted to undirected graph to capture all routes
