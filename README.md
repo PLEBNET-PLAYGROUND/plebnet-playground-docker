@@ -39,6 +39,7 @@ pip3 install -r requirements.txt
 | ----------- | ----------- |
 |  bitcoind | Bitcoin Core Daemon |
 |  lnd | Lightning Labs LND Daemon  |
+|  clightning | Blockstream lightningd Daemon |
 |  tor | tor network daemon |
 | [rtl](http://localhost:3000) |  Ride The Lightning Daemon |
 | [thunderhub](http://localhost:3001) |  Thunderhub Lightning UI |

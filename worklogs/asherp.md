@@ -1,3 +1,4 @@
+* adding c-lighting
 
 ### 2021-12-26 19:50:09.021401: clock-in
 
