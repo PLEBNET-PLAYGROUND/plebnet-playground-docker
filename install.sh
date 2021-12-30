@@ -34,7 +34,7 @@ sudo rm -rf volumes
 #Create Datafile
 mkdir volumes
 mkdir volumes/lnd_datadir
-mkdir volumes/clightning
+mkdir volumes/clightning_datadir
 mkdir volumes/bitcoin_datadir
 mkdir volumes/thub_datadir
 mkdir volumes/rtl_datadir

@@ -66,7 +66,10 @@ services:
         source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /root/.lnd/
   clightning:
-    image: elementsproject/lightningd
+    build: 
+      context: clightning
+      dockerfile: Dockerfile
+    image: playground-clightning
     links:
     - bitcoind
     - tor
@@ -74,27 +77,57 @@ services:
     - bitcoind
     - tor
     environment:
+      # ARCH: '${ARCH}' 
       TRIPLET: '${TRIPLET}'
-      LIGHTNINGD_DATA: /root/.lightning
-      LIGHTNINGD_RPC_PORT: 9835
-      LIGHTNINGD_PORT: 9735
-      LIGHTNINGD_NETWORK: signet #?
+      BITCOIN_RPCCONNECT: playground-bitcoind-clnd
+      BITCOIN_RPCUSER: bitcoin
+      BITCOIN_RPCPASSWORD: bitcoin
+      ALIAS: clightning-test
+      PROXY: playground-tor-clnd
+      LOG_FILE: /root/.lightning/logs.log
+      TOR_SERVICE_PASSWORD: hello
     restart: unless-stopped
-    container_name: playground-c-lightning
+    container_name: playground-clnd
     expose:
-    - "9735"
-    - "9835"
-    ports:
-    - "9736:9735" # 9735 taken by lnd
-    - "9835:9835"
+    - 9735
+    - 9835
     volumes:
-    - type: bind
-      source: ${oc.env:PWD}/volumes/clightning
-      target: /root/.lightning/
-    - type: bind
-      read_only: true
-      source: ${oc.env:PWD}/volumes/bitcoin_datadir
-      target: /root/.bitcoin/
+      - type: bind
+        source: ${oc.env:PWD}/volumes/clightning_datadir
+        target: /root/.lightning
+      - type: bind
+        source: ./bitcoin_datadir
+        target: /root/.bitcoin/
+  # clightning:
+  #   image: elementsproject/lightningd
+  #   links:
+  #   - bitcoind
+  #   - tor
+  #   depends_on: 
+  #   - bitcoind
+  #   - tor
+  #   environment:
+  #     TRIPLET: '${TRIPLET}'
+  #     LIGHTNINGD_DATA: /root/.lightning
+  #     LIGHTNINGD_RPC_PORT: 9835
+  #     LIGHTNINGD_PORT: 9735
+  #     LIGHTNINGD_NETWORK: signet #?
+  #   restart: unless-stopped
+  #   container_name: playground-c-lightning
+  #   expose:
+  #   - "9735"
+  #   - "9835"
+  #   ports:
+  #   - "9736:9735" # 9735 taken by lnd
+  #   - "9835:9835"
+  #   volumes:
+  #   - type: bind
+  #     source: ${oc.env:PWD}/volumes/clightning
+  #     target: /root/.lightning/
+  #   - type: bind
+  #     read_only: true
+  #     source: ${oc.env:PWD}/volumes/bitcoin_datadir
+  #     target: /root/.bitcoin/
   tor:
       restart: unless-stopped
       container_name: playground-tor

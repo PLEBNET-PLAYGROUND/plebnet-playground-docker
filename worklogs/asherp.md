@@ -1,3 +1,4 @@
+* trying to build clightning based on cluster dockerfile
 * copying xenofun's work from plebnet-playground-cluster
 
 ### 2021-12-29 19:54:38.356443: clock-in

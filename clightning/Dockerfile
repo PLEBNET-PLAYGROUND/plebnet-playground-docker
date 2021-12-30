@@ -65,6 +65,13 @@ WORKDIR /opt/lightningd
 RUN git clone --recursive /tmp/lightning . && \
     git checkout $(git --work-tree=/tmp/lightning --git-dir=/tmp/lightning/.git rev-parse HEAD)
 
+# apembroke added apt-get here for mrkd and mako
+RUN apt-get update && apt-get install -y --no-install-recommends socat inotify-tools python3 python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip3 install -U pip setuptools 
+RUN pip3 install mrkd
+RUN pip3 install Mako
+
 ARG DEVELOPER=0
 ENV PYTHON_VERSION=3
 RUN ./configure --prefix=/tmp/lightning_install --enable-static && make -j3 DEVELOPER=${DEVELOPER} && make install
