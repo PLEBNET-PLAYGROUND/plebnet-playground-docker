@@ -1,3 +1,6 @@
+
+### 2021-12-29 19:54:38.356443: clock-in
+
 ### 2021-12-26 23:14:47.513874: clock-out
 
 * unable to connect to bitcoin-cli
