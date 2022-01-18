@@ -218,11 +218,11 @@ services:
       - lnd  
     volumes:  
       - ${oc.env:PWD}/volumes/lnd_datadir:/root/.lnd:ro
-      - ${oc.env:PWD}/volumes/lndg_datadir/db.sqlite3:/lndg/db.sqlite3:rw
+      - ${oc.env:PWD}/volumes/lndg_datadir/data:/lndg/data:rw
     command:  
       - sh  
       - -c  
-      - python initialize.py -net 'signet' -server 'playground-lnd:10009' -d && python manage.py migrate && python manage.py collectstatic --no-input && sleep 20 && supervisord  && python manage.py runserver 0.0.0.0:8000  
+      - python initialize.py -net 'signet' -server 'playground-lnd:10009' -d && sleep 20 && supervisord && python manage.py runserver 0.0.0.0:8000  
     ports:  
       - 8889:8000
   docs:
