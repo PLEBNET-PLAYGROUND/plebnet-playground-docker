@@ -63,6 +63,12 @@ else
 DOCKER_COMPOSE							:= $(compose)
 endif
 export DOCKER_COMPOSE
+ifeq ($(reset),true)
+RESET:=true
+else
+RESET:=false
+endif
+export RESET
 
 PYTHON                                  := $(shell which python)
 export PYTHON

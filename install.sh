@@ -28,19 +28,25 @@ docker-compose down
 
 python3 plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
-sudo rm -rf volumes
+if [ "$RESET" == "true" ]; then
+    read -p "Clobber volumes directory - This will destroy private keys!!! (y/n) " -n 1;
+    echo "";
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    sudo rm -rf volumes
+    fi
+fi
 
 #Create Datafile
-mkdir volumes
-mkdir volumes/lnd_datadir
-mkdir volumes/bitcoin_datadir
-mkdir volumes/thub_datadir
-mkdir volumes/rtl_datadir
-mkdir volumes/tor_datadir
-mkdir volumes/tor_servicesdir
-mkdir volumes/tor_torrcdir
-mkdir volumes/lndg_datadir
-touch volumes/lndg_datadir/db.sqlite3
+mkdir -p volumes
+mkdir -p volumes/lnd_datadir
+mkdir -p volumes/bitcoin_datadir
+mkdir -p volumes/thub_datadir
+mkdir -p volumes/rtl_datadir
+mkdir -p volumes/tor_datadir
+mkdir -p volumes/tor_servicesdir
+mkdir -p volumes/tor_torrcdir
+mkdir -p volumes/lndg_datadir
+touch    volumes/lndg_datadir/db.sqlite3
 
 docker-compose build --build-arg TRIPLET=$TRIPLET
 docker-compose up --remove-orphans -d
