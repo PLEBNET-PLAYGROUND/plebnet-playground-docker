@@ -46,7 +46,6 @@ mkdir -p volumes/tor_datadir
 mkdir -p volumes/tor_servicesdir
 mkdir -p volumes/tor_torrcdir
 mkdir -p volumes/lndg_datadir
-touch    volumes/lndg_datadir/db.sqlite3
 
 docker-compose build --build-arg TRIPLET=$TRIPLET
 docker-compose up --remove-orphans -d
