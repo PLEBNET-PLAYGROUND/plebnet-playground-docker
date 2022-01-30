@@ -218,7 +218,7 @@ services:
       - lnd  
     volumes:  
       - ${oc.env:PWD}/volumes/lnd_datadir:/root/.lnd:ro
-      - ${oc.env:PWD}/volumes/lndg_datadir/data:/lndg/data:rw
+      - ${oc.env:PWD}/volumes/lndg_datadir:/lndg/data:rw
     command:  
       - sh  
       - -c  
