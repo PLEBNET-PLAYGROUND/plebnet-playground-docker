@@ -1,3 +1,5 @@
+### 2022-02-10 23:20:26.798951: clock-out
+
 * install instructions for Compose
 * switch to docker compose
 
