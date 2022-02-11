@@ -1,3 +1,6 @@
+
+### 2022-02-11 17:16:17.926726: clock-in
+
 ### 2022-02-11 10:57:03.001138: clock-out
 
 * single quotes for ubuntu
