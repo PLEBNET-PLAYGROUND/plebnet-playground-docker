@@ -24,7 +24,7 @@ fi
 
 
 #Remove any old version
-docker-compose down
+docker compose down
 
 python3 plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
@@ -47,5 +47,5 @@ mkdir -p volumes/tor_servicesdir
 mkdir -p volumes/tor_torrcdir
 mkdir -p volumes/lndg_datadir
 
-docker-compose build --build-arg TRIPLET=$TRIPLET
-docker-compose up --remove-orphans -d
+docker compose build --build-arg TRIPLET=$TRIPLET
+docker compose up --remove-orphans -d
