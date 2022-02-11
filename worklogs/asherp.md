@@ -1,3 +1,6 @@
+
+### 2022-02-11 01:08:30.447242: clock-in: T-10m 
+
 ### 2022-02-10 23:20:26.798951: clock-out
 
 * install instructions for Compose
