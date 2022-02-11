@@ -1,3 +1,6 @@
+
+### 2022-02-11 10:26:17.437377: clock-in: T-10m 
+
 ### 2022-02-11 01:13:07.178217: clock-out
 
 * added check for compose command, with fallback to docker-compose
