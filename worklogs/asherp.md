@@ -1,3 +1,4 @@
+* install instructions for Compose
 * switch to docker compose
 
 ### 2022-02-10 23:09:40.015116: clock-in
