@@ -25,10 +25,10 @@ fi
 
 if ! command -v docker compose &> /dev/null
 then
-    echo "docker compose could not be found, defaulting to docker-compose"
-    alias compose_cmd="docker-compose"
+    echo 'docker compose could not be found, defaulting to docker-compose'
+    alias compose_cmd='docker-compose'
 else
-    alias compose_cmd="docker compose"
+    alias compose_cmd='docker compose'
 fi
 
 #Remove any old version
