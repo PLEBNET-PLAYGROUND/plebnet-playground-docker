@@ -1,3 +1,5 @@
+### 2022-02-11 10:57:03.001138: clock-out
+
 * single quotes for ubuntu
 
 ### 2022-02-11 10:26:17.437377: clock-in: T-10m 
