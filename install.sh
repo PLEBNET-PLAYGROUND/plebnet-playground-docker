@@ -23,8 +23,16 @@ TRIPLET=$1
 fi
 
 
+if ! command -v docker compose &> /dev/null
+then
+    echo "docker compose could not be found, defaulting to docker-compose"
+    alias compose_cmd="docker-compose"
+else
+    alias compose_cmd="docker compose"
+fi
+
 #Remove any old version
-docker compose down
+compose_cmd down
 
 python3 plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
@@ -47,5 +55,5 @@ mkdir -p volumes/tor_servicesdir
 mkdir -p volumes/tor_torrcdir
 mkdir -p volumes/lndg_datadir
 
-docker compose build --build-arg TRIPLET=$TRIPLET
-docker compose up --remove-orphans -d
+compose_cmd build --build-arg TRIPLET=$TRIPLET
+compose_cmd up --remove-orphans -d

@@ -1,3 +1,4 @@
+* added check for compose command, with fallback to docker-compose
 
 ### 2022-02-11 01:08:30.447242: clock-in: T-10m 
 
