@@ -157,7 +157,11 @@ services:
     restart: unless-stopped
     ports:
       - "8888:8888"
-    image: plebnet-playground-docker_dashboard
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+      args:
+        - TRIPLET=${TRIPLET}
     volumes:
       - type: bind
         source: ${oc.env:PWD}/notebooks
@@ -192,7 +196,6 @@ services:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
-    image: plebnet-playground-docker_dashboard
     volumes:
       - type: bind
         source: ${oc.env:PWD}/dashboard
