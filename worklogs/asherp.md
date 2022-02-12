@@ -1,3 +1,21 @@
+### 2022-02-11 17:33:57.721456: clock-out
+
+* removing alias
+
+### 2022-02-11 17:16:17.926726: clock-in
+
+### 2022-02-11 10:57:03.001138: clock-out
+
+* single quotes for ubuntu
+
+### 2022-02-11 10:26:17.437377: clock-in: T-10m 
+
+### 2022-02-11 01:13:07.178217: clock-out
+
+* added check for compose command, with fallback to docker-compose
+
+### 2022-02-11 01:08:30.447242: clock-in: T-10m 
+
 ### 2022-02-10 23:20:26.798951: clock-out
 
 * install instructions for Compose
