@@ -1,5 +1,31 @@
+* merging master
 
 ### 2022-03-06 20:14:04.895074: clock-in
+
+### 2022-02-11 17:33:57.721456: clock-out
+
+* removing alias
+
+### 2022-02-11 17:16:17.926726: clock-in
+
+### 2022-02-11 10:57:03.001138: clock-out
+
+* single quotes for ubuntu
+
+### 2022-02-11 10:26:17.437377: clock-in: T-10m 
+
+### 2022-02-11 01:13:07.178217: clock-out
+
+* added check for compose command, with fallback to docker-compose
+
+### 2022-02-11 01:08:30.447242: clock-in: T-10m 
+
+### 2022-02-10 23:20:26.798951: clock-out
+
+* install instructions for Compose
+* switch to docker compose
+
+### 2022-02-10 23:09:40.015116: clock-in
 
 ### 2021-12-29 20:33:38.681602: clock-out
 
@@ -7,6 +33,7 @@
 * copying xenofun's work from plebnet-playground-cluster
 
 ### 2021-12-29 19:54:38.356443: clock-in
+
 
 ### 2021-12-26 23:14:47.513874: clock-out
 

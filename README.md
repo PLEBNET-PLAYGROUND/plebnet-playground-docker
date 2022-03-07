@@ -25,6 +25,7 @@ git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --conf
 cd plebnet-playground-docker
 pip3 install -r requirements.txt
 ```
+Follow [these instructions](https://docs.docker.com/compose/install/#install-compose) to install the `docker compose` subcommand on your system (Mac, Windows, Windows Server 2016, or Linux systems). 
 
 ### Supported System Architectures
 
@@ -111,7 +112,8 @@ open /Applications/Docker.app
 ```
 make
 make init
-make install
+make install (non-destructive)
+make install reset=true (destructive)
 play help
 play-bitcoin help
 play-lnd help

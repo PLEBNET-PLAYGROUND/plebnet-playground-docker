@@ -110,7 +110,8 @@ open /Applications/Docker.app
 ```
 make
 make init
-make install
+make install (non-destructive)
+make install reset=true (destructive)
 play help
 play-bitcoin help
 play-lnd help
