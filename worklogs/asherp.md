@@ -1,3 +1,6 @@
+
+### 2022-03-06 20:14:04.895074: clock-in
+
 ### 2021-12-29 20:33:38.681602: clock-out
 
 * trying to build clightning based on cluster dockerfile
