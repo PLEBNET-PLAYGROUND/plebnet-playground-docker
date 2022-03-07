@@ -1,3 +1,29 @@
+* trying to build clightning container
+* error when running `docker compose build clightning`
+```sh
+#22 1.355     Error: pg_config executable not found.
+```
+* questions on clighthing env variables:
+
+```yaml
+ environment:
+      TRIPLET: '${TRIPLET}'
+      BITCOIN_RPCHOST: playground-bitcoind
+      BITCOIN_RPCCONNECT: playground-bitcoind # container name for bitcoind
+      BITCOIN_RPCUSER: bitcoin
+      BITCOIN_RPCPASS: bitcoin # is this right?
+      ALIAS: 'NewNode'
+      PROXY: playground-tor
+      LOG_FILE: /root/.lightning/logs.log
+      TOR_SERVICE_PASSWORD: hello # is this right?
+      EXPOSE_TCP: true
+      LIGHTNINGD_DATA: /root/.lightning
+      LIGHTNINGD_NETWORK: signet
+      LIGHTNINGD_RPC_PORT: 9835
+      LIGHTNINGD_PORT: 9735 # remap to 9736?
+      ANNOUNCE_ADDR: playground-clnd # Is this right?
+```
+
 * merging master
 
 ### 2022-03-06 20:14:04.895074: clock-in

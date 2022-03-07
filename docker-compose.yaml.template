@@ -77,15 +77,21 @@ services:
     - bitcoind
     - tor
     environment:
-      # ARCH: '${ARCH}' 
       TRIPLET: '${TRIPLET}'
-      BITCOIN_RPCCONNECT: playground-bitcoind-clnd
+      BITCOIN_RPCHOST: playground-bitcoind
+      BITCOIN_RPCCONNECT: playground-bitcoind # container name for bitcoind
       BITCOIN_RPCUSER: bitcoin
-      BITCOIN_RPCPASSWORD: bitcoin
-      ALIAS: clightning-test
-      PROXY: playground-tor-clnd
+      BITCOIN_RPCPASS: bitcoin # is this right?
+      ALIAS: 'NewNode'
+      PROXY: playground-tor
       LOG_FILE: /root/.lightning/logs.log
-      TOR_SERVICE_PASSWORD: hello
+      TOR_SERVICE_PASSWORD: hello # is this right?
+      EXPOSE_TCP: true
+      LIGHTNINGD_DATA: /root/.lightning
+      LIGHTNINGD_NETWORK: signet
+      LIGHTNINGD_RPC_PORT: 9835
+      LIGHTNINGD_PORT: 9735 # remap to 9736?
+      ANNOUNCE_ADDR: playground-clnd # Is this right?
     restart: unless-stopped
     container_name: playground-clnd
     expose:
@@ -98,36 +104,6 @@ services:
       - type: bind
         source: ./bitcoin_datadir
         target: /root/.bitcoin/
-  # clightning:
-  #   image: elementsproject/lightningd
-  #   links:
-  #   - bitcoind
-  #   - tor
-  #   depends_on: 
-  #   - bitcoind
-  #   - tor
-  #   environment:
-  #     TRIPLET: '${TRIPLET}'
-  #     LIGHTNINGD_DATA: /root/.lightning
-  #     LIGHTNINGD_RPC_PORT: 9835
-  #     LIGHTNINGD_PORT: 9735
-  #     LIGHTNINGD_NETWORK: signet #?
-  #   restart: unless-stopped
-  #   container_name: playground-c-lightning
-  #   expose:
-  #   - "9735"
-  #   - "9835"
-  #   ports:
-  #   - "9736:9735" # 9735 taken by lnd
-  #   - "9835:9835"
-  #   volumes:
-  #   - type: bind
-  #     source: ${oc.env:PWD}/volumes/clightning
-  #     target: /root/.lightning/
-  #   - type: bind
-  #     read_only: true
-  #     source: ${oc.env:PWD}/volumes/bitcoin_datadir
-  #     target: /root/.bitcoin/
   tor:
       restart: unless-stopped
       container_name: playground-tor
