@@ -1,3 +1,5 @@
+### 2022-03-06 22:09:48.211358: clock-out
+
 * trying to build clightning container
 * error when running `docker compose build clightning`
 ```sh
