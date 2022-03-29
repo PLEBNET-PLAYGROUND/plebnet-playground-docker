@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 /signet/*
-up.sh 
+up.sh
 docker-compose.yaml
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -370,4 +370,4 @@ bos/node/credentials.json
 
 .ipynb_checkpoints/
 
-
+get-pip.py
