@@ -45,7 +45,7 @@ fi
 #Create data directories
 mkdir -p volumes
 mkdir -p volumes/lnd_datadir
-mkdir -p volumes/clightning_datadir
+mkdir -p volumes/cln_datadir
 mkdir -p volumes/bitcoin_datadir
 mkdir -p volumes/thub_datadir
 mkdir -p volumes/rtl_datadir

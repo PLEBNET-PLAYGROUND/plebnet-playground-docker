@@ -65,11 +65,7 @@ services:
       - type: bind
         source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /root/.lnd/
-  clightning:
-    build: 
-      context: clightning
-      dockerfile: Dockerfile
-    image: playground-clightning
+  cln:
     links:
     - bitcoind
     - tor
@@ -77,33 +73,24 @@ services:
     - bitcoind
     - tor
     environment:
-      TRIPLET: '${TRIPLET}'
-      BITCOIN_RPCHOST: playground-bitcoind
-      BITCOIN_RPCCONNECT: playground-bitcoind # container name for bitcoind
-      BITCOIN_RPCUSER: bitcoin
-      BITCOIN_RPCPASS: bitcoin # is this right?
-      ALIAS: 'NewNode'
-      PROXY: playground-tor
-      LOG_FILE: /root/.lightning/logs.log
-      TOR_SERVICE_PASSWORD: hello # is this right?
-      EXPOSE_TCP: true
-      LIGHTNINGD_DATA: /root/.lightning
-      LIGHTNINGD_NETWORK: signet
-      LIGHTNINGD_RPC_PORT: 9835
-      LIGHTNINGD_PORT: 9735 # remap to 9736?
-      ANNOUNCE_ADDR: playground-clnd # Is this right?
+      CLN_ALIAS: 'NewNode'
+      BITCOIN_RPC_HOST: 'playground-bitcoind'
+      TOR_PROXY: 'playground-tor:9050'
+      TOR_ADDR: 'playground-tor:9051'
+      LIGHTNINGD_PORT: '9736'
     restart: unless-stopped
-    container_name: playground-clnd
+    container_name: playground-cln
+    build: 
+      context: ./cln-signet
+      dockerfile: Dockerfile
     expose:
-    - 9735
-    - 9835
+    - "9736"
+    ports:
+    - "9736:9736"
     volumes:
       - type: bind
-        source: ${oc.env:PWD}/volumes/clightning_datadir
-        target: /root/.lightning
-      - type: bind
-        source: ./bitcoin_datadir
-        target: /root/.bitcoin/
+        source: ${oc.env:PWD}/volumes/cln_datadir
+        target: /root/.lightning/
   tor:
       restart: unless-stopped
       container_name: playground-tor
