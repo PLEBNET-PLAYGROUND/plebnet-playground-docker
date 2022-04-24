@@ -108,6 +108,7 @@ export GIT_REPO_NAME
 #make package-all profile=asherp
 #note on GH_TOKEN.txt file below
 ifeq ($(profile),)
+GIT_PROFILE								:= $(GIT_USER_NAME)
 ifeq ($(GIT_REPO_ORIGIN),git@github.com:PLEBNET_PLAYGROUND/plebnet-playground-docker.dev.git)
 GIT_PROFILE								:= PLEBNET-PLAYGROUND
 endif
@@ -142,7 +143,7 @@ NOCACHE					     			:= --no-cache
 #Force parallel build when --no-cache to speed up build
 PARALLEL                                := --parallel
 else
-NOCACHE						    		:=	
+NOCACHE						    		:=
 PARALLEL                                :=
 endif
 ifeq ($(parallel),true)
@@ -157,7 +158,7 @@ export PARALLEL
 ifeq ($(verbose),true)
 VERBOSE									:= --verbose
 else
-VERBOSE									:=	
+VERBOSE									:=
 endif
 export VERBOSE
 
@@ -178,13 +179,13 @@ export NODE_PORT
 
 ifneq ($(passwd),)
 PASSWORD								:= $(passwd)
-else 
+else
 PASSWORD								:= changeme
 endif
 export PASSWORD
 
 ifeq ($(cmd),)
-CMD_ARGUMENTS							:= 	
+CMD_ARGUMENTS							:=
 else
 CMD_ARGUMENTS							:= $(cmd)
 endif
@@ -521,7 +522,7 @@ package-plebnet: signin
 ########################
 .PHONY: package-all
 package-all: init package-plebnet
-#INSERT other scripting here 
+#INSERT other scripting here
 	bash -c "echo insert more scripting here..."
 ########################
 
