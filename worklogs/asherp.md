@@ -1,3 +1,6 @@
+
+### 2022-04-24 17:46:25.179767: clock-in: T-1h 
+
 ### 2022-03-06 22:09:48.211358: clock-out
 
 * trying to build clightning container
