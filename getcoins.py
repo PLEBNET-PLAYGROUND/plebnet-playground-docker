@@ -19,6 +19,7 @@ parser = argparse.ArgumentParser(description='Script to get coins from a faucet.
 parser.add_argument('-c', '--cmd', default='docker', help='bitcoin-cli command to use')
 parser.add_argument('-f', '--faucet', default='http://signet.xenon.fun:5000/faucet', help='URL of the faucet')
 parser.add_argument('-a', '--address', default='', help='Bitcoin address to which the faucet should send')
+parser.add_argument('-n', '--node', default='lnd', choices=['lnd', 'cln'], help='Node implementation to use when --address is not supplied')
 parser.add_argument('-r', '--report', action='store_true', help='Return session data')
 
 args = parser.parse_args()
@@ -32,9 +33,15 @@ def print_report():
     else:
         print(res.text)
 
+def get_new_address():
+    if args.node == 'cln':
+        return json.loads(subprocess.check_output([args.cmd] + ['exec','-it','playground-cln', 'lightning-cli', 'newaddr']))["bech32"]
+    else:
+        return json.loads(subprocess.check_output([args.cmd] + ['exec','-it','playground-lnd', 'lncli', '--macaroonpath', '/root/.lnd/data/chain/bitcoin/signet/admin.macaroon', 'newaddress', 'p2wkh']))["address"]
+
 if args.address == '':
     # get address for receiving coins
-    args.address = json.loads(subprocess.check_output([args.cmd] + ['exec','-it','playground-lnd', 'lncli', '--macaroonpath', '/root/.lnd/data/chain/bitcoin/signet/admin.macaroon', 'newaddress', 'p2wkh']))["address"]
+    args.address = args.address = get_new_address()
     data = {'address': args.address}
 else:
     data = {'address': args.address}
