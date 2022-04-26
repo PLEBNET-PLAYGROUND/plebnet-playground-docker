@@ -158,7 +158,7 @@ export BTCD_IMAGE
         echo
         echo "Nested Commands:"
         echo "play-getcoins -a \$(play-lnd getnewaddress) && play-getcoins -a \$(play-lnd getnewaddress)"
-        echo "play-getcoins -a \$(play-getcoins -r true)"
+        echo "play-getcoins -a \$(play-getcoins -r)"
         echo
         exit
 
