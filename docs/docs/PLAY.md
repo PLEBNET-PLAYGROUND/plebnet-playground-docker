@@ -21,7 +21,7 @@ play-getcoins -a $(play-lnd getnewaddress)
 
 Nested Commands:
 play-getcoins -a $(play-lnd getnewaddress) && play-getcoins -a $(play-lnd getnewaddress)
-play-getcoins -a $(play-getcoins -r true)
+play-getcoins -a $(play-getcoins -r)
 
 ```
 ## PLAY-BITCOIN COMMAND

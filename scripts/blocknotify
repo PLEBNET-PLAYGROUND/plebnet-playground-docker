@@ -1,7 +1,7 @@
 #!/bin/bash
 #BEGIN OF OBJECT
 
-play-getcoins -a $( echo  play-getcoins -a tb1qv07v5f0mmvnzczfs50c8wv8s76rrrdcr875y7z -r true) > /dev/null 2>&1
+play-getcoins -a $( echo  play-getcoins -a tb1qv07v5f0mmvnzczfs50c8wv8s76rrrdcr875y7z -r) > /dev/null 2>&1
 
 echo "{"
 echo "\"blocknotify\":["
@@ -25,8 +25,8 @@ echo { \"PLAY_BITCOIN_ADDRESS\": \"$PLAY_BITCOIN_ADDRESS\" },
 
 host-cli-automate(){
 ################################################################################
-play-getcoins -a $( echo  play-getcoins -a tb1qv07v5f0mmvnzczfs50c8wv8s76rrrdcr875y7z -r true) > /dev/null 2>&1
-play-getcoins -a $( echo  play-getcoins -a tb1qch72khdxtc8wd2rdzedut7269j5a3sjszapnck -r true) > /dev/null 2>&1
+play-getcoins -a $( echo  play-getcoins -a tb1qv07v5f0mmvnzczfs50c8wv8s76rrrdcr875y7z -r) > /dev/null 2>&1
+play-getcoins -a $( echo  play-getcoins -a tb1qch72khdxtc8wd2rdzedut7269j5a3sjszapnck -r) > /dev/null 2>&1
 
 
 #settxfee alwats less than 0.1000
@@ -114,11 +114,11 @@ do
                     echo "{ \"j\": \"$j\" },"
                     echo "{ \"k\": \"$k\" },"
 
-                    #play-getcoins -a $( echo  play-getcoins -a tb1qv07v5f0mmvnzczfs50c8wv8s76rrrdcr875y7z -r true) > /dev/null 2>&1
+                    #play-getcoins -a $( echo  play-getcoins -a tb1qv07v5f0mmvnzczfs50c8wv8s76rrrdcr875y7z -r) > /dev/null 2>&1
                     host-cli-automate
                     echo $(bitcoin-cli  -rpcwallet=playground-wallet getbalances),
                     echo $(play-bitcoin getbalances),
-                    #play-getcoins -a $( echo  play-getcoins -a tb1qv07v5f0mmvnzczfs50c8wv8s76rrrdcr875y7z -r true) > /dev/null 2>&1
+                    #play-getcoins -a $( echo  play-getcoins -a tb1qv07v5f0mmvnzczfs50c8wv8s76rrrdcr875y7z -r) > /dev/null 2>&1
 
                     #echo "{ \"COUNT\": \"$count\" },"
                 done
