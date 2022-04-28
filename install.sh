@@ -42,9 +42,10 @@ if [ "$RESET" == "true" ]; then
     fi
 fi
 
-#Create Datafile
+#Create data directories
 mkdir -p volumes
 mkdir -p volumes/lnd_datadir
+mkdir -p volumes/cln_datadir
 mkdir -p volumes/bitcoin_datadir
 mkdir -p volumes/thub_datadir
 mkdir -p volumes/rtl_datadir
@@ -63,5 +64,4 @@ else
     docker compose build --build-arg TRIPLET=$TRIPLET
     docker compose up --remove-orphans -d
 fi
-
 

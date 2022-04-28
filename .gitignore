@@ -370,4 +370,8 @@ bos/node/credentials.json
 
 .ipynb_checkpoints/
 
+# MacOS
+.DS_Store
+
 get-pip.py
+

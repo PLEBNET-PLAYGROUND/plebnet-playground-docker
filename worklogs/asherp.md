@@ -1,3 +1,43 @@
+### 2022-04-24 18:13:02.806289: clock-out
+
+
+* testing c-lightning fix from jonmthomson
+
+### 2022-04-24 17:46:25.179767: clock-in: T-1h 
+
+### 2022-03-06 22:09:48.211358: clock-out
+
+* trying to build clightning container
+* error when running `docker compose build clightning`
+```sh
+#22 1.355     Error: pg_config executable not found.
+```
+* questions on clighthing env variables:
+
+```yaml
+ environment:
+      TRIPLET: '${TRIPLET}'
+      BITCOIN_RPCHOST: playground-bitcoind
+      BITCOIN_RPCCONNECT: playground-bitcoind # container name for bitcoind
+      BITCOIN_RPCUSER: bitcoin
+      BITCOIN_RPCPASS: bitcoin # is this right?
+      ALIAS: 'NewNode'
+      PROXY: playground-tor
+      LOG_FILE: /root/.lightning/logs.log
+      TOR_SERVICE_PASSWORD: hello # is this right?
+      EXPOSE_TCP: true
+      LIGHTNINGD_DATA: /root/.lightning
+      LIGHTNINGD_NETWORK: signet
+      LIGHTNINGD_RPC_PORT: 9835
+      LIGHTNINGD_PORT: 9735 # remap to 9736?
+      ANNOUNCE_ADDR: playground-clnd # Is this right?
+```
+
+* merging master
+
+### 2022-03-06 20:14:04.895074: clock-in
+
+
 ### 2022-02-11 17:33:57.721456: clock-out
 
 * removing alias
@@ -22,6 +62,29 @@
 * switch to docker compose
 
 ### 2022-02-10 23:09:40.015116: clock-in
+
+
+### 2021-12-29 20:33:38.681602: clock-out
+
+* trying to build clightning based on cluster dockerfile
+* copying xenofun's work from plebnet-playground-cluster
+
+### 2021-12-29 19:54:38.356443: clock-in
+
+
+### 2021-12-26 23:14:47.513874: clock-out
+
+* unable to connect to bitcoin-cli
+`bitcoin-cli -rpcconnect playground-bitcoind -rpcport 38332 -rpcuser bitcoin -rpcpassword bitcoin`
+* running lightning container `docker compose run --entrypoint bash clightning`
+
+### 2021-12-26 21:37:39.721294: clock-in
+
+### 2021-12-26 20:59:49.569589: clock-out
+
+* adding c-lighting
+
+### 2021-12-26 19:50:09.021401: clock-in
 
 ### 2021-09-25 14:59:37.408376: clock-out
 

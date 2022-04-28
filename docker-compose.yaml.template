@@ -65,6 +65,32 @@ services:
       - type: bind
         source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /root/.lnd/
+  cln:
+    links:
+    - bitcoind
+    - tor
+    depends_on: 
+    - bitcoind
+    - tor
+    environment:
+      CLN_ALIAS: 'NewNode'
+      BITCOIN_RPC_HOST: 'playground-bitcoind'
+      TOR_PROXY: 'playground-tor:9050'
+      TOR_ADDR: 'playground-tor:9051'
+      LIGHTNINGD_PORT: '9736'
+    restart: unless-stopped
+    container_name: playground-cln
+    build: 
+      context: ./cln-signet
+      dockerfile: Dockerfile
+    expose:
+    - "9736"
+    ports:
+    - "9736:9736"
+    volumes:
+      - type: bind
+        source: ${oc.env:PWD}/volumes/cln_datadir
+        target: /root/.lightning/
   tor:
       restart: unless-stopped
       container_name: playground-tor
