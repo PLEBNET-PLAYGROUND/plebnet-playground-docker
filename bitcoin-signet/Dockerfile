@@ -1,6 +1,6 @@
 FROM debian:buster-slim as builder
 
-ARG BITCOIN_VERSION=22.0
+ARG BITCOIN_VERSION=23.0
 ARG TRIPLET=${TRIPLET}
 
 
