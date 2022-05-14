@@ -19,7 +19,7 @@ if [[ ! -z "$GAWK" ]]; then
     echo $AWK
 fi
 
-PATH=$PATH:/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin
+export PATH=$PATH:/usr/local/opt/python@${python_version_major}.${python_version_minor}/Frameworks/Python.framework/Versions/${python_version_major}.${python_version_minor}/bin
 
 report() {
 echo OS:
@@ -85,7 +85,7 @@ if hash brew 2>/dev/null; then
     fi
     brew install --quiet  --force python@3.9
     curl -O https://bootstrap.pypa.io/get-pip.py
-    sudo python3 get-pip.py
+    sudo -H python3 get-pip.py --no-warn-script-location
 
     if [ -f "/usr/local/opt/python@3.9/bin/python3" ] && [ -f "/opt/homebrew/opt/python@3.9/bin/python3" ]; then
         python39=/opt/homebrew/opt/python@3.9/bin/python3
