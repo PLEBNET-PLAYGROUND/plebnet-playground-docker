@@ -22,15 +22,7 @@ TRIPLET=$1
 : ${services:=Null}
 fi
 
-
-#Remove any old version
-# see if compose is installed
-if ! command -v docker compose &> /dev/null
-then
-    docker-compose down
-else
-    docker compose down
-fi
+docker compose down || docker-compose down
 
 python3 plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
@@ -55,13 +47,6 @@ mkdir -p volumes/tor_torrcdir
 mkdir -p volumes/lndg_datadir
 
 
-# check for compose command
-if ! command -v docker compose &> /dev/null
-then
-    docker-compose build --build-arg TRIPLET=$TRIPLET
-    docker-compose up --remove-orphans -d
-else
-    docker compose build --build-arg TRIPLET=$TRIPLET
-    docker compose up --remove-orphans -d
-fi
+docker compose build --build-arg TRIPLET=$TRIPLET || docker-compose build --build-arg TRIPLET=$TRIPLET
+docker compose up --remove-orphans -d || docker-compose up --remove-orphans -d
 
