@@ -84,6 +84,23 @@ export PIP2
 PIP3                                    := $(shell which pip3)
 export PIP3
 
+python_version_full := $(wordlist 2,4,$(subst ., ,$(shell python3 --version 2>&1)))
+python_version_major := $(word 1,${python_version_full})
+python_version_minor := $(word 2,${python_version_full})
+python_version_patch := $(word 3,${python_version_full})
+
+my_cmd.python.3 := $(PYTHON3) some_script.py3
+my_cmd := ${my_cmd.python.${python_version_major}}
+
+PYTHON_VERSION                         := ${python_version_major}.${python_version_minor}.${python_version_patch}
+PYTHON_VERSION_MAJOR                   := ${python_version_major}
+PYTHON_VERSION_MINOR                   := ${python_version_minor}
+
+export python_version_major
+export python_version_minor
+export python_version_patch
+export PYTHON_VERSION
+
 # PROJECT_NAME defaults to name of the current directory.
 ifeq ($(project),)
 PROJECT_NAME							:= $(notdir $(PWD))
@@ -266,16 +283,20 @@ report:
 	@echo ''
 	@echo '	[ARGUMENTS]	'
 	@echo '      args:'
+	@echo '        - PROJECT_NAME=${PROJECT_NAME}'
 	@echo '        - HOME=${HOME}'
 	@echo '        - PWD=${PWD}'
 	@echo '        - PYTHON=${PYTHON}'
-	@echo '        - PYTHON2=${PYTHON2}'
+	# @echo '        - PYTHON2=${PYTHON2}'
 	@echo '        - PYTHON3=${PYTHON3}'
+	@echo '        - PYTHON_VERSION=${PYTHON_VERSION}'
+	@echo '        - PYTHON_VERSION_MAJOR=${PYTHON_VERSION_MAJOR}'
+	@echo '        - PYTHON_VERSION_MINOR=${PYTHON_VERSION_MINOR}'
 	@echo '        - PIP=${PIP}'
-	@echo '        - PIP2=${PIP2}'
+	# @echo '        - PIP2=${PIP2}'
 	@echo '        - PIP3=${PIP3}'
-	@echo '        - UMBREL=${UMBREL}'
-	@echo '        - THIS_FILE=${THIS_FILE}'
+	# @echo '        - UMBREL=${UMBREL}'
+	# @echo '        - THIS_FILE=${THIS_FILE}'
 	@echo '        - TIME=${TIME}'
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
@@ -285,8 +306,7 @@ report:
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
 	@echo '        - NODE_PORT=${NODE_PORT}'
-	@echo '        - SERVICE_TARGET=${SERVICE_TARGET}'
-	@echo '        - PROJECT_NAME=${PROJECT_NAME}'
+	# @echo '        - SERVICE_TARGET=${SERVICE_TARGET}'
 	@echo '        - DOCKER_COMPOSE=${DOCKER_COMPOSE}'
 	@echo '        - GIT_USER_NAME=${GIT_USER_NAME}'
 	@echo '        - GIT_USER_EMAIL=${GIT_USER_EMAIL}'
@@ -299,11 +319,9 @@ report:
 	@echo '        - GIT_REPO_NAME=${GIT_REPO_NAME}'
 	@echo '        - GIT_REPO_PATH=${GIT_REPO_PATH}'
 	@echo '        - NOCACHE=${NOCACHE}'
-	@echo '        - VERBOSE=${VERBOSE}'
-	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
-	@echo '        - NODE_PORT=${NODE_PORT}'
-	@echo '        - PASSWORD=${PASSWORD}'
-	@echo '        - CMD_ARGUMENTS=${CMD_ARGUMENTS}'
+	# @echo '        - VERBOSE=${VERBOSE}'
+	# @echo '        - PASSWORD=${PASSWORD}'
+	# @echo '        - CMD_ARGUMENTS=${CMD_ARGUMENTS}'
 
 #######################
 
