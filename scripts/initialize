@@ -73,6 +73,8 @@ if hash brew 2>/dev/null; then
     #brew install python@3.8
     if ! hash docker 2>/dev/null; then
         brew install --cask docker
+        brew install docker
+        brew link docker
     fi
     if ! hash docker-compose 2>/dev/null; then
         brew install docker-compose
