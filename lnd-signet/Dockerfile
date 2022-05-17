@@ -17,7 +17,7 @@ RUN apk add --no-cache --update alpine-sdk \
 &&  git clone https://github.com/lightningnetwork/lnd /go/src/github.com/lightningnetwork/lnd \
 &&  cd /go/src/github.com/lightningnetwork/lnd \
 &&  git checkout "${BRANCH}" \
-&&  make release-install
+&&  make -j $(nproc) release-install
 
 # Start a new, final image.
 FROM alpine:3 as playground-lnd-signet
