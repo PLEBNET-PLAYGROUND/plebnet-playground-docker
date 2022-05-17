@@ -41,7 +41,7 @@ RUN apk --no-cache add --update \
       && tar xf $TOR_TARBALL_NAME \
       && cd tor-$TOR_VERSION \
       && ./configure --disable-unittests --disable-systemd --disable-seccomp --disable-asciidoc \
-      && make install \
+      && make -j $(nproc) install \
       && ls -R /usr/local/ \
       && strip /usr/local/bin/tor-* && strip /usr/local/bin/tor
       # Main files created (plus docs):
