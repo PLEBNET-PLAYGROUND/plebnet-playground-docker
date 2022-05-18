@@ -509,7 +509,7 @@ prune:
 .PHONY: prune-network
 prune-network:
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
-	docker network prune -f &
+	docker network rm plebnet-playground-docker_default 2>/dev/null || docker network prune -f || echo
 #######################
 .PHONY: push
 push:
