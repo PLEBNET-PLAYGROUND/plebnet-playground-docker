@@ -363,7 +363,7 @@ endif
 	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
 #endif
-	./plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
+	$(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
 #######################
 .PHONY: blocknotify
 blocknotify:
