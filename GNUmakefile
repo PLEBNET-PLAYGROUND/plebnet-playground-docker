@@ -340,6 +340,24 @@ ifneq ($(shell id -u),0)
 #.ONESHELL:
 	sudo -s
 endif
+.PHONY: venv
+venv:
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -r requirements.txt; \
+	);
+	@echo "To activate (venv)"
+	@echo "try:"
+	@echo ". .venv/bin/activate"
+	@echo "or:"
+	@echo "make test-venv"
+##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
+test-venv:
+	# insert test commands here
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -r requirements.txt; \
+	);
 .PHONY: init
 .SILENT:
 init:
