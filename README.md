@@ -49,16 +49,16 @@ Follow [these instructions](https://docs.docker.com/compose/install/#install-com
 | dashboard |  Jupyter Dashboard |
 | lndg |  lndg Dashboard (available on port 8889) |
 
-### Install and start all services (Intel x64 example)
+### Install and start all services (will autodetect platform)
 ***
 
 ```sh
-TRIPLET=x86_64-linux-gnu ./install.sh   
+./install.sh   
 ```
 
 ### Install and start just the `bitcoind`,`lnd` services (comma separate them)
 ```sh
-TRIPLET=x86_64-linux-gnu services=bitcoind,lnd ./install.sh   
+services=bitcoind,lnd ./install.sh   
 ```
 
 ### Start containers
