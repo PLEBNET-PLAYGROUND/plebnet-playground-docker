@@ -49,16 +49,17 @@ jobs:
           access_token: ${{ github.token }}
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: make initialize init help report
+      - name: make venv && install.sh make help report
         run: |
-          make initialize init help report
-      - name: install, build, and test
+          make venv && . .venv/bin/activate
+          make init
+          ./install.sh
+          make help report
+      - name: make initialize, venv, init, build, install
         run: |
-          sudo apt install python python3
-          sudo apt install -y mkdocs
-          pip install -r docs/requirements.txt
-          pip install -r requirements.txt
-          make blocknotify
+          make initialize
+          make venv && . .venv/bin/activate
+          make init
           make build nocache=true
           make build para=true
           make install verbose=true
