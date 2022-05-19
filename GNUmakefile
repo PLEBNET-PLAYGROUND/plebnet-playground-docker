@@ -361,26 +361,29 @@ test-venv:
 .PHONY: init
 .SILENT:
 init:
+
 ifneq ($(shell id -u),0)
-	@echo 'make super #if permissions issue'
-	@echo 'make init  #if permissions issue'
+	@echo
+	@echo $(shell id -u -n) 'try:'
+	@echo 'make super'
+	@echo 'If permissions issue...'
+	@echo
 endif
-	echo $(PYTHON3)
-	echo $(PIP3)
-#ifneq ($(shell id -u),0)
-	sudo -s bash -c 'rm -f /usr/local/bin/play'
-	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
-	sudo -s bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
-#ifneq ($(PIP3),)
+	sudo -s chown -R $(shell id -u) *
+	sudo -s chown -R $(shell id -u) scripts/*
+	chmod -R o+rwx *
+	chmod -R o+rwx scripts/*
+	# chmod -R o+rwx /usr/local/bin
+	# pushd scripts > /dev/null; for string in *; do echo $$string; done; popd > /dev/null
+	pushd scripts > /dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  > /dev/null
+	install -v $(PWD)/scripts/*  /usr/local/bin/
+	install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
 	$(PYTHON3) -m pip install --upgrade pip
 	$(PYTHON3) -m pip install -q omegaconf
 	$(PYTHON3) -m pip install -q -r requirements.txt
-	pushd docs && $(PYTHON3) -m pip install -q -r requirements.txt && popd
-#endif
-#else
+	pushd docs > /dev/null && $(PYTHON3) -m pip install -q -r requirements.txt && popd  > /dev/null
 	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
-#endif
 	$(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
 #######################
 .PHONY: blocknotify
