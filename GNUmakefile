@@ -340,6 +340,24 @@ ifneq ($(shell id -u),0)
 #.ONESHELL:
 	sudo -s
 endif
+.PHONY: venv
+venv:
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -r requirements.txt; \
+	);
+	@echo "To activate (venv)"
+	@echo "try:"
+	@echo ". .venv/bin/activate"
+	@echo "or:"
+	@echo "make test-venv"
+##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
+test-venv:
+	# insert test commands here
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -r requirements.txt; \
+	);
 .PHONY: init
 .SILENT:
 init:
@@ -363,7 +381,7 @@ endif
 	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
 	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
 #endif
-	./plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
+	$(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
 #######################
 .PHONY: blocknotify
 blocknotify:
@@ -491,7 +509,7 @@ prune:
 .PHONY: prune-network
 prune-network:
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
-	docker network prune -f &
+	docker network rm plebnet-playground-docker_default 2>/dev/null || docker network prune -f || echo
 #######################
 .PHONY: push
 push:

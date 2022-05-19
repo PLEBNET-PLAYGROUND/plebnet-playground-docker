@@ -5,3 +5,4 @@ mkdocs-material
 jinja2>=2.11.1
 omegaconf>=2.0.0
 glom
+virtualenv

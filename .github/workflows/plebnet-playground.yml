@@ -1,6 +1,6 @@
 name: plebnet-playground
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   pull_request:
     branches:       #[ master ]
@@ -29,52 +29,37 @@ on:
 jobs:
   github-workspace:
     name: github-workspace
-    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Print github workspace
         run: |
           printenv
 
-  ubuntu-latest-build_and_test:
-    runs-on: ubuntu-latest
+  ubuntu-build_and_test:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: styfle/cancel-workflow-action@0.8.0
         with:
           access_token: ${{ github.token }}
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: install, build, and test
+      - name: make venv && install.sh make help report
         run: |
-          make initialize init help report
-          sudo apt install python python3
-          sudo apt install -y mkdocs
-          pip install -r docs/requirements.txt
-          pip install -r requirements.txt
-          make blocknotify
-          make build nocache=true
-          make build para=true
-          make install verbose=true
-          blocknotify | jq . & exit
-          #make uninstall
-
-  ubuntu-20-build_and_test:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: styfle/cancel-workflow-action@0.8.0
-        with:
-          access_token: ${{ github.token }}
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: make initialize init help report
+          make venv && . .venv/bin/activate
+          make init
+          ./install.sh
+          make help report
+      - name: make initialize, venv, init, build, install
         run: |
-          make initialize init help report
-      - name: install, build, and test
-        run: |
-          sudo apt install python python3
-          sudo apt install -y mkdocs
-          pip install -r docs/requirements.txt
-          pip install -r requirements.txt
-          make blocknotify
+          make initialize
+          make venv && . .venv/bin/activate
+          make init
           make build nocache=true
           make build para=true
           make install verbose=true

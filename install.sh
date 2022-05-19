@@ -50,6 +50,25 @@ mkdir -p volumes/tor_servicesdir
 mkdir -p volumes/tor_torrcdir
 mkdir -p volumes/lndg_datadir
 
+#REF: https://docs.docker.com/engine/install/linux-postinstall
+while ! docker system info > /dev/null 2>&1; do
+    echo "Waiting for docker to start..."
+    if [[ "$(uname -s)" == "Linux" ]]; then
+        systemctl restart docker.service ||
+            echo "Install Docker.app"
+            echo "Try:"
+            echo "make initialize"
+    fi
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        open --background -a /./Applications/Docker.app/Contents/MacOS/Docker ||
+            echo "Install Docker.app"
+            echo "Try:"
+            echo "make initialize"
+    fi
+
+    sleep 1;
+
+done
 
 docker compose build --build-arg TRIPLET=$TRIPLET || docker-compose build --build-arg TRIPLET=$TRIPLET
 docker compose up --remove-orphans -d || docker-compose up --remove-orphans -d
