@@ -28,6 +28,26 @@ do
         echo $BITCOIND_ID
         exit
 
+    elif [[ ${!i} = config ]]; then
+        ((i++))
+        docker inspect $(play-bitcoin id) | jq '.[] | {(.Name) : [(.Config)]}'
+        exit
+
+    elif [[ ${!i} = ip ]]; then
+        ((i++))
+        docker inspect $(play-bitcoin id) | jq '.[] | {(.Name) : [(.NetworkSettings.Networks."plebnet-playground-docker_default".IPAddress)]}' | jq .[] | jq .[]
+        exit
+
+    elif [[ ${!i} = port ]]; then
+        ((i++))
+        docker inspect $(play-bitcoin id) | jq '.[] | {(.Name) : [(.NetworkSettings.Ports."38333/tcp")]}' | jq .[] | jq .[] | jq .[] | jq .HostPort
+        exit
+
+    elif [[ ${!i} = env ]]; then
+        ((i++))
+        play-bitcoin config | jq .[] |  jq .[] | jq .Env
+        exit
+
     elif [[ ${!i} = top ]]; then
         ((i++))
         docker top $BITCOIND_ID
