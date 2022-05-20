@@ -28,6 +28,11 @@ do
         echo $BITCOIND_ID
         exit
 
+    elif [[ ${!i} = config ]]; then
+        ((i++))
+        docker inspect $(play-bitcoin id) | jq '.[] | {(.Name) : [(.Config)]}'
+        exit
+
     elif [[ ${!i} = top ]]; then
         ((i++))
         docker top $BITCOIND_ID
