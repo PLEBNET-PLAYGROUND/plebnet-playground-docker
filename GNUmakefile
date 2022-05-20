@@ -394,11 +394,12 @@ blocknotify:
 initialize:
 	./scripts/initialize  #>&/dev/null
 #######################
-.PHONY: install
+.PHONY: install install-cluster
 .SILENT:
 install: init
 	bash -c './install.sh $(TRIPLET)'
-	#bash -c 'make btcd'
+install-cluster: venv
+	bash -c 'pushd cluster && ./up-x64.sh 5 && popd'
 #######################
 .PHONY: uninstall
 uninstall:
@@ -510,9 +511,12 @@ prune:
 	docker system prune -af &
 #######################
 .PHONY: prune-network
-prune-network:
+prune-playground:
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
-	docker network rm plebnet-playground-docker_default 2>/dev/null || docker network prune -f || echo
+	docker network rm plebnet-playground-docker* 2>/dev/null || echo
+prune-cluster:
+	$(DOCKER_COMPOSE) -p cluster down
+	docker network rm cluster* 2>/dev/null || echo
 #######################
 .PHONY: push
 push:
