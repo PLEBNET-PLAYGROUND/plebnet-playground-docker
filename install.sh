@@ -54,16 +54,10 @@ mkdir -p volumes/lndg_datadir
 while ! docker system info > /dev/null 2>&1; do
     echo "Waiting for docker to start..."
     if [[ "$(uname -s)" == "Linux" ]]; then
-        systemctl restart docker.service ||
-            echo "Install Docker.app"
-            echo "Try:"
-            echo "make initialize"
+        systemctl restart docker.service
     fi
     if [[ "$(uname -s)" == "Darwin" ]]; then
-        open --background -a /./Applications/Docker.app/Contents/MacOS/Docker ||
-            echo "Install Docker.app"
-            echo "Try:"
-            echo "make initialize"
+        open --background -a /./Applications/Docker.app/Contents/MacOS/Docker
     fi
 
     sleep 1;
