@@ -39,6 +39,11 @@ do
         docker inspect $(play-bitcoin id) | jq '.[] | {(.Name) : [(.NetworkSettings.Networks."plebnet-playground-docker_default".IPAddress)]}' | jq .[] | jq .[]
         exit
 
+    elif [[ ${!i} = port* ]]; then
+        ((i++))
+        docker inspect $(play-lnd id) | jq '.[] | {(.Name) : [(.NetworkSettings.Ports)]}'
+        exit
+
     elif [[ ${!i} = top ]]; then
         ((i++))
         docker top $LND_ID
