@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 /signet/*
-up.sh 
+up.sh
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -363,4 +363,4 @@ z.sh
 volumes/
 backup/
 docker-compose.yaml
-
+worklogs
