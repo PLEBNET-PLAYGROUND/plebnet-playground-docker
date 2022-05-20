@@ -47,33 +47,30 @@ jobs:
       - uses: styfle/cancel-workflow-action@0.8.0
         with:
           access_token: ${{ github.token }}
-      - name: Checkout repository
+      - name: make init venv install.sh uninstall.sh
         uses: actions/checkout@v2
       - name: make venv && install.sh make help report
         run: |
+          make init initialize
           make venv && . .venv/bin/activate
-          make init
           ./install.sh
           make help report
+          ./uninstall.sh
       - name: make initialize, venv, init, build, install
         run: |
-          make initialize
-          make venv && . .venv/bin/activate
-          make init
+          make install-cluster
           make build nocache=true
           make build para=true
+          make install-cluster
           make install verbose=true
-          blocknotify | jq . & exit
-          #make uninstall
+          # blocknotify | jq . & exit
       - name: play
         run: |
-          make install
           play
           play info
           play ids
       - name: bitcoind-commands
         run: |
-          make install
           play bitcoin
           play bitcoin top
           play bitcoin netinfo 5
@@ -82,7 +79,6 @@ jobs:
           play bitcoin 'bitcoin-cli getblockhash 1000'
       - name: lnd-commands
         run: |
-          make install
           # play defaults to the lnd container
           play lnd
           play lnd top
