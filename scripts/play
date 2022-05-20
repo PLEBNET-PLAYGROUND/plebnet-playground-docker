@@ -19,6 +19,11 @@ export LND_ID
 LND_IMAGE=$(echo $(docker images | awk '/docker_lnd/'|awk ' {print $3}' | awk 'NR==1'))
 export LND_IMAGE
 
+CLN_ID=$(echo $(docker ps | awk '/docker_cln/'|awk ' {print $1}' | awk 'NR==1'))
+export CLN_ID
+CLN_IMAGE=$(echo $(docker images | awk '/docker_cln/'|awk ' {print $3}' | awk 'NR==1'))
+export CLN_IMAGE
+
 LNDG_ID=$(echo $(docker ps | awk '/cryptosharks131/'|awk ' {print $1}' | awk 'NR==1'))
 export LNDG_ID
 LNDG_IMAGE=$(echo $(docker images | awk '/cryptosharks131/'|awk ' {print $3}' | awk 'NR==1'))
@@ -67,6 +72,7 @@ export BTCD_IMAGE
         echo "THUNDERHUB_ID:            $THUNDERHUB_ID"
         echo "RTL_ID:                   $RTL_ID"
         echo "LND_ID:                   $LND_ID"
+        echo "CLN_ID:                   $CLN_ID"
         echo "LNDG_ID:                  $LNDG_ID"
         echo "DOCS_ID:                  $DOCS_ID"
         echo "BITCOIND_ID:              $BITCOIND_ID"
@@ -81,6 +87,7 @@ export BTCD_IMAGE
         echo "THUNDERHUB_IMAGE:          $THUNDERHUB_IMAGE"
         echo "RTL_IMAGE:                 $RTL_IMAGE"
         echo "LND_IMAGE:                 $LND_IMAGE"
+        echo "CLN_IMAGE:                 $CLN_IMAGE"
         echo "LNDG_IMAGE:                $LNDG_IMAGE"
         echo "DOCS_IMAGE:                $DOCS_IMAGE"
         echo "BITCOIND_IMAGES:           $BITCOIND_IMAGE"
