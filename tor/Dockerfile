@@ -3,7 +3,7 @@
 
 FROM alpine:3.13 AS tor-build
 ARG TOR_GPG_KEY=0x6AFEE6D49E92B601
-ENV TOR_VERSION=0.4.6.5
+ENV TOR_VERSION=0.4.7.7
 # Install prerequisites
 RUN apk --no-cache add --update \
         gnupg \
@@ -64,7 +64,7 @@ LABEL org.opencontainers.image.licenses=MIT
 LABEL org.opencontainers.image.source="https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker"
 
 
-ENV TOR_VERSION=0.4.6.5
+ENV TOR_VERSION=0.4.7.7
 
 # Installing dependencies of Tor
 RUN apk --no-cache add --update \
