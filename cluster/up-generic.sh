@@ -16,11 +16,13 @@ echo "Auto Detect"
         #echo './install.sh x86_64-linux-gnu'
         export TRIPLET="x86_64-linux-gnu"
     fi
-
+echo "TRIPLET =" $TRIPLET
 # : ${TRIPLET:=x86_64-linux-gnu}
-: ${bitcoind=$1}
 : ${lnd=$1}
-: ${tor=$1}
+bitcoincount=`expr $lnd / 2 + 1`
+: ${bitcoind=$bitcoincount}
+torcount=`expr $lnd / 16 + 1`
+: ${tor=$torcount}
 
 python plebnet_generate.py TRIPLET=$TRIPLET bitcoind=$bitcoind lnd=$lnd tor=$tor
 
