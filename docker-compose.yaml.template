@@ -208,38 +208,38 @@ services:
       - sh
       - -c
       - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
-  dashboard:
-    container_name: playground-dashboard
-    links: 
-      - lnd      
-      - bitcoind 
-    depends_on: 
-      - lnd
-      - bitcoind
-    restart: unless-stopped
-    ports:
-      - "8050:8050"
-    build:
-      context: ./dashboard
-      dockerfile: Dockerfile
-    volumes:
-      - type: bind
-        source: ${oc.env:PWD}/dashboard
-        target: /dashboard
-      - type: bind
-        source: ${oc.env:PWD}/volumes/lnd_datadir
-        target: /root/.lnd/
-        read_only: true
-    environment:
-      JUPYTER_NOTEBOOKS: /dashboard
-      LND_DATADIR: /root/.lnd
-      GRAPH_TEST_DATA: describegraph.json
-      USE_TEST_DATA: ${USE_TEST_DATA}
-    working_dir: /dashboard
-    # use this command to spin up jupyter serving on localhost:8888
-    command:
-      - python
-      - dashboard.py
+#  dashboard:
+#    container_name: playground-dashboard
+#    links: 
+#      - lnd      
+#      - bitcoind 
+#    depends_on: 
+#      - lnd
+#      - bitcoind
+#    restart: unless-stopped
+#    ports:
+#      - "8050:8050"
+#    build:
+#      context: ./dashboard
+#      dockerfile: Dockerfile
+#    volumes:
+#      - type: bind
+#        source: ${oc.env:PWD}/dashboard
+#        target: /dashboard
+#      - type: bind
+#        source: ${oc.env:PWD}/volumes/lnd_datadir
+#        target: /root/.lnd/
+#        read_only: true
+#    environment:
+#      JUPYTER_NOTEBOOKS: /dashboard
+#      LND_DATADIR: /root/.lnd
+#      GRAPH_TEST_DATA: describegraph.json
+#      USE_TEST_DATA: ${USE_TEST_DATA}
+#    working_dir: /dashboard
+#    # use this command to spin up jupyter serving on localhost:8888
+#    command:
+#      - python
+#      - dashboard.py
   lndg:  
     image: ghcr.io/cryptosharks131/lndg:latest  
     container_name: playground-lndg
