@@ -371,8 +371,13 @@ ifneq ($(shell id -u),0)
 endif
 	sudo -s chown -R $(shell id -u) *
 	sudo -s chown -R $(shell id -u) scripts/*
+	sudo -s chown -R $(shell id -u) volumes/*  || echo
+	sudo -s chown -R $(shell id -u) cluster/*
+	sudo -s chown -R $(shell id -u) cluster/volumes/* || echo
+
 	chmod -R o+rwx *
 	chmod -R o+rwx scripts/*
+
 	# chmod -R o+rwx /usr/local/bin
 	# pushd scripts > /dev/null; for string in *; do echo $$string; done; popd > /dev/null
 	pushd scripts > /dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  > /dev/null
@@ -394,11 +399,12 @@ blocknotify:
 initialize:
 	./scripts/initialize  #>&/dev/null
 #######################
-.PHONY: install
+.PHONY: install install-cluster
 .SILENT:
 install: init
 	bash -c './install.sh $(TRIPLET)'
-	#bash -c 'make btcd'
+install-cluster: venv
+	bash -c 'pushd cluster && ./up-x64.sh 5 && popd'
 #######################
 .PHONY: uninstall
 uninstall:
@@ -510,9 +516,12 @@ prune:
 	docker system prune -af &
 #######################
 .PHONY: prune-network
-prune-network:
+prune-playground:
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
-	docker network rm plebnet-playground-docker_default 2>/dev/null || docker network prune -f || echo
+	docker network rm plebnet-playground-docker* 2>/dev/null || echo
+prune-cluster:
+	$(DOCKER_COMPOSE) -p cluster down
+	docker network rm cluster* 2>/dev/null || echo
 #######################
 .PHONY: push
 push:
