@@ -18,30 +18,20 @@ RUN apk --no-cache add --update \
         zlib-dev \
         zstd \
         zstd-dev \
-      # Install Tor from source, incl. GeoIP files (get latest release version number from Tor ReleaseNotes)
+         # Install Tor from source, incl. GeoIP files (get latest release version number from Tor ReleaseNotes)
       && TOR_TARBALL_NAME="tor-${TOR_VERSION}.tar.gz" \
       && TOR_TARBALL_LINK="https://dist.torproject.org/${TOR_TARBALL_NAME}" \
       && wget -q $TOR_TARBALL_LINK \
-      && wget $TOR_TARBALL_LINK.asc \
-    # Reliably fetch the TOR_GPG_KEY
-        && found=''; \
-         	for server in \
-           		ha.pool.sks-keyservers.net \
-           		hkp://keyserver.ubuntu.com:80 \
-           		hkp://p80.pool.sks-keyservers.net:80 \
-               ipv4.pool.sks-keyservers.net \
-               keys.gnupg.net \
-           		pgp.mit.edu \
-         	; do \
-         		echo "Fetching GPG key $TOR_GPG_KEY from $server"; \
-         		gpg --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$TOR_GPG_KEY" && found=yes && break; \
-         	done; \
-         	test -z "$found" && echo >&2 "error: failed to fetch GPG key $TOR_GPG_KEY" && exit 1; \
-        gpg --verify $TOR_TARBALL_NAME.asc \
+      && wget $TOR_TARBALL_LINK.sha256sum.asc \
+      && wget $TOR_TARBALL_LINK.sha256sum \
+      && gpg --auto-key-locate nodefault,wkd --locate-keys ahf@torproject.org \
+      && gpg --auto-key-locate nodefault,wkd --locate-keys dgoulet@torproject.org \
+      && gpg --auto-key-locate nodefault,wkd --locate-keys nickm@torproject.org \
+      && gpg --verify $TOR_TARBALL_NAME.sha256sum.asc \
       && tar xf $TOR_TARBALL_NAME \
       && cd tor-$TOR_VERSION \
       && ./configure --disable-unittests --disable-systemd --disable-seccomp --disable-asciidoc \
-      && make -j $(nproc) install \
+      && make install \
       && ls -R /usr/local/ \
       && strip /usr/local/bin/tor-* && strip /usr/local/bin/tor
       # Main files created (plus docs):
