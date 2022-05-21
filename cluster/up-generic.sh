@@ -23,7 +23,9 @@ bitcoincount=`expr $lnd / 2 + 1`
 : ${bitcoind=$bitcoincount}
 torcount=`expr $lnd / 16 + 1`
 : ${tor=$torcount}
-
+echo "lnd Count:"  $lnd
+echo "bitcoind Count:"  $bitcoind
+echo "tor Count:"  $ltor
 python plebnet_generate.py TRIPLET=$TRIPLET bitcoind=$bitcoind lnd=$lnd tor=$tor
 
 #Remove
