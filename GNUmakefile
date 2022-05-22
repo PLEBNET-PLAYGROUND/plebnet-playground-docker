@@ -28,11 +28,11 @@ endif
 #	lndg
 #	docs
 ifeq ($(services),)
-SERVICES                                :=bitcoind,lnd,rtl,thunderhub,docs
+services                                :=bitcoind,lnd,cln,rtl,thunderhub,docs
 else
-SERVICES                                :=$(services)
+services                                :=$(services)
 endif
-export SERVICES
+export services
 ifeq ($(user),)
 HOST_USER								:= root
 HOST_UID								:= $(strip $(if $(uid),$(uid),0))
@@ -305,7 +305,7 @@ report:
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
 	@echo '        - TRIPLET=${TRIPLET}'
-	@echo '        - SERVICES=${SERVICES}'
+	@echo '        - services=${services}'
 	@echo '        - HOST_USER=${HOST_USER}'
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
