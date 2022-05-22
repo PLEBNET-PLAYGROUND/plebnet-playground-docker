@@ -4,6 +4,7 @@
 
 
 		 make 
+		 make all                        install and run playground and cluster
 		 make help                       print help
 		 make report                     print environment variables
 		 make initialize                 install dependencies - ubuntu/macOS
