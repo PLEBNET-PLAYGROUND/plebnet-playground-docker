@@ -62,17 +62,33 @@ jobs:
           make initialize init
           make venv && . .venv/bin/activate
           make build para=true
+          make install
           ./install.sh
           make help report
+
       - name: play
         run: |
           play
+
+      - name: play info
+        run: |
           play info
+
+      - name: play ids
+        run: |
           play ids
 
       - name: play-bitcoin "bitcoin-cli -h"
         run: |
           play-bitcoin "bitcoin-cli -h"
+
+      - name: play bitcoin config
+        run: |
+          play bitcoin config
+
+      - name: play-bitcoin config
+        run: |
+          play-bitcoin config
 
       - name: play lnd config
         run: |
@@ -86,9 +102,20 @@ jobs:
       - name: play-lnd config
         run: |
           play-lnd config
+
+      - name: play-lnd "lncli -h"
+        run: |
           play-lnd "lncli -h"
+
+      - name: make docs git diff
+        run: |
+          make docs
+          git diff
 
       - name: uninstall
         run: |
-          make uninstall
+          make prune-playground || echo
+          make prune-cluster || echo
+          make prune || echo
+          make uninstall || echo
 
