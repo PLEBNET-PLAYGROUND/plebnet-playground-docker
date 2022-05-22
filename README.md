@@ -20,13 +20,21 @@ This package will setup a bitcoind, lnd, and tor daemon that will connect to the
 ***
 ### Clone Repo & Install Requirements
 ***
+
+
+If you already have *virtualenv* installed, great. If not, and you are new to using Python, see this article about why its recommended to use a
+[virtualenv](https://www.freecodecamp.org/news/how-to-setup-virtual-environments-in-python/)
+
+
 ```
 git clone https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker --config core.autocrlf=input
 cd plebnet-playground-docker
+pip3 install virtualenv 
 python3 -m venv venv 
 source venv/bin/activate
 pip3 install -r requirements.txt
 ```
+
 Follow [these instructions](https://docs.docker.com/compose/install/#install-compose) to install the `docker compose` subcommand on your system (Mac, Windows, Windows Server 2016, or Linux systems). 
 
 ### Supported System Architectures
