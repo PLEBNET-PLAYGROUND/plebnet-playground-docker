@@ -222,6 +222,9 @@ export CMD_ARGUMENTS
 
 PACKAGE_PREFIX                          := ghcr.io
 export PACKAGE_PREFIX
+.PHONY: - all
+-:help
+all: initialize init install-cluster install
 
 .PHONY: help
 help:
@@ -230,6 +233,7 @@ help:
 	@echo ''
 	@echo ''
 	@echo '		 make '
+	@echo '		 make all                        install and run playground and cluster'
 	@echo '		 make help                       print help'
 	@echo '		 make report                     print environment variables'
 	@echo '		 make initialize                 install dependencies - ubuntu/macOS'
