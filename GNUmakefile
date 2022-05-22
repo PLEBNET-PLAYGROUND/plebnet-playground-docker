@@ -369,26 +369,20 @@ ifneq ($(shell id -u),0)
 	@echo 'If permissions issue...'
 	@echo
 endif
-	sudo -s chown -R $(shell id -u) *
-	sudo -s chown -R $(shell id -u) scripts/*
-	sudo -s chown -R $(shell id -u) volumes/*  || echo
-	sudo -s chown -R $(shell id -u) cluster/*
-	sudo -s chown -R $(shell id -u) cluster/volumes/* || echo
 
-	chmod -R o+rwx *
-	chmod -R o+rwx scripts/*
+	chown -R $(shell id -u) *                 || echo
+	chown -R $(shell id -u) scripts           || echo
+	chown -R $(shell id -u) volumes           || echo
+	chown -R $(shell id -u) cluster           || echo
+	chown -R $(shell id -u) cluster/volumes   || echo
 
-	# chmod -R o+rwx /usr/local/bin
-	# pushd scripts > /dev/null; for string in *; do echo $$string; done; popd > /dev/null
 	pushd scripts > /dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  > /dev/null
-	install -v $(PWD)/scripts/*  /usr/local/bin/
-	install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
+	install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin/
+	install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
 	$(PYTHON3) -m pip install --upgrade pip
 	$(PYTHON3) -m pip install -q omegaconf
 	$(PYTHON3) -m pip install -q -r requirements.txt
 	pushd docs > /dev/null && $(PYTHON3) -m pip install -q -r requirements.txt && popd  > /dev/null
-	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
-	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
 	$(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
 #######################
 .PHONY: blocknotify
