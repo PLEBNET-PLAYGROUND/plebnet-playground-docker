@@ -145,6 +145,10 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             apk add "$AWK"
             report
             echo 'Using apk...'
+            apk add python3 py3-pip
+            python3 -m pip install -r requirements.txt || \
+            python3 -m pip install -r ../requirements.txt
+
 
         fi
     fi
