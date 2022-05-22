@@ -1,6 +1,8 @@
 #This is for internal testing only
 if [ -z "$1" ]; then
     count=5
+else
+    count=$1
 fi
 echo "Auto Detect"
     if [ "$(uname -m)" == "arm64" ]; then
@@ -26,7 +28,7 @@ bitcoind=$bitcoincount
 echo "bitcoind Count:"  $bitcoind
 torcount=$(expr ${lnd} / 16 + 1)
 tor=$torcount
-echo "tor Count:"  $ltor
+echo "tor Count:"  $tor
 python plebnet_generate.py TRIPLET=$TRIPLET bitcoind=$bitcoind lnd=$lnd tor=$tor
 
 #Remove
