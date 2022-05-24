@@ -277,5 +277,25 @@ services:
       - type: bind
         source: ${oc.env:PWD}/docs
         target: /docs
-
+  db:
+    image: postgres
+    restart: always
+    container_name: playground-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: myPassword
+    expose:
+     - "5432"
+    ports:
+     - '5432:5432'
+    volumes:
+      - type: bind
+        source: ${oc.env:PWD}/volumes/postgres_datadir
+        target: /data
+  adminer:
+    image: adminer
+    container_name: playground-adminer
+    restart: always
+    ports:
+      - 7000:7000
 
