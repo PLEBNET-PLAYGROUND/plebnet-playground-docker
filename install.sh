@@ -1,4 +1,4 @@
-if [ -z "$1" ]
+if [ -z "$TRIPLET" ]
     then
     echo "Auto Detect"
     if [ "$(uname -m)" == "arm64" ]; then
@@ -14,18 +14,15 @@ if [ -z "$1" ]
         #echo './install.sh x86_64-linux-gnu'
         export TRIPLET="x86_64-linux-gnu"
     fi
-    # echo "EXAMPLE:"
-    # echo "         TRIPLET=x86_64-linux-gnu ./install.sh"
-    # echo "EXAMPLE:"
-    # echo "         TRIPLET=x86_64-linux-gnu services=bitcoind,lnd ./install.sh"
-    echo "TRIPLET=" $TRIPLET
-    echo "services:" $services
-    echo
 else
-    TRIPLET=$1
     : ${TRIPLET:=$TRIPLET}
     : ${services:=Null}
 fi
+echo "TRIPLET="$TRIPLET
+if [ ! -z "$services" ]; then
+    echo "services="$services
+fi
+
 docker compose down || docker-compose down
 
 python3 plebnet_generate.py TRIPLET=$TRIPLET services=$services

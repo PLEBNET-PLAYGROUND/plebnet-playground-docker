@@ -57,47 +57,65 @@ jobs:
       - run: pip install -r requirements.txt
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
-      - name: make venv && install.sh make help report
+      - name: make initialize init venv build install.sh help report
         run: |
-          make init initialize
+          make initialize init
           make venv && . .venv/bin/activate
+          make build para=true
+          make install
           ./install.sh
           make help report
-          ./uninstall.sh
-      - name: make initialize, venv, init, build, install
-        run: |
-          make install-cluster
-          make build nocache=true
-          make build para=true
-          make install-cluster
-          make install verbose=true
-          # blocknotify | jq . & exit
+
       - name: play
         run: |
           play
+
+      - name: play info
+        run: |
           play info
+
+      - name: play ids
+        run: |
           play ids
-      - name: bitcoind-commands
+
+      - name: play-bitcoin "bitcoin-cli -h"
+        run: |
+          play-bitcoin "bitcoin-cli -h"
+
+      - name: play bitcoin config
+        run: |
+          play bitcoin config
+
+      - name: play-bitcoin config
         run: |
           play-bitcoin config
-          play bitcoin
-          play bitcoin top
-          play bitcoin netinfo 5
-          play bitcoin gettxoutsetinfo
-          play bitcoin getmininginfo
-          play bitcoin 'bitcoin-cli getblockhash 1000'
-      - name: lnd-commands
+
+      - name: play lnd config
         run: |
           # play defaults to the lnd container
+          play lnd config
+
+      - name: play lnd "lncli -h"
+        run: |
+          play lnd "lncli -h"
+
+      - name: play-lnd config
+        run: |
           play-lnd config
-          play lnd
-          play lnd top
-          play lnd lncli
-          play lncli
-          play lncli --version
-          play lnd 'lncli --version'
+
+      - name: play-lnd "lncli -h"
+        run: |
+          play-lnd "lncli -h"
+
+      - name: make docs git diff
+        run: |
+          make docs
+          git diff
 
       - name: uninstall
         run: |
-          make uninstall
+          make prune-playground || echo
+          make prune-cluster || echo
+          make prune || echo
+          make uninstall || echo
 

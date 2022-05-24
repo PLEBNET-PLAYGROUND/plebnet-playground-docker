@@ -28,11 +28,11 @@ endif
 #	lndg
 #	docs
 ifeq ($(services),)
-SERVICES                                :=bitcoind,lnd,rtl,thunderhub,docs
+services                                :=bitcoind,lnd,cln,rtl,thunderhub,docs
 else
-SERVICES                                :=$(services)
+services                                :=$(services)
 endif
-export SERVICES
+export services
 ifeq ($(user),)
 HOST_USER								:= root
 HOST_UID								:= $(strip $(if $(uid),$(uid),0))
@@ -222,6 +222,9 @@ export CMD_ARGUMENTS
 
 PACKAGE_PREFIX                          := ghcr.io
 export PACKAGE_PREFIX
+.PHONY: - all
+-:help
+all: initialize init install-cluster install
 
 .PHONY: help
 help:
@@ -230,6 +233,7 @@ help:
 	@echo ''
 	@echo ''
 	@echo '		 make '
+	@echo '		 make all                        install and run playground and cluster'
 	@echo '		 make help                       print help'
 	@echo '		 make report                     print environment variables'
 	@echo '		 make initialize                 install dependencies - ubuntu/macOS'
@@ -301,7 +305,7 @@ report:
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
 	@echo '        - TRIPLET=${TRIPLET}'
-	@echo '        - SERVICES=${SERVICES}'
+	@echo '        - services=${services}'
 	@echo '        - HOST_USER=${HOST_USER}'
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
@@ -369,26 +373,25 @@ ifneq ($(shell id -u),0)
 	@echo 'If permissions issue...'
 	@echo
 endif
-	sudo -s chown -R $(shell id -u) *
-	sudo -s chown -R $(shell id -u) scripts/*
-	sudo -s chown -R $(shell id -u) volumes/*  || echo
-	sudo -s chown -R $(shell id -u) cluster/*
-	sudo -s chown -R $(shell id -u) cluster/volumes/* || echo
 
-	chmod -R o+rwx *
-	chmod -R o+rwx scripts/*
+	git config --global --add safe.directory $(PWD)
 
-	# chmod -R o+rwx /usr/local/bin
-	# pushd scripts > /dev/null; for string in *; do echo $$string; done; popd > /dev/null
-	pushd scripts > /dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  > /dev/null
-	install -v $(PWD)/scripts/*  /usr/local/bin/
-	install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
+	mkdir -p volumes
+	mkdir -p cluster/volumes
+	chown -R $(shell id -u) *                 || echo
+	chown -R $(shell id -u) scripts           || echo
+	chown -R $(shell id -u) volumes           || echo
+	chown -R $(shell id -u) cluster           || echo
+	chown -R $(shell id -u) cluster/volumes   || echo
+
+	install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin/
+	install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
+	pushd scripts > /dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  > /dev/null || echo
+
 	$(PYTHON3) -m pip install --upgrade pip
 	$(PYTHON3) -m pip install -q omegaconf
 	$(PYTHON3) -m pip install -q -r requirements.txt
 	pushd docs > /dev/null && $(PYTHON3) -m pip install -q -r requirements.txt && popd  > /dev/null
-	bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
-	bash -c 'install -v $(PWD)/getcoins.py  /usr/local/bin/play-getcoins'
 	$(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
 #######################
 .PHONY: blocknotify

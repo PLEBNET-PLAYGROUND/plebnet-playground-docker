@@ -43,6 +43,7 @@ play-bitcoin getnewaddress playground-wallet
 play-bitcoin getnewaddress <walletname>
 play-bitcoin getbalance
 play-bitcoin getbalances
+play-bitcoin gettxoutsetinfo
 
 https://www.plebnet.fun
 
