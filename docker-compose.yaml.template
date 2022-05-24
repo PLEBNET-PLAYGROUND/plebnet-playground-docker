@@ -278,7 +278,7 @@ services:
         source: ${oc.env:PWD}/docs
         target: /docs
   db:
-    image: postgres
+    image: postgres:14.1-alpine
     restart: always
     container_name: playground-postgres
     environment:
