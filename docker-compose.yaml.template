@@ -302,4 +302,30 @@ services:
     restart: always
     ports:
       - 7000:7000
-
+  lnbits:
+    container_name: playground-lnbits
+    depends_on:
+    - lnd
+    - bitcoind
+    links:
+    - bitcoind
+    - lnd
+    build:
+      context: ./lnbits
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    stop_signal: SIGKILL
+    environment:
+        NO_VERSION_CHECK: "true" 
+        ACCOUNT_CONFIG_PATH: '/data/lnbitsConfig.yaml'
+        LOG_LEVEL: debug
+    volumes:
+        - type: bind
+          source: ${oc.env:PWD}/volumes/lnd_datadir
+          target: /etc/lnd
+          read_only: true
+        - type: bind
+          source: ${oc.env:PWD}/volumes/lnbits_datadir
+          target: /data
+    ports:
+        - '5001:5000'  

@@ -47,6 +47,7 @@ mkdir -p volumes/tor_servicesdir
 mkdir -p volumes/tor_torrcdir
 mkdir -p volumes/lndg_datadir
 mkdir -p volumes/postgres_datadir
+mkdir -p volumes/lnbits_datadir
 
 
 #REF: https://docs.docker.com/engine/install/linux-postinstall
