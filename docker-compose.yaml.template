@@ -278,7 +278,7 @@ services:
         source: ${oc.env:PWD}/docs
         target: /docs
   db:
-    image: postgres:14.1-alpine
+    image: postgres:latest
     restart: always
     container_name: playground-postgres
     environment:
@@ -293,6 +293,10 @@ services:
         source: ${oc.env:PWD}/volumes/postgres_datadir
         target: /data
   adminer:
+    links:
+     - db
+    depends_on:
+     - db
     image: adminer
     container_name: playground-adminer
     restart: always
