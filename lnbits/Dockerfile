@@ -1,50 +1,60 @@
+# see correct LNBits install instructions:
+# https://github.com/lnbits/lnbits-legend/blob/main/docs/guide/installation.md
+
 # Build image
 FROM postgres:latest as builder
+#FROM python:3.7-slim as builder
 
-RUN apt-get update
-RUN apt-get install -y python3 python3-venv
 # Setup virtualenv
 ENV VIRTUAL_ENV /opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install build deps
+FROM ubuntu:latest
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends build-essential pkg-config python3
-RUN python3 -m pip install --upgrade pip
+RUN apt install -y python3-pip
 RUN pip install wheel
 
-# Install runtime deps
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
+RUN apt-get -y update
+RUN apt-get -y install git
+
+# Copy in app source
+WORKDIR /app
+
+# clone repository
+RUN git clone https://github.com/lnbits/lnbits-legend /app/lnbits
+RUN mkdir -p /app/lnbits/data
 
 # Install c-lightning specific deps
 RUN pip install pylightning
 
-# Install LND specific deps
-RUN pip install lndgrpc
+# Install LND specific deps - has trouble installing
+# RUN pip install lndgrpc
 
 # Production image
 # FROM postgres:latest as lnbits
-
-# Run as non-root
-USER 1000:1000
 
 # Copy over virtualenv
 ENV VIRTUAL_ENV /opt/venv
 # COPY --from=builder --chown=1000:1000 $VIRTUAL_ENV /opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Copy in app source
-WORKDIR /app
+# Install runtime deps
+USER root
+RUN cp /app/lnbits/requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
 
-RUN mkdir -p /app/lnbits/data
-
-COPY --chown=1000:1000 . /app/lnbits
+# Run as non-root - doesn't seem to run as nonroot
+#USER 1000:1000
+#COPY --chown=1000:1000 . /app/lnbits
 
 ENV LNBITS_PORT="5000"
 ENV LNBITS_HOST="0.0.0.0"
-
 EXPOSE 5000
+
+COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["sh", "-c", "uvicorn --app-dir lnbits --port $LNBITS_PORT --host $LNBITS_HOST"]
