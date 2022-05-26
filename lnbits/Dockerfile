@@ -28,7 +28,7 @@ RUN git clone https://github.com/lnbits/lnbits-legend /app/lnbits
 RUN pip install pylightning
 
 # Install LND specific deps - has trouble installing
-# RUN pip install lndgrpc
+RUN pip install lndgrpc
 
 # Production image
 # FROM postgres:latest as lnbits
