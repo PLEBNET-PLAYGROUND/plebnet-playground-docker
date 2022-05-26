@@ -25,7 +25,6 @@ WORKDIR /app
 
 # clone repository
 RUN git clone https://github.com/lnbits/lnbits-legend /app/lnbits
-RUN mkdir -p /app/lnbits/data
 
 # Install c-lightning specific deps
 RUN pip install pylightning
@@ -43,18 +42,24 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install runtime deps
 USER root
-RUN cp /app/lnbits/requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
+#RUN cp /app/lnbits/requirements.txt /tmp/requirements.txt
+#RUN pip install -r /tmp/requirements.txt
+RUN pip install -r /app/lnbits/requirements.txt
 
 # Run as non-root - doesn't seem to run as nonroot
 #USER 1000:1000
-#COPY --chown=1000:1000 . /app/lnbits
+# COPY --chown=1000:1000 /app/lnbits-legend/lnbits /app/lnbits
+RUN mkdir -p /app/lnbits/data
 
 ENV LNBITS_PORT="5000"
 ENV LNBITS_HOST="0.0.0.0"
 EXPOSE 5000
 
-COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENV LNBITS_DATA_FOLDER="./data"
+ENV LNBITS_DATABASE_URL="postgres://postgres:myPassword@localhost:5432/lnbits"
 
-CMD ["sh", "-c", "uvicorn --app-dir lnbits --port $LNBITS_PORT --host $LNBITS_HOST"]
+#COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+#ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+WORKDIR /app/lnbits
+CMD ["sh", "-c", "uvicorn lnbits.__main__:app --port $LNBITS_PORT --host $LNBITS_HOST"]
