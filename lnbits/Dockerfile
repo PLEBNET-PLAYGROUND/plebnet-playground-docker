@@ -12,12 +12,10 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install build deps
 FROM ubuntu:latest
-RUN apt-get update
+RUN apt-get -y update
 RUN apt-get install -y --no-install-recommends build-essential pkg-config 
 RUN apt install -y python3-pip
 RUN pip install wheel
-
-RUN apt-get -y update
 RUN apt-get -y install git
 
 # Copy in app source
