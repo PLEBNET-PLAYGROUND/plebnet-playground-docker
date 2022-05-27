@@ -307,9 +307,11 @@ services:
     depends_on:
     - lnd
     - bitcoind
+    - db
     links:
     - bitcoind
     - lnd
+    - db
     build:
       context: ./lnbits
       dockerfile: Dockerfile
