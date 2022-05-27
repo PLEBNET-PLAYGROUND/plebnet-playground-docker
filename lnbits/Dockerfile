@@ -2,13 +2,7 @@
 # https://github.com/lnbits/lnbits-legend/blob/main/docs/guide/installation.md
 
 # Build image
-#FROM postgres:latest as builder
 FROM python:3.7-slim as builder
-
-# Setup virtualenv
-ENV VIRTUAL_ENV /opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install build deps
 FROM ubuntu:latest
@@ -24,24 +18,16 @@ WORKDIR /app
 # clone repository
 RUN git clone https://github.com/lnbits/lnbits-legend /app/lnbits
 
+# Install runtime deps
+#USER root
+RUN pip install -r /app/lnbits/requirements.txt
+RUN mkdir -p /app/lnbits/data
+
 # Install c-lightning specific deps
 RUN pip install pylightning
 
 # Install LND specific deps - has trouble installing
 RUN pip install lndgrpc
-
-# Production image
-# FROM postgres:latest as lnbits
-
-# Copy over virtualenv
-ENV VIRTUAL_ENV /opt/venv
-COPY --from=builder --chown=1000:1000 $VIRTUAL_ENV /opt/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Install runtime deps
-#USER root
-RUN pip install -r /app/lnbits/requirements.txt
-RUN mkdir -p /app/lnbits/data
 
 # Run as non-root - doesn't seem to run as nonroot
 USER 1000:1000
