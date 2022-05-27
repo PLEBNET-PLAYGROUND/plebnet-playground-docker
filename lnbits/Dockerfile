@@ -17,7 +17,7 @@ RUN apt-get -y update
 RUN apt-get install -y --no-install-recommends build-essential pkg-config 
 RUN apt install -y python3-pip
 RUN pip3 install wheel
-RUN apt-get -y install git
+RUN apt-get -y install git libffi-dev libpq-dev 
 
 # Copy in app source
 WORKDIR /app
@@ -39,7 +39,8 @@ RUN mkdir -p /app/lnbits/data
 RUN pip3 install pylightning
 
 # Install LND specific deps - has trouble installing
-RUN pip3 install lndgrpc
+RUN pip3 install lndgrpc 
+RUN pip3 install psycopg2
 
 # Copy over virtualenv
 ENV VIRTUAL_ENV /opt/venv

@@ -287,7 +287,7 @@ services:
     expose:
      - "5432"
     ports:
-     - '5432:5432'
+     - "5432:5432"
     volumes:
       - type: bind
         source: ${oc.env:PWD}/volumes/postgres_datadir
