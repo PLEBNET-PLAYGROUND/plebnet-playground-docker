@@ -1,9 +1,9 @@
-# see correct LNBits install instructions:
+# Also see LNBits install instructions:
 # https://github.com/lnbits/lnbits-legend/blob/main/docs/guide/installation.md
 
 # Build image
-#FROM postgres:latest as builder
 FROM python:3.7-slim as builder
+LABEL maintainer "Bitkarrot <me@bitkarrot.co>"
 
 # Setup virtualenv
 ENV VIRTUAL_ENV /opt/venv
@@ -11,7 +11,7 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 CMD ["sh", "source ./opt/venv/bin/activate"]
 
-# Install build deps
+# Install build deps, python3.8 from ubuntu 20.04 works for lnbits
 FROM ubuntu:20.04
 RUN apt-get -y update
 RUN apt-get install -y --no-install-recommends build-essential pkg-config 
@@ -24,6 +24,9 @@ WORKDIR /app
 
 # clone repository
 RUN git clone https://github.com/lnbits/lnbits-legend /app/lnbits
+WORKDIR /app/lnbits
+RUN git checkout 11006ef7ed34e226629bad4f4b614e21c4df1ec4
+
 
 # Install runtime deps
 USER root
@@ -38,26 +41,17 @@ RUN pip3 install pylightning
 # Install LND specific deps - has trouble installing
 RUN pip3 install lndgrpc
 
-# Production image
-# FROM postgres:latest as lnbits
-
 # Copy over virtualenv
 ENV VIRTUAL_ENV /opt/venv
-#COPY --from=builder --chown=1000:1000 $VIRTUAL_ENV /opt/venv
 COPY --from=builder $VIRTUAL_ENV /opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-
-# Run as non-root - doesn't seem to run as nonroot
-#USER 1000:1000
-#COPY --chown=1000:1000 . /app/lnbits
 
 ENV LNBITS_PORT="5000"
 ENV LNBITS_HOST="0.0.0.0"
 EXPOSE 5000
 
 ENV LNBITS_DATA_FOLDER="./data"
-ENV LNBITS_DATABASE_URL="postgres://postgres:myPassword@playground-postgres:5432/lnbits"
+ENV LNBITS_DATABASE_URL="postgres://postgres:myPassword@playground-postgres/lnbits"
 
 #COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
 #ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
