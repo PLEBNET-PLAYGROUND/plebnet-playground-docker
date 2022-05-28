@@ -278,7 +278,7 @@ services:
         source: ${oc.env:PWD}/docs
         target: /docs
   db:
-    image: postgres:latest
+    image: postgres:14.3
     restart: always
     container_name: playground-postgres
     environment:
@@ -292,6 +292,7 @@ services:
       - type: bind
         source: ${oc.env:PWD}/volumes/postgres_datadir
         target: /data
+ 
   adminer:
     links:
      - db
@@ -301,9 +302,9 @@ services:
     container_name: playground-adminer
     restart: always
     ports:
-      - 8888:8080
+      - 8890:8080
     expose:
-      - "8888:8080"
+      - "8890:8080"
   lnbits:
     container_name: playground-lnbits
     depends_on:
