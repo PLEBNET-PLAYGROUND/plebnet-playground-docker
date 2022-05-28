@@ -302,7 +302,7 @@ services:
     container_name: playground-adminer
     restart: always
     ports:
-      - 8890:8080
+      - 8080
     expose:
       - "8890:8080"
   lnbits:
