@@ -37,11 +37,11 @@ ENV LNBITS_PORT="5000"
 ENV LNBITS_HOST="0.0.0.0"
 EXPOSE 5000
 
-ENV LNBITS_DATA_FOLDER="./data"
+ENV LNBITS_DATA_FOLDER="/data"
 ENV LNBITS_DATABASE_URL="postgres://postgres:myPassword@playground-postgres:5432/lnbits"
 
 COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY .env //usr/local/etc/.env
+COPY .env /usr/local/etc/.env
 COPY lnbitsConfig.yaml /usr/local/etc/lnbitsConfig.yaml
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
