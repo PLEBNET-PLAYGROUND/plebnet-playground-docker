@@ -277,5 +277,60 @@ services:
       - type: bind
         source: ${oc.env:PWD}/docs
         target: /docs
-
-
+  db:
+    image: postgres:14.3
+    restart: always
+    container_name: playground-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: myPassword
+    expose:
+     - "5432"
+    ports:
+     - "5432:5432"
+    volumes:
+      - type: bind
+        source: ${oc.env:PWD}/volumes/postgres_datadir
+        target: /data
+ 
+  adminer:
+    links:
+     - db
+    depends_on:
+     - db
+    image: adminer
+    container_name: playground-adminer
+    restart: always
+    expose:
+    - 8080
+    ports:
+    - 8890:8080
+  lnbits:
+    container_name: playground-lnbits
+    depends_on:
+    - lnd
+    - bitcoind
+    - db
+    links:
+    - bitcoind
+    - lnd
+    - db
+    build:
+      context: ./lnbits
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    stop_signal: SIGKILL
+    environment:
+        NO_VERSION_CHECK: "true" 
+        ACCOUNT_CONFIG_PATH: '/data/lnbitsConfig.yaml'
+        LOG_LEVEL: debug
+    volumes:
+        - type: bind
+          source: ${oc.env:PWD}/volumes/lnd_datadir
+          target: /etc/lnd
+          read_only: true
+        - type: bind
+          source: ${oc.env:PWD}/volumes/lnbits_datadir
+          target: /data
+    ports:
+        - '5001:5000'  
