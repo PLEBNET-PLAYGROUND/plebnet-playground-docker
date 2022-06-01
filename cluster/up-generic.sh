@@ -1,4 +1,6 @@
 #This is for internal testing only
+export COMPOSE_PROJECT_NAME=plebnet-playground-cluster
+
 if [ -z "$1" ]; then
     count=5
 else
@@ -53,5 +55,5 @@ do
 done
 
 docker-compose build --build-arg TRIPLET=$TRIPLET
-docker-compose up --remove-orphans -d
+docker-compose -p plebnet-playground-cluster up -d
 

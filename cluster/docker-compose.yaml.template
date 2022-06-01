@@ -1,4 +1,4 @@
-version: "3"
+version: "3.4"
 networks: {}
 services:
   bitcoind:
@@ -10,7 +10,7 @@ services:
     image: playground-cluster-bitcoind
     links:
     - tor-${tor_i}
-    depends_on: 
+    depends_on:
     - tor-${tor_i}
     restart: unless-stopped
     container_name: playground-bitcoind-${bitcoind_i}
@@ -19,20 +19,20 @@ services:
     expose:
     - "38332"
     - "38333"
-    - "38334" 
+    - "38334"
     volumes:
       - type: bind
         source: ${oc.env:PWD}/volumes/bitcoin_datadir_${bitcoind_i}
         target: /root/.bitcoin/
   lnd:
-    build: 
+    build:
       context: ./lnd-signet
       dockerfile: Dockerfile
     image: playground-cluster-lnd
     links:
     - bitcoind-${bitcoind_i}
     - tor-${tor_i}
-    depends_on: 
+    depends_on:
     - bitcoind-${bitcoind_i}
     - tor-${tor_i}
     environment:
@@ -80,4 +80,3 @@ services:
         - type: bind
           source: ${oc.env:PWD}/volumes/tor_servicesdir_${tor_i}
           target: /var/lib/tor/hidden_services
-
