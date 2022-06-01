@@ -50,19 +50,27 @@ mkdir -p volumes/postgres_datadir
 mkdir -p volumes/lnbits_datadir
 
 
-#REF: https://docs.docker.com/engine/install/linux-postinstall
-while ! docker system info > /dev/null 2>&1; do
-    echo "Waiting for docker to start..."
-    if [[ "$(uname -s)" == "Linux" ]]; then
-        systemctl restart docker.service
-    fi
-    if [[ "$(uname -s)" == "Darwin" ]]; then
-        open --background -a /./Applications/Docker.app/Contents/MacOS/Docker
-    fi
 
-    sleep 1;
+BAR='...'
+echo -ne "Waiting for docker to start"$BAR
+while ! docker system info > /dev/null 2>&1; do
+#REF: https://docs.docker.com/engine/install/linux-postinstall
+if [[ "$(uname -s)" == "Linux" ]]; then
+    systemctl restart docker.service
+fi
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    open -g -j /Applications/Docker.app
+fi
+
+    for i in {1..4}; do
+        tput civis
+        echo -ne "${BAR:0:$i}" # print $i chars of $BAR from 0 position
+        sleep .5                 # wait 100ms between "frames"
+    done
+    echo -ne "\rWaiting for docker to start........."
 
 done
+tput cnorm
 
 docker compose build --build-arg TRIPLET=$TRIPLET || docker-compose build --build-arg TRIPLET=$TRIPLET
 docker compose up --remove-orphans -d || docker-compose up --remove-orphans -d
