@@ -101,7 +101,7 @@ export python_version_minor
 export python_version_patch
 export PYTHON_VERSION
 
-# PROJECT_NAME defaults to name of the current directory.
+#PROJECT_NAME defaults to name of the current directory.
 ifeq ($(project),)
 PROJECT_NAME							:= $(notdir $(PWD))
 else
@@ -223,67 +223,71 @@ export CMD_ARGUMENTS
 PACKAGE_PREFIX                          := ghcr.io
 export PACKAGE_PREFIX
 .PHONY: - all
--:help
-all: initialize init install-cluster install
+-:
+	#NOTE: 2 hashes are detected as 1st column output with color
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .PHONY: help
-help:
+help:## print verbose help
+	@echo 'make [COMMAND] [EXTRA_ARGUMENTS]	'
 	@echo ''
-	@echo '	[USAGE]: make [COMMAND] [EXTRA_ARGUMENTS]	'
-	@echo ''
-	@echo ''
-	@echo '		 make '
-	@echo '		 make all                        install and run playground and cluster'
-	@echo '		 make help                       print help'
-	@echo '		 make report                     print environment variables'
-	@echo '		 make initialize                 install dependencies - ubuntu/macOS'
-	@echo '		 make init                       initialize basic dependencies'
-	@echo '		 make build'
-	@echo '		 make build para=true            parallelized build'
-	@echo '		 make install'
-	@echo '		                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook'
-	@echo '		 make run'
-	@echo '		                                 nocache=true verbose=true'
+	#@echo ''
+	@echo 'make '
+	@echo '	 make all                        install and run playground and cluster'
+	@echo '	 make help                       print help'
+	@echo '	 make report                     print environment variables'
+	@echo '	 make initialize                 install dependencies - ubuntu/macOS'
+	@echo '	 make init                       initialize basic dependencies'
+	@echo '	 make build'
+	@echo '	 make build para=true            parallelized build'
+	@echo '	 make install'
+	@echo '	 make install-cluster'
+	@echo '	                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook'
+	@echo '	 make run'
+	@echo '	                                 nocache=true verbose=true'
 	@echo ''
 	@echo '	[DEV ENVIRONMENT]:	'
 	@echo ''
-#	@echo '		 make shell            compiling environment on host machine'
-	@echo '		 make signin profile=gh-user     ~/GH_TOKEN.txt required from github.com'
-#	@echo '		 make header package-header'
-	@echo '		 make build'
-#	@echo '		 make build package-statoshi'
-	@echo '		 make package-all'
+#	@echo '	 make shell            compiling environment on host machine'
+	@echo '	 make signin profile=gh-user     ~/GH_TOKEN.txt required from github.com'
+#	@echo '	 make header package-header'
+	@echo '	 make build'
+#	@echo '	 make build package-statoshi'
+	@echo '	 make package-all'
 	@echo ''
-	@echo '		 make install-python38-sh'
-	@echo '		 make install-python39-sh'
+	@echo '	 make install-python38-sh'
+	@echo '	 make install-python39-sh'
 	@echo ''
 #	@echo '	[EXTRA_ARGUMENTS]:	set build variables	'
 #	@echo ''
-#	@echo '		nocache=true'
-#	@echo '		            	add --no-cache to docker command and apk add $(NOCACHE)'
-#	@echo '		port=integer'
-#	@echo '		            	set PUBLIC_PORT default 80'
+#	@echo '	nocache=true'
+#	@echo '	            	add --no-cache to docker command and apk add $(NOCACHE)'
+#	@echo '	port=integer'
+#	@echo '	            	set PUBLIC_PORT default 80'
 #	@echo ''
-#	@echo '		nodeport=integer'
-#	@echo '		            	set NODE_PORT default 8333'
+#	@echo '	nodeport=integer'
+#	@echo '	            	set NODE_PORT default 8333'
 #	@echo ''
-#	@echo '		            	TODO'
+#	@echo '	            	TODO'
 #	@echo ''
 #	@echo '	[DOCKER COMMANDS]:	push a command to the container	'
 #	@echo ''
-#	@echo '		cmd=command 	'
-#	@echo '		cmd="command"	'
-#	@echo '		             	send CMD_ARGUMENTS to the [TARGET]'
+#	@echo '	cmd=command 	'
+#	@echo '	cmd="command"	'
+#	@echo '	             	send CMD_ARGUMENTS to the [TARGET]'
 	@echo ''
 	@echo '	[EXAMPLES]:'
 	@echo ''
-	@echo '		make run nocache=true verbose=true'
+	@echo '	make run nocache=true verbose=true'
 	@echo ''
-	@echo '		make init && play help'
-	@echo '	'
+	@echo '	make init && play help'
+	@echo ''
+	@sed -n 's/^# //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/# /'
+	@sed -n 's/^## //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/## /'
+	@sed -n 's/^### //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/### /'
 
 .PHONY: report
-report:
+report:## print environment arguments
 	@echo ''
 	@echo '	[ARGUMENTS]	'
 	@echo '      args:'
@@ -336,7 +340,7 @@ export ORIGIN_DIR
 export TARGET_DIR
 
 .PHONY: super
-super:
+super:## switch to super user
 ifneq ($(shell id -u),0)
 	@echo switch to superuser
 	@echo cd $(TARGET_DIR)
@@ -344,8 +348,9 @@ ifneq ($(shell id -u),0)
 #.ONESHELL:
 	sudo -s
 endif
+all: initialize init install-cluster install## all
 .PHONY: venv
-venv:
+venv:## create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
 	   source .venv/bin/activate; pip install -r requirements.txt; \
@@ -356,14 +361,15 @@ venv:
 	@echo "or:"
 	@echo "make test-venv"
 ##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
-test-venv:
+test-venv:## test virutalenv .venv
 	# insert test commands here
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
 	   source .venv/bin/activate; pip install -r requirements.txt; \
 	);
-.PHONY: init
+.PHONY: init setup
 .SILENT:
+setup: init venv## basic setup
 init:
 
 ifneq ($(shell id -u),0)
@@ -375,7 +381,6 @@ ifneq ($(shell id -u),0)
 endif
 
 	git config --global --add safe.directory $(PWD)
-
 	mkdir -p volumes
 	mkdir -p cluster/volumes
 	chown -R $(shell id -u) *                 || echo
@@ -399,15 +404,15 @@ blocknotify:
 	bash -c 'install -v $(PWD)/scripts/blocknotify  /usr/local/bin/blocknotify'
 #######################
 .PHONY: initialize
-initialize:
+initialize:## install libs and dependencies
 	./scripts/initialize  #>&/dev/null
 #######################
 .PHONY: install install-cluster
 .SILENT:
-install: init
+install: venv## create docker-compose.yml and run playground
 	bash -c './install.sh $(TRIPLET)'
-install-cluster: venv
-	bash -c 'pushd cluster && ./up-x64.sh 5 && popd'
+install-cluster: venv## create cluster/docker-compose.yml and run playground-cluster
+	bash -c 'pushd cluster && ./up-generic.sh 5 && popd'
 #######################
 .PHONY: uninstall
 uninstall:
@@ -431,7 +436,7 @@ docs: init
 
 	echo "## MAKE COMMAND" >> MAKE.md
 	echo '```' > MAKE.md
-	make >> MAKE.md
+	make help >> MAKE.md
 	echo '```' >> MAKE.md
 
 	echo "## PLAY COMMAND" > PLAY.md
