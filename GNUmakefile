@@ -228,7 +228,7 @@ export PACKAGE_PREFIX
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .PHONY: help
-help:## print verbose help
+help:## 	print verbose help
 	@echo 'make [COMMAND] [EXTRA_ARGUMENTS]	'
 	@echo ''
 	#@echo ''
@@ -287,7 +287,7 @@ help:## print verbose help
 	@sed -n 's/^### //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/### /'
 
 .PHONY: report
-report:## print environment arguments
+report:## 	print environment arguments
 	@echo ''
 	@echo '	[ARGUMENTS]	'
 	@echo '      args:'
@@ -339,18 +339,9 @@ LINUX_TARGET_DIR:=/root/$(PROJECT_NAME)
 export ORIGIN_DIR
 export TARGET_DIR
 
-.PHONY: super
-super:## switch to super user
-ifneq ($(shell id -u),0)
-	@echo switch to superuser
-	@echo cd $(TARGET_DIR)
-	#sudo ln -s $(PWD) $(TARGET_DIR)
-#.ONESHELL:
-	sudo -s
-endif
-all: initialize init install-cluster install## all
+all: initialize init install-cluster install## 	all
 .PHONY: venv
-venv:## create python3 virtualenv .venv
+venv:## 	create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
 	   source .venv/bin/activate; pip install -r requirements.txt; \
@@ -361,7 +352,7 @@ venv:## create python3 virtualenv .venv
 	@echo "or:"
 	@echo "make test-venv"
 ##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
-test-venv:## test virutalenv .venv
+test-venv:## 	test virutalenv .venv
 	# insert test commands here
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
@@ -369,8 +360,8 @@ test-venv:## test virutalenv .venv
 	);
 .PHONY: init setup
 .SILENT:
-setup: init venv## basic setup
-init:
+setup: init venv## 	basic setup
+init:## 	basic setup
 
 ifneq ($(shell id -u),0)
 	@echo
@@ -403,23 +394,23 @@ blocknotify:
 	bash -c 'install -v $(PWD)/scripts/blocknotify  /usr/local/bin/blocknotify'
 #######################
 .PHONY: initialize
-initialize:## install libs and dependencies
+initialize:## 	install libs and dependencies
 	./scripts/initialize  #>&/dev/null
 #######################
 .PHONY: install install-cluster
 .SILENT:
-install: venv## create docker-compose.yml and run playground
+install: venv## 	create docker-compose.yml and run playground
 	bash -c './install.sh $(TRIPLET)'
-install-cluster: venv## create cluster/docker-compose.yml and run playground-cluster
+install-cluster: venv## 	create cluster/docker-compose.yml and run playground-cluster
 	bash -c 'pushd cluster && ./up-generic.sh 5 && popd'
 #######################
 .PHONY: uninstall
-uninstall:
+uninstall: 	run uninstall.sh script
 	bash -c './uninstall.sh $(TRIPLET)'
 #######################
 .PHONY: run
-run: docs init
-	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
+run: docs init## 	docker-compose up -d
+	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up -d
 #######################
 .PHONY: build
 build: init
@@ -518,15 +509,15 @@ clean:
 	|| echo 'Image(s) for "$(PROJECT_NAME)" already removed.'
 #######################
 .PHONY: prune
-prune:
+prune:## 	docker system prune -af (very destructive!)
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
 	docker system prune -af &
 #######################
 .PHONY: prune-network
-prune-playground:
+prune-playground:## 	remove plebnet-playground-docker network
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
 	docker network rm plebnet-playground-docker* 2>/dev/null || echo
-prune-cluster:
+prune-cluster:## 	remove plebnet-playground-cluster network
 	$(DOCKER_COMPOSE) -p plebnet-playground-cluster down
 	docker network rm plebnet-playground-cluster* 2>/dev/null || echo
 #######################
