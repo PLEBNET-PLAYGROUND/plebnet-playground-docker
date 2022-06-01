@@ -384,10 +384,6 @@ endif
 	mkdir -p volumes
 	mkdir -p cluster/volumes
 	chown -R $(shell id -u) *                 || echo
-	chown -R $(shell id -u) scripts           || echo
-	chown -R $(shell id -u) volumes           || echo
-	chown -R $(shell id -u) cluster           || echo
-	chown -R $(shell id -u) cluster/volumes   || echo
 
 	install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin/
 	install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
@@ -528,8 +524,8 @@ prune-playground:
 	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
 	docker network rm plebnet-playground-docker* 2>/dev/null || echo
 prune-cluster:
-	$(DOCKER_COMPOSE) -p cluster down
-	docker network rm cluster* 2>/dev/null || echo
+	$(DOCKER_COMPOSE) -p plebnet-playground-cluster down
+	docker network rm plebnet-playground-cluster* 2>/dev/null || echo
 #######################
 .PHONY: push
 push:
