@@ -13,25 +13,29 @@ export ARCH
 export AWK
 export GAWK
 
-if [[ ! -z "$GAWK" ]]; then
+if [[ -n "$GAWK" ]]; then
     AWK=$(which gawk)
     export AWK
-    echo $AWK
+    echo "$AWK"
 fi
 
-export PATH=$PATH:/usr/local/opt/python@${python_version_major}.${python_version_minor}/Frameworks/Python.framework/Versions/${python_version_major}.${python_version_minor}/bin
+python_version_major=$(python3 -c 'import sys; print(str(sys.version_info[0]))')
+python_version_minor=$(python3 -c 'import sys; print(str(sys.version_info[1]))')
+# echo major $python_version_major
+# echo minor $python_version_minor
+export PATH=$PATH:/usr/local/opt/python@$python_version_major.$python_version_minor/Frameworks/Python.framework/Versions/$python_version_major.$python_version_minor/bin
 
 report() {
 echo OS:
-echo "$OS" | "$AWK" '{print tolower($0)}'
+echo "$OS" | "$AWK" "{print tolower($0)}"
 echo OS_VERSION:
-echo "$OS_VERSION" | "$AWK" '{print tolower($0)}'
+echo "$OS_VERSION" | "$AWK" "{print tolower($0)}"
 echo UNAME_M:
-echo "$UNAME_M" | "$AWK" '{print tolower($0)}'
+echo "$UNAME_M" | "$AWK" "{print tolower($0)}"
 echo ARCH:
-echo "$ARCH" | "$AWK" '{print tolower($0)}'
+echo "$ARCH" | "$AWK" "{print tolower($0)}"
 echo OSTYPE:
-echo "$OSTYPE" | "$AWK" '{print tolower($0)}'
+echo "$OSTYPE" | "$AWK" "{print tolower($0)}"
 }
 
 checkbrew() {
@@ -71,15 +75,32 @@ if hash brew 2>/dev/null; then
     if ! hash gawk 2>/dev/null; then
         brew install gawk
     fi
-    #brew install python@3.8
-    if ! hash docker 2>/dev/null; then
-        brew install --cask docker
-        brew install docker
-        brew link docker
-    fi
-    if ! hash docker-compose 2>/dev/null; then
-        brew install docker-compose
-    fi
+    # save time in CI
+    # if [ "$(whoami)" != "runner" ]; then
+        if ! hash docker 2>/dev/null; then
+            rm /usr/local/share/zsh/site-functions/_docker
+            rm /usr/local/share/zsh/site-functions/_docker_compose
+            rm /usr/local/share/zsh/site-functions/_docker-compose
+            rm /usr/local/share/fish/vendor_completions.d/docker.fish
+            rm /usr/local/etc/bash_completion.d/docker
+            brew install --force --cask docker
+            # brew install docker
+            brew link docker
+            echo
+        else
+            rm /usr/local/share/zsh/site-functions/_docker
+            rm /usr/local/share/zsh/site-functions/_docker_compose
+            rm /usr/local/share/zsh/site-functions/_docker-compose
+            rm /usr/local/share/fish/vendor_completions.d/docker.fish
+            rm /usr/local/etc/bash_completion.d/docker
+            brew reinstall --force --cask docker
+            brew unlink docker && brew link docker
+            echo
+        fi
+        if ! hash docker-compose 2>/dev/null; then
+            brew install docker-compose
+        fi
+    # fi
     if ! hash mkdocs 2>/dev/null; then
         brew install mkdocs
     fi
@@ -164,14 +185,14 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     checkbrew
 elif [[ "$OSTYPE" == "cygwin" ]]; then
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 elif [[ "$OSTYPE" == "msys" ]]; then
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 elif [[ "$OSTYPE" == "win32" ]]; then
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 else
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 fi
 
