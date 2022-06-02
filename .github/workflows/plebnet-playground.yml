@@ -64,9 +64,17 @@ jobs:
         run: |
           make initialize init
           make venv && . .venv/bin/activate
+
+      - name: make build para=true
+        run: |
           make build para=true
-          make install
-          ./install.sh
+
+      - name: sudo -sH make install install-cluster
+        run: |
+            sudo -sH make install install-cluster
+
+      - name: make help report
+        run: |
           make help report
 
       - name: play

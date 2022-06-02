@@ -413,8 +413,8 @@ run: docs init## 	docker-compose up -d
 	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up -d
 #######################
 .PHONY: build
-build: init
-	docker pull  shahanafarooqui/rtl:0.11.0
+build:
+	docker pull  shahanafarooqui/rtl:0.11.0 &
 	$(DOCKER_COMPOSE) $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)
 #######################
 .PHONY: btcd
