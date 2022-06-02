@@ -67,7 +67,7 @@ jobs:
 
       - name: make build para=true
         run: |
-          make build para=true
+          make report build para=true
 
       - name: sudo -sH make install install-cluster
         run: |

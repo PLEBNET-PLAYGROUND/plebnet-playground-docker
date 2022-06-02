@@ -57,11 +57,13 @@ DOCKER   							    := $(docker)
 endif
 export DOCKER
 
-ifeq ($(compose),)
+DOCKER						    := $(shell which docker)
 DOCKER_COMPOSE						    := $(shell which docker-compose)
-else
-DOCKER_COMPOSE							:= $(compose)
+export DOCKER_COMPOSE
+ifeq ($(DOCKER_COMPOSE),)
+DOCKER_COMPOSE						    :=docker compose
 endif
+export DOCKER
 export DOCKER_COMPOSE
 ifeq ($(reset),true)
 RESET:=true
@@ -315,6 +317,7 @@ report:## 	print environment arguments
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
 	@echo '        - NODE_PORT=${NODE_PORT}'
 	# @echo '        - SERVICE_TARGET=${SERVICE_TARGET}'
+	@echo '        - DOCKER=${DOCKER}'
 	@echo '        - DOCKER_COMPOSE=${DOCKER_COMPOSE}'
 	@echo '        - GIT_USER_NAME=${GIT_USER_NAME}'
 	@echo '        - GIT_USER_EMAIL=${GIT_USER_EMAIL}'
@@ -414,8 +417,11 @@ run: docs init## 	docker-compose up -d
 #######################
 .PHONY: build
 build:
-	docker pull  shahanafarooqui/rtl:0.11.0 &
+ifeq ($(DOCKER_COMPOSE),)
+	$(DOCKER) compose $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)
+else
 	$(DOCKER_COMPOSE) $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)
+endif
 #######################
 .PHONY: btcd
 btcd:
