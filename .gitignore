@@ -360,7 +360,8 @@ hourly-outputs/
 
 # Volumes
 
-volumes/
+volumes
+volumes-*
 
 # bos credentials
 
@@ -378,3 +379,4 @@ get-pip.py
 # don't check in virtualenv, usually named env or venv
 env
 venv
+.venv

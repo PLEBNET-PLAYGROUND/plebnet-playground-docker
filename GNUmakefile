@@ -405,8 +405,8 @@ install-cluster: venv## 	create cluster/docker-compose.yml and run playground-cl
 	bash -c 'pushd cluster && ./up-generic.sh 5 && popd'
 #######################
 .PHONY: uninstall
-uninstall: 	run uninstall.sh script
-	bash -c './uninstall.sh $(TRIPLET)'
+uninstall:## 	run uninstall.sh script
+	./uninstall.sh
 #######################
 .PHONY: run
 run: docs init## 	docker-compose up -d
