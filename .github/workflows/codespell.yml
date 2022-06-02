@@ -28,7 +28,6 @@ jobs:
           FILTER_REGEX_EXCLUDE: codespell.yml
       - name: make lint-dockerfiles
         run: |
-          printenv
           make lint-dockerfiles
       - name: install-codespell-asciidoctor
         run: |
@@ -37,23 +36,37 @@ jobs:
           go get github.com/client9/misspell/cmd/misspell
       - name: markdown-syntax
         run: |
-          git grep -n --color $'\r' -- "*.md" && echo "^ Possible Windows style line ending detected. Please use Unix style line endings (\n)." && exit 0 || true
-          git grep -n --color ' $' -- "*.md" && echo "^ Trailing space detected at end of line. Please remove." && exit 0 || true
-          git grep  -n --color  $'\t' -- "*.md" && echo "^ Use of tabs detected. Please use space for indentation." && exit 0 || true
-          git grep -iE  -n --color '(^| )(\w+) \2(\.|,|:|;| |$)' -- "*.md" && echo "^ Detected lexical illusion in the form of a duplicated word. Please correct." && exit 0 || true
-          for FILE in $(git ls-files -- "*.md"); do if [[ $(tail -c1 $FILE) != "" ]]; then echo "File ${FILE} does not end with a newline character (\n)."; exit 0; fi; done
-          git grep "" -- "*.md" | uniq -c | grep -1 "^      [2-9] " | cut -b9- | sed 's/:$/:[more-than-one-blank-line-here-please-remove]/' \
-          | grep ":" && echo "^ Multiple blank lines detected. Please use only one blank line between paragraphs." && exit 0 || true
+          git grep -n --color $'\r' -- "*.md" && \
+            echo "^ Please use Unix style line endings (\n)." && exit 0 || true
+          git grep -n --color ' $' -- "*.md" && \
+            echo "^ Trailing space detected at end of line." && exit 0 || true
+          git grep  -n --color  $'\t' -- "*.md" && \
+            echo "^ Use of tabs detected - use space for indentation." && \
+            exit 0 || true
+          git grep -iE  -n --color '(^| )(\w+) \2(\.|,|:|;| |$)' -- "*.md" && \
+            echo "^ Detected lexical illusion in the form of a dupl. word." \
+            && exit 0 || true
+          for FILE in $(git ls-files -- "*.md"); \
+            do if [[ $(tail -c1 $FILE) != "" ]]; then \
+            echo "File ${FILE} does not end with a newline character (\n)."; \
+            exit 0; fi; done
+          git grep "" -- "*.md" | uniq -c | grep -1 "^      [2-9] " | \
+            cut -b9- | \
+            sed 's/:$/:[more-than-one-blank-line-here-please-remove]/' \
+            | grep ":" && \
+            echo "^ Please use only one blank line between paragraphs." && \
+            exit 0 || true
       - name: codespell-py-md
         run: |
-          codespell --config .codespellrc --ignore-words .codespell-ignore $(git ls-files -- "*.py" "*.md")
+          codespell --config .codespellrc --ignore-words .codespell-ignore \
+          $(git ls-files -- "*.py" "*.md")
       - name: codespell-html
         run: |
-          codespell --config .codespellrc --ignore-words .codespell-ignore ./docs/docs/*.html
+          codespell --config .codespellrc --ignore-words .codespell-ignore \
+          ./docs/docs/*.html
       - name: git-grep-terms-debug
         run: |
           echo "change when needed for PRs"
           git grep ARCH
           git grep TRIPLET
           git grep "version: \"3"
-
