@@ -1,7 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 name: codespell
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on: [push, pull_request]
 
 jobs:
@@ -16,8 +16,17 @@ jobs:
       - uses: styfle/cancel-workflow-action@0.8.0
         with:
           access_token: ${{ github.token }}
-      - uses: actions/checkout@v2
-      - name: printenv
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_EXCLUDE: codespell.yml
+      - name: make lint-dockerfiles
         run: |
           printenv
           make lint-dockerfiles
@@ -33,7 +42,7 @@ jobs:
           git grep  -n --color  $'\t' -- "*.md" && echo "^ Use of tabs detected. Please use space for indentation." && exit 0 || true
           git grep -iE  -n --color '(^| )(\w+) \2(\.|,|:|;| |$)' -- "*.md" && echo "^ Detected lexical illusion in the form of a duplicated word. Please correct." && exit 0 || true
           for FILE in $(git ls-files -- "*.md"); do if [[ $(tail -c1 $FILE) != "" ]]; then echo "File ${FILE} does not end with a newline character (\n)."; exit 0; fi; done
-          git grep "" -- "*.md" | uniq -c | grep -1 "^      [2-9] " | cut -b9- | sed 's/:$/:[more-than-one-blank-line-here-please-remove]/' \ 
+          git grep "" -- "*.md" | uniq -c | grep -1 "^      [2-9] " | cut -b9- | sed 's/:$/:[more-than-one-blank-line-here-please-remove]/' \
           | grep ":" && echo "^ Multiple blank lines detected. Please use only one blank line between paragraphs." && exit 0 || true
       - name: codespell-py-md
         run: |
