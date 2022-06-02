@@ -99,7 +99,7 @@ if hash brew 2>/dev/null; then
             rm /usr/local/share/zsh/site-functions/_docker-compose
             rm /usr/local/share/fish/vendor_completions.d/docker.fish
             rm /usr/local/etc/bash_completion.d/docker
-            brew reinstall --force --cask docker
+            brew reinstall        --cask docker
             brew unlink docker && brew link docker
             echo
         fi
