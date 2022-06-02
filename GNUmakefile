@@ -50,13 +50,6 @@ SERVICE_TARGET							:= $(target)
 endif
 export SERVICE_TARGET
 
-ifeq ($(docker),)
-DOCKER							        := $(shell which docker)
-else
-DOCKER   							    := $(docker)
-endif
-export DOCKER
-
 DOCKER						    := $(shell which docker)
 DOCKER_COMPOSE						    := $(shell which docker-compose)
 export DOCKER_COMPOSE
@@ -417,10 +410,15 @@ run: docs init## 	docker-compose up -d
 #######################
 .PHONY: build
 build:
+ifneq ($(DOCKER),)
 ifeq ($(DOCKER_COMPOSE),)
 	$(DOCKER) compose $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)
 else
-	$(DOCKER_COMPOSE) $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)
+	bash -c "$(DOCKER_COMPOSE) $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)"
+endif
+else
+	@echo "docker not detected..."
+	$(MAKE) init initialize build
 endif
 #######################
 .PHONY: btcd
