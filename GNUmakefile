@@ -534,6 +534,16 @@ push:
 push-docs: statoshi-docs push
 	@echo 'push-docs'
 
+lint-dockerfiles:
+	for string in */Dockerfile; do \
+	echo $$string; \
+	docker run --rm -i ghcr.io/hadolint/hadolint < $$string || true; \
+	done;
+	for string in cluster/*/Dockerfile; do \
+	echo $$string; \
+	docker run --rm -i ghcr.io/hadolint/hadolint < $$string || true; \
+	done;
+
 SIGNIN=randymcmillan
 export SIGNIN
 
