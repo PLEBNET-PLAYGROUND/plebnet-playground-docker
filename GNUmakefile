@@ -50,18 +50,13 @@ SERVICE_TARGET							:= $(target)
 endif
 export SERVICE_TARGET
 
-ifeq ($(docker),)
-DOCKER							        := $(shell which docker)
-else
-DOCKER   							    := $(docker)
+DOCKER						    := $(shell which docker)
+DOCKER_COMPOSE						    := $(shell which docker-compose)
+export DOCKER_COMPOSE
+ifeq ($(DOCKER_COMPOSE),)
+DOCKER_COMPOSE						    :=docker compose
 endif
 export DOCKER
-
-ifeq ($(compose),)
-DOCKER_COMPOSE						    := $(shell which docker-compose)
-else
-DOCKER_COMPOSE							:= $(compose)
-endif
 export DOCKER_COMPOSE
 ifeq ($(reset),true)
 RESET:=true
@@ -315,6 +310,7 @@ report:## 	print environment arguments
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
 	@echo '        - NODE_PORT=${NODE_PORT}'
 	# @echo '        - SERVICE_TARGET=${SERVICE_TARGET}'
+	@echo '        - DOCKER=${DOCKER}'
 	@echo '        - DOCKER_COMPOSE=${DOCKER_COMPOSE}'
 	@echo '        - GIT_USER_NAME=${GIT_USER_NAME}'
 	@echo '        - GIT_USER_EMAIL=${GIT_USER_EMAIL}'
@@ -344,7 +340,10 @@ all: initialize init install-cluster install## 	all
 venv:## 	create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   . .venv/bin/activate; \
+       python3 -m pip install --upgrade pip; \
+       pip install -r requirements.txt; \
+       python3 -m pip install omegaconf; \
 	);
 	@echo "To activate (venv)"
 	@echo "try:"
@@ -353,10 +352,11 @@ venv:## 	create python3 virtualenv .venv
 	@echo "make test-venv"
 ##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
 test-venv:## 	test virutalenv .venv
-	# insert test commands here
+	# TODO: real tests
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   source .venv/bin/activate; \
+       ./scripts/pyinbash.sh; \
 	);
 .PHONY: init setup
 .SILENT:
@@ -399,23 +399,31 @@ initialize:## 	install libs and dependencies
 #######################
 .PHONY: install install-cluster
 .SILENT:
-install: venv## 	create docker-compose.yml and run playground
+install: 	## 	create docker-compose.yml and run playground
 	bash -c './install.sh $(TRIPLET)'
-install-cluster: venv## 	create cluster/docker-compose.yml and run playground-cluster
+install-cluster:## 	create cluster/docker-compose.yml and run playground-cluster
 	bash -c 'pushd cluster && ./up-generic.sh 5 && popd'
 #######################
 .PHONY: uninstall
-uninstall: 	run uninstall.sh script
-	bash -c './uninstall.sh $(TRIPLET)'
+uninstall:## 	run uninstall.sh script
+	./uninstall.sh
 #######################
 .PHONY: run
 run: docs init## 	docker-compose up -d
 	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up -d
 #######################
 .PHONY: build
-build: init
-	docker pull  shahanafarooqui/rtl:0.11.0
-	$(DOCKER_COMPOSE) $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)
+build:
+ifneq ($(DOCKER),)
+ifeq ($(DOCKER_COMPOSE),)
+	$(DOCKER) compose $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)
+else
+	bash -c "$(DOCKER_COMPOSE) $(VERBOSE) build --pull $(PARALLEL) --no-rm $(NOCACHE)"
+endif
+else
+	@echo "docker not detected..."
+	$(MAKE) init initialize build
+endif
 #######################
 .PHONY: btcd
 btcd:
@@ -533,6 +541,16 @@ push:
 .PHONY: push-docs
 push-docs: statoshi-docs push
 	@echo 'push-docs'
+
+lint-dockerfiles:
+	for string in */Dockerfile; do \
+	echo $$string; \
+	docker run --rm -i ghcr.io/hadolint/hadolint < $$string || true; \
+	done;
+	for string in cluster/*/Dockerfile; do \
+	echo $$string; \
+	docker run --rm -i ghcr.io/hadolint/hadolint < $$string || true; \
+	done;
 
 SIGNIN=randymcmillan
 export SIGNIN
