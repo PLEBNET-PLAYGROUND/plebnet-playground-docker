@@ -31,7 +31,7 @@ echo "bitcoind Count:"  $bitcoind
 torcount=$(expr ${lnd} / 16 + 1)
 tor=$torcount
 echo "tor Count:"  $tor
-python plebnet_generate.py TRIPLET=$TRIPLET bitcoind=$bitcoind lnd=$lnd tor=$tor
+$(which python3) plebnet_generate.py TRIPLET=$TRIPLET bitcoind=$bitcoind lnd=$lnd tor=$tor
 
 #Remove
 docker-compose down
