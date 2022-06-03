@@ -83,29 +83,113 @@ if hash brew 2>/dev/null; then
     fi
     # save time in CI
     # if [ "$(whoami)" != "runner" ]; then
-        if ! hash docker 2>/dev/null; then
-            rm /usr/local/share/zsh/site-functions/_docker
-            rm /usr/local/share/zsh/site-functions/_docker_compose
-            rm /usr/local/share/zsh/site-functions/_docker-compose
-            rm /usr/local/share/fish/vendor_completions.d/docker.fish
-            rm /usr/local/etc/bash_completion.d/docker
-            brew install --force --cask docker
-            # brew install docker
-            brew link docker
+    if hash pgrep 2>/dev/null; then
+        if ! pgrep com.docker.backend; then
             echo
-        else
-            rm /usr/local/share/zsh/site-functions/_docker
-            rm /usr/local/share/zsh/site-functions/_docker_compose
-            rm /usr/local/share/zsh/site-functions/_docker-compose
-            rm /usr/local/share/fish/vendor_completions.d/docker.fish
-            rm /usr/local/etc/bash_completion.d/docker
-            brew reinstall        --cask docker
-            brew unlink docker && brew link docker
-            echo
+            if ! pgrep docker; then
+                echo
+                if ! pgrep Docker; then
+                    echo
+                    if ! pgrep docker.service; then
+                        echo "Docker isnt running!!!"
+
+                        if ! hash docker 2>/dev/null; then
+                            echo "brew install --cask docker"
+                            rm /Library/PrivilegedHelperTools/com.docker.vmnetd
+                            rm /usr/local/bin/com.docker.cli
+                            rm /usr/local/bin/docker-compose-v1
+                            rm /usr/local/bin/docker-compose
+                            rm /usr/local/bin/docker-credential-desktop
+                            rm /usr/local/bin/docker-credential-ecr-login
+                            rm /usr/local/bin/docker-credential-osxkeychain
+                            rm /usr/local/bin/docker
+                            rm /usr/local/bin/hub-tool
+                            rm /usr/local/bin/hyperkit
+                            rm /usr/local/bin/kubectl.docker
+                            rm /usr/local/bin/kubectl
+                            rm /usr/local/bin/notary
+                            rm /usr/local/bin/vpnkit
+                            rm /usr/local/share/zsh/site-functions/_docker
+                            rm /usr/local/share/zsh/site-functions/_docker_compose
+                            rm /usr/local/share/zsh/site-functions/_docker-compose
+                            rm /usr/local/share/fish/vendor_completions.d/docker.fish
+                            rm /usr/local/etc/bash_completion.d/docker
+                            brew install --cask docker
+                            brew install docker
+                            # brew link docker
+                            echo
+                        else
+                            echo "brew reinstall --cask docker"
+                            rm /Library/PrivilegedHelperTools/com.docker.vmnetd
+                            rm /usr/local/bin/com.docker.cli
+                            rm /usr/local/bin/docker-compose-v1
+                            rm /usr/local/bin/docker-compose
+                            rm /usr/local/bin/docker-credential-desktop
+                            rm /usr/local/bin/docker-credential-ecr-login
+                            rm /usr/local/bin/docker-credential-osxkeychain
+                            rm /usr/local/bin/docker
+                            rm /usr/local/bin/hub-tool
+                            rm /usr/local/bin/hyperkit
+                            rm /usr/local/bin/kubectl.docker
+                            rm /usr/local/bin/kubectl
+                            rm /usr/local/bin/notary
+                            rm /usr/local/bin/vpnkit
+                            rm /usr/local/share/zsh/site-functions/_docker
+                            rm /usr/local/share/zsh/site-functions/_docker_compose
+                            rm /usr/local/share/zsh/site-functions/_docker-compose
+                            rm /usr/local/share/fish/vendor_completions.d/docker.fish
+                            rm /usr/local/etc/bash_completion.d/docker
+                            rm /usr/local/share/zsh/site-functions/_docker
+                            rm /usr/local/share/zsh/site-functions/_docker_compose
+                            rm /usr/local/share/zsh/site-functions/_docker-compose
+                            rm /usr/local/share/fish/vendor_completions.d/docker.fish
+                            rm /usr/local/etc/bash_completion.d/docker
+                            brew reinstall        --cask docker
+                            brew unlink docker && brew link docker
+                            echo
+
+
+
+                        fi
+                    fi
+                fi
+            fi
         fi
-        if ! hash docker-compose 2>/dev/null; then
-            brew install docker-compose
-        fi
+    fi
+
+        BAR='...'
+        echo -ne "Waiting for docker to start"$BAR
+        while ! docker system info > /dev/null 2>&1; do
+        #REF: https://docs.docker.com/engine/install/linux-postinstall
+
+            if ! pgrep docker 2>/dev/null; then
+                if [[ "$(uname -s)" == "Linux" ]]; then
+                    systemctl restart docker.service
+                fi
+                if [[ "$(uname -s)" == "Darwin" ]]; then
+                    open -g -j /Applications/Docker.app
+                fi
+            fi
+
+            for i in {1..4}; do
+                tput civis
+                echo -ne "${BAR:0:$i}" # print $i chars of $BAR from 0 position
+                sleep .5                 # wait 100ms between "frames"
+            done
+            echo -ne "\rWaiting for docker to start........."
+            if hash pgrep 2>/dev/null; then
+                # if pgrep Docker; then pkill Docker;fi
+                if pgrep com.docker.backend; then echo docker starting!!;fi
+                if pgrep docker; then echo docker starting!!;fi
+                if pgrep Docker; then echo docker starting!!;fi
+            fi
+
+        done
+        tput cnorm
+
+        # if ! hash docker-compose 2>/dev/null; then
+        #     brew install docker-compose
+        # fi
     # fi
     if ! hash mkdocs 2>/dev/null; then
         brew install mkdocs

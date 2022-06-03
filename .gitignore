@@ -380,3 +380,4 @@ get-pip.py
 env
 venv
 .venv
+scripts/pyscript.py

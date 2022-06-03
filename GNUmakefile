@@ -340,7 +340,10 @@ all: initialize init install-cluster install## 	all
 venv:## 	create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   . .venv/bin/activate; \
+       python3 -m pip install --upgrade pip; \
+       pip install -r requirements.txt; \
+       python3 -m pip install omegaconf; \
 	);
 	@echo "To activate (venv)"
 	@echo "try:"
@@ -349,10 +352,11 @@ venv:## 	create python3 virtualenv .venv
 	@echo "make test-venv"
 ##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
 test-venv:## 	test virutalenv .venv
-	# insert test commands here
+	# TODO: real tests
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   source .venv/bin/activate; \
+       ./scripts/pyinbash.sh; \
 	);
 .PHONY: init setup
 .SILENT:
@@ -395,9 +399,9 @@ initialize:## 	install libs and dependencies
 #######################
 .PHONY: install install-cluster
 .SILENT:
-install: venv## 	create docker-compose.yml and run playground
+install: 	## 	create docker-compose.yml and run playground
 	bash -c './install.sh $(TRIPLET)'
-install-cluster: venv## 	create cluster/docker-compose.yml and run playground-cluster
+install-cluster:## 	create cluster/docker-compose.yml and run playground-cluster
 	bash -c 'pushd cluster && ./up-generic.sh 5 && popd'
 #######################
 .PHONY: uninstall
