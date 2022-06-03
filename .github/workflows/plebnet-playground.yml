@@ -71,11 +71,13 @@ jobs:
 
       - name: sudo -sH make install
         run: |
+            make venv && . .venv/bin/activate
             sudo -sH make install
 
-      - name: sudo -sH make install-cluster
-        run: |
-            sudo -sH make install-cluster
+      # - name: sudo -sH make install-cluster
+      #   run: |
+      #       make venv && . .venv/bin/activate
+      #       sudo -sH make install-cluster
 
       - name: make help report
         run: |
