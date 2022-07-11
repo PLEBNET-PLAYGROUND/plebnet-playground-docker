@@ -4,10 +4,10 @@
 # Install build deps, python3.8 from ubuntu 20.04 works for lnbits
 FROM ubuntu:20.04
 RUN apt-get -y update
-RUN apt-get install -y --no-install-recommends build-essential pkg-config 
+RUN apt-get install -y --no-install-recommends build-essential pkg-config
 RUN apt install -y python3-pip postgresql-client
 RUN pip3 install wheel
-RUN apt-get -y install git libffi-dev libpq-dev 
+RUN apt-get -y install git libffi-dev libpq-dev
 
 # Copy in app source
 WORKDIR /app
@@ -15,7 +15,7 @@ WORKDIR /app
 # clone repository
 RUN git clone https://github.com/lnbits/lnbits-legend /app/lnbits
 WORKDIR /app/lnbits
-RUN git checkout 11006ef7ed34e226629bad4f4b614e21c4df1ec4
+RUN git reset --hard 11006ef7ed34e226629bad4f4b614e21c4df1ec4
 
 
 # Install runtime deps
@@ -29,7 +29,7 @@ RUN mkdir -p /app/lnbits/data
 RUN pip3 install pylightning
 
 # Install LND specific deps - has trouble installing
-RUN pip3 install lndgrpc 
+RUN pip3 install lndgrpc
 RUN pip3 install psycopg2
 
 
