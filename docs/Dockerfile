@@ -27,7 +27,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 # Set build directory
 RUN apk add git
-RUN git clone https://github.com/mkdocs/mkdocs.git /tmp
+RUN git clone --depth 1 https://github.com/mkdocs/mkdocs.git /tmp
 RUN apk del git
 WORKDIR /tmp
 # Copy files necessary for build
