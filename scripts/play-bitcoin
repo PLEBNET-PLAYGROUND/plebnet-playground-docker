@@ -162,7 +162,7 @@ do
         docker exec -it $BITCOIND_ID sh
         exit
 
-    elif [[ ${!i} == *help ]]; then
+    elif [[ ${!i} == help ]]; then
         ((i++))
         echo "play-bitcoin id"
         echo "play-bitcoin top"
@@ -194,7 +194,7 @@ do
 
     elif [[ -n ${!i} ]]; then
         ((i++))
-        docker exec $BITCOIND_ID sh -c  "$1 $2 $3 $4 $5 $6 $7"
+        docker exec $BITCOIND_ID sh -c  "$1 $2 $3 $4 $5 $6 $7 $8 $9"
         exit
     fi
 
