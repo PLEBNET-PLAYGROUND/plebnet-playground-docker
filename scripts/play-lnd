@@ -97,7 +97,7 @@ do
         docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .unconfirmed_balance"
         exit
 
-    elif [[ ${!i} == *help ]]; then
+    elif [[ ${!i} == help ]]; then
         ((i++))
         echo "play-lnd id"
         echo "play-lnd top"
