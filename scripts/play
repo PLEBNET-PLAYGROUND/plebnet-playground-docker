@@ -78,6 +78,31 @@ export BTCD_IMAGE
         echo "BITCOIND_ID:              $BITCOIND_ID"
         echo "TOR_ID:                   $TOR_ID"
         echo
+        echo "CLUSTER:"
+        declare -a cluster_bitcoind=("playground-bitcoind-" "playground-bitcoind-" "playground-bitcoind-" "playground-bitcoind-" "playground-bitcoind-")
+        # get length of an array
+        length=${#cluster_bitcoind[@]}-1
+        for (( j=1; j<length; j++ ));
+        do
+          cluster_bitcoind[$j]=$(docker ps | awk '/'${cluster_bitcoind[$j]}'/'|awk ' {print $1}' | awk 'NR=='$j)
+          if [ -n ${cluster_bitcoind[$j]} ];
+          then
+              printf "playground-bitcoind-%d:    %s\n" $(($j-1)) "${cluster_bitcoind[$j]}"
+              INDEX=$(($j-1))
+          fi
+        done
+        declare -a cluster_lnd=("playground-lnd-"  "playground-lnd-"  "playground-lnd-" "playground-lnd-" "playground-lnd-" "playground-lnd-" "playground-lnd-")
+        # get length of an array
+        length=${#cluster_lnd[@]}-1
+        for (( j=1; j<length; j++ ));
+        do
+          cluster_lnd[$j]=$(docker ps | awk '/'${cluster_lnd[$j]}'/'|awk ' {print $1}' | awk 'NR=='$j)
+          if [ -n ${cluster_lnd[$j]} ];
+          then
+              printf "playground-lnd-%d:         %s\n" $(($j-1)) "${cluster_lnd[$j]}"
+              INDEX=$(($j-1))
+          fi
+        done
         #[ -z "$BTCD_ID" ] && echo "try 'make btcd'"|| echo BTCD_ID:
         #[ -z "$BTCD_ID" ] && echo || echo $BTCD_ID
         exit
