@@ -142,7 +142,7 @@ export BTCD_IMAGE
         play-bitcoin ${!i} $3 $4 $5 $6 $7
         exit
 
-    elif [[ ${!i} == *help ]]; then
+    elif [[ ${!i} == help ]]; then
         ((i++))
         echo "play ids"
         echo "play images"
@@ -199,7 +199,7 @@ export BTCD_IMAGE
 
     elif [[ -n ${!i} ]]; then
         ((i++))
-        docker exec $LND_ID /bin/bash -c "$1 $2 $3 $4 $5 $6"
+        docker exec $LND_ID /bin/bash -c "$1 $2 $3 $4 $5 $6 $7 $8 $9"
         exit
     fi
 
