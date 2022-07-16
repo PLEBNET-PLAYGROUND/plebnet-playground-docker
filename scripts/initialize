@@ -1,77 +1,142 @@
 #!/usr/bin/env bash
-#ENV VARS
+# Check for group sudo
+if groups | grep "\<sudo\>" &> /dev/null; then
+    echo "You are a sudoer!"
+    export SUDO="sudo -s"
+else
+    echo "You are not a sudoer!"
+fi
+# Check for group admin
+if groups | grep "\<admin\>" &> /dev/null; then
+    echo "You are an admin!"
+    export SUDO="sudo -s"
+else
+    echo "You are not an admin!"
+fi
+#DETECT ENV VARS
 OS=$(uname)
 OS_VERSION=$(uname -r)
 UNAME_M=$(uname -m)
+UNAME_P=$(uname -p)
 ARCH=$(uname -m)
+if [[ "$OS" != "Linux"* ]]; then
+    if hash brew; then
+        BREW=$(which brew)
+        BREW_AWK=$(brew --prefix awk)
+        BREW_GAWK=$(brew --prefix gawk)
+        export HOMEBREW_NO_ENV_HINTS=0
+        export HOMEBREW_NO_INSTALL_CLEANUP=false
+    fi
+fi
+PYTHON3=$(which python3)
+PIP=$(which pip)
+PIP3=$(which pip3)
+if [ -z "$SUDO" ]; then
+    DASH_U="-U"
+else
+    DASH_U=
+fi
 AWK=$(which awk)
 GAWK=$(which gawk)
-export OS
-export OS_VERSION
-export UNAME_M
-export ARCH
-export AWK
-export GAWK
+
+echo "OS=$OS"
+echo "OS_VERSION=$OS_VERSION"
+echo "UNAME_M=$UNAME_M"
+echo "UNAME_P=$UNAME_P"
+echo "ARCH=$ARCH"
+echo "BREW=$BREW"
+echo "PYTHON3=$PYTHON3"
+echo "PIP=$PIP"
+echo "PIP3=$PIP3"
+echo "DASH_U=$DASH_U"
+echo "AWK=$AWK"
+echo "GAWK=$GAWK"
+echo "BREW_AWK=$BREW_AWK"
+echo "BREW_GAWK=$BREW_GAWK"
+
+if [ "${UNAME_M}" = "x86_64" ]; then
+    if [ "${OS}" = "Darwin"* ]; then
+        if [ "$(sysctl -in sysctl.proc_translated)" = "1" ]; then
+            echo "Running on Rosetta 2"
+            ROSETTA=1
+            export ROSETTA
+        else
+            echo "Running on native Intel"
+        fi
+    fi
+elif [ "${UNAME_M}" = "arm64" ]; then
+    echo "Running on arm64"
+elif [ "${UNAME_M}" = "aarch64" ]; then
+    echo "Running on aarch64"
+else
+    echo "Unknown architecture: ${UNAME_M}"
+fi
 
 if [[ ! -z "$GAWK" ]]; then
     AWK=$(which gawk)
     export AWK
-    echo $AWK
 fi
 
-export PATH=$PATH:/usr/local/opt/python@${python_version_major}.${python_version_minor}/Frameworks/Python.framework/Versions/${python_version_major}.${python_version_minor}/bin
-
-report() {
-echo OS:
-echo "$OS" | "$AWK" '{print tolower($0)}'
-echo OS_VERSION:
-echo "$OS_VERSION" | "$AWK" '{print tolower($0)}'
-echo UNAME_M:
-echo "$UNAME_M" | "$AWK" '{print tolower($0)}'
-echo ARCH:
-echo "$ARCH" | "$AWK" '{print tolower($0)}'
-echo OSTYPE:
-echo "$OSTYPE" | "$AWK" '{print tolower($0)}'
+function initialize-add-python3-to-path(){
+#ADD python3 to PATH
+if [[ ! -z "${python_version_major}" ]]; then
+    if [[ ! -z "${python_version_minor}" ]]; then
+        export PATH=$PATH:/usr/local/opt/python@${python_version_major}.${python_version_minor}/Frameworks/Python.framework/Versions/${python_version_major}.${python_version_minor}/bin
+    fi
+fi
 }
 
-checkbrew() {
+function initialize-use-apk(){
+# alpine linux... not android
+    echo "more apk support needed"
+    apk add "$AWK"
+    apk add python3 py3-pip
+    python3 -m pip install -r requirements.txt || \
+    python3 -m pip install -r ../requirements.txt
 
-arch_name="$(uname -m)"
+}
+function initialize-use-apt(){
 
-if [ "${arch_name}" = "x86_64" ]; then
-    if [ "$(sysctl -in sysctl.proc_translated)" = "1" ]; then
-        echo "Running on Rosetta 2"
-    else
-        echo "Running on native Intel"
-    fi
-elif [ "${arch_name}" = "arm64" ]; then
-    echo "Running on arm64"
-elif [ "${arch_name}" = "aarch64" ]; then
-    echo "Running on aarch64"
-else
-    echo "Unknown architecture: ${arch_name}"
-fi
+DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
 
 if hash apt-get 2>/dev/null; then
-    sudo apt-get update
-    sudo apt-get install -y runc containerd
-    sudo apt-get install -y \
-    python3 python3-pip mkdocs \
-    jq runc containerd docker.io docker-compose \
-        mkdocs
-    if ! hash pip3 2>/dev/null; then
-	sudo apt-get install python3-pip
-    else
-        pip3 install omegaconf glom
+    $SUDO apt-get update
+     $SUDO apt-get install -y \
+        python3 python3-pip mkdocs jq
+
+    if ! hash docker 2>/dev/null; then
+        $SUDO apt-get install -y runc containerd docker.io
     fi
-exit
+    if ! hash docker-compose 2>/dev/null; then
+        $SUDO apt-get install -y docker-compose
+    fi
+    if ! hash flake8 2>/dev/null; then
+        $SUDO apt-get install -y flake8
+    fi
+    if ! hash isort 2>/dev/null; then
+        $SUDO apt-get install -y isort
+    fi
+    if ! hash black 2>/dev/null; then
+        $SUDO apt-get install -y black
+    fi
+else
+    apt install apt-get python3 python3-pip
+    initialize-use-apt
 fi
+$PYTHON3 -m pip install $DASH_U omegaconf glom
+}
+
+function checkbrew() {
 
 if hash brew 2>/dev/null; then
+    # We want to use gawk
     if ! hash gawk 2>/dev/null; then
+        if [[ ! -z $BREW_AWK ]]; then
+            brew link --overwrite gawk
+        fi
         brew install gawk
+        brew link gawk
     fi
-    #brew install python@3.8
     if ! hash docker 2>/dev/null; then
         brew install --cask docker
         brew install docker
@@ -86,18 +151,12 @@ if hash brew 2>/dev/null; then
     if ! hash jq 2>/dev/null; then
         brew install jq
     fi
-    brew install --quiet  --force python@3.9
-    curl -O https://bootstrap.pypa.io/get-pip.py
-    sudo -H python3 get-pip.py --no-warn-script-location
-
-    if [ -f "/usr/local/opt/python@3.9/bin/python3" ] && [ -f "/opt/homebrew/opt/python@3.9/bin/python3" ]; then
-        python39=/opt/homebrew/opt/python@3.9/bin/python3
-    else
-        python39=$(which python3)
-    fi
-    export python39
-    $python39 -m pip -q install --upgrade pip
-    $python39 -m pip -q install omegaconf
+    brew install --quiet --force python@3.9
+    #echo $(brew --prefix python@3.9)
+    # omegaconf works with python3.9
+    # stability on other versions needs to be retested and updated
+    $(which python3.9) -m ensurepip $DASH_U 2>/dev/null
+    $(which python3.9) -m pip -q install omegaconf 2>/dev/null
     echo
 else
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -129,22 +188,13 @@ if [[ "$OSTYPE" == "linux"* ]]; then
     #CHECK APT
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         if hash apt 2>/dev/null; then
-            sudo apt install "$AWK"
-            sudo apt update
-            sudo apt install software-properties-common
-            sudo apt install python3
-            sudo apt-get install python3-pip
-            sudo apt install runc containerd docker.io docker-compose
-
-            report
-            echo 'Using apt...'
+            initialize-use-apt
         fi
     fi
     if [[ "$OSTYPE" == "linux-musl" ]]; then
         if hash apk 2>/dev/null; then
+            initialize-use-apk
             apk add "$AWK"
-            report
-            echo 'Using apk...'
             apk add python3 py3-pip
             python3 -m pip install -r requirements.txt || \
             python3 -m pip install -r ../requirements.txt
@@ -162,6 +212,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
         fi
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "checking brew..."
     checkbrew
 elif [[ "$OSTYPE" == "cygwin" ]]; then
     echo TODO add support for $OSTYPE
