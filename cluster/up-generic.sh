@@ -1,5 +1,5 @@
 #This is for internal testing only
-export COMPOSE_PROJECT_NAME=plebnet-playground-cluster
+export COMPOSE_PROJECT_NAME=zebnet-cluster
 
 if [ -z "$1" ]; then
     count=5
@@ -54,6 +54,6 @@ do
     mkdir -p volumes/tor_torrcdir_$i
 done
 
-docker-compose build --build-arg TRIPLET=$TRIPLET
-docker-compose -p plebnet-playground-cluster up -d
+docker compose build --build-arg TRIPLET=$TRIPLET
+docker compose up -d --remove-orphans
 

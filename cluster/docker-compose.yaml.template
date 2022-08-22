@@ -1,21 +1,28 @@
 version: "3.4"
 networks: {}
 services:
-  bitcoind:
-    build:
-      context: ./bitcoin-signet
-      dockerfile: Dockerfile
-      args:
-        - TRIPLET=${TRIPLET}
-    image: playground-cluster-bitcoind
+  bitcoind:    
+    image: zebedeeops/bitcoin_zebnet
     links:
-    - tor-${tor_i}
+    - zebnet-tor-${tor_i}
     depends_on:
-    - tor-${tor_i}
+    - zebnet-tor-${tor_i}
     restart: unless-stopped
-    container_name: playground-bitcoind-${bitcoind_i}
+    container_name: zebnet-bitcoind-${bitcoind_i}
     environment:
-      - TRIPLET=${TRIPLET}
+      - UACOMMENT=ZBDCustomSignet-0
+      - RPCUSER=bitcoin
+      - RPCPASSWORD=bitcoin
+      - ZMQPUBRAWBLOCK=tcp://0.0.0.0:28332
+      - ZMQPUBRAWTX=tcp://0.0.0.0:28333
+      - ZMQPUBHASHBLOCK=tcp://0.0.0.0:28334
+      - RPCBIND=0.0.0.0:38332
+      - RPCALLOWIP=0.0.0.0/0
+      - WHITELIST=0.0.0.0/0
+      - BLOCKPRODUCTIONDELAY=1
+      - MINERENABLED=0
+      - MINE_GENESIS=0
+      - ADDNODE=10.21.13.10
     expose:
     - "38332"
     - "38333"
@@ -25,30 +32,30 @@ services:
         source: ${oc.env:PWD}/volumes/bitcoin_datadir_${bitcoind_i}
         target: /root/.bitcoin/
   lnd:
-    build:
-      context: ./lnd-signet
-      dockerfile: Dockerfile
-    image: playground-cluster-lnd
+    image: zebedeeops/lnd_zebnet
     links:
-    - bitcoind-${bitcoind_i}
-    - tor-${tor_i}
+    - zebnet-bitcoind-${bitcoind_i}
+    - zebnet-tor-${tor_i}
     depends_on:
-    - bitcoind-${bitcoind_i}
-    - tor-${tor_i}
+    - zebnet-bitcoind-${bitcoind_i}
+    - zebnet-tor-${tor_i}
     environment:
-      TRIPLET: '${TRIPLET}'
       n: '${lnd_i}'
-      LND_LISTEN: 'playground-lnd-${lnd_i}:9735'
-      LND_RPCLISTEN: 'playground-lnd-${lnd_i}:10009'
-      LND_RESTLISTEN: 'playground-lnd-${lnd_i}:8080'
-      zmqpubrawblock: 'tcp://playground-bitcoind-${bitcoind_i}:28332'
-      zmqpubrawtx: 'tcp://playground-bitcoind-${bitcoind_i}:28333'
-      torsocks: 'playground-tor-${tor_i}:9050'
-      torcontrol: 'playground-tor-${tor_i}:9051'
-      tlsextradomain: 'playground-lnd-${lnd_i}'
-      rpchost: 'playground-bitcoind-${bitcoind_i}'
+      LND_LISTEN: 'zebnet-lnd-${lnd_i}:9735'
+      LND_RPCLISTEN: 'zebnet-lnd-${lnd_i}:10009'
+      LND_RESTLISTEN: 'zebnet-lnd-${lnd_i}:8080'
+      ZMQPUBRAWBLOCK: 'tcp://zebnet-bitcoind-${bitcoind_i}:28332'
+      ZMQPUBRAWTX: 'tcp://zebnet-bitcoind-${bitcoind_i}:28333'
+      TORSOCKS: 'zebnet-tor-${tor_i}:9050'
+      TORCONTROL: 'zebnet-tor-${tor_i}:9051'
+      TLSEXTRADOMAIN: 'zebnet-lnd-${lnd_i}'
+      BITCOIN_RPCHOST: 'zebnet-bitcoind-${bitcoind_i}'
+      BITCOIN_NODE: 'bitcoind'
+      BITCOIN_RPCUSER: 'bitcoin'
+      BITCOIN_RPCPASS: 'bitcoin'
+      BITCOIN_NETWORK: 'signet'   
     restart: unless-stopped
-    container_name: playground-lnd-${lnd_i}
+    container_name: zebnet-lnd-${lnd_i}
     expose:
     - 8080
     - 9735
@@ -64,7 +71,7 @@ services:
         context: ./tor
         dockerfile: Dockerfile
       image: playground-cluster-tor
-      container_name: playground-tor-${tor_i}
+      container_name: zeb-tor-${tor_i}
       environment:
         TRIPLET: '${TRIPLET}'
       expose:
