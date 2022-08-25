@@ -19,10 +19,14 @@ services:
       - RPCBIND=0.0.0.0:38332
       - RPCALLOWIP=0.0.0.0/0
       - WHITELIST=0.0.0.0/0
-      - BLOCKPRODUCTIONDELAY=1
       - MINERENABLED=0
       - MINE_GENESIS=0
-      - ADDNODE=10.21.13.10
+      - ADDNODE=34.233.241.184:38333
+      - TORSOCKS=zebnet-tor-${tor_i}:9050
+      - TORCONTROL=zebnet-tor-${tor_i}:9051
+      - ONIONPROXY=zebnet-tor-${tor_i}:9050
+      - TORPASSWORD=hello
+      - SIGNETCHALLENGE=5121035e487a7320e5703d1679c1e02b393d9530e490004793207f1a152dc7c9b475a951ae
     expose:
     - "38332"
     - "38333"
@@ -30,7 +34,7 @@ services:
     volumes:
       - type: bind
         source: ${oc.env:PWD}/volumes/bitcoin_datadir_${bitcoind_i}
-        target: /root/.bitcoin/
+        target: /root/.bitcoin/    
   lnd:
     image: zebedeeops/lnd_zebnet
     links:
@@ -40,20 +44,23 @@ services:
     - zebnet-bitcoind-${bitcoind_i}
     - zebnet-tor-${tor_i}
     environment:
-      n: '${lnd_i}'
-      LND_LISTEN: 'zebnet-lnd-${lnd_i}:9735'
-      LND_RPCLISTEN: 'zebnet-lnd-${lnd_i}:10009'
-      LND_RESTLISTEN: 'zebnet-lnd-${lnd_i}:8080'
-      ZMQPUBRAWBLOCK: 'tcp://zebnet-bitcoind-${bitcoind_i}:28332'
-      ZMQPUBRAWTX: 'tcp://zebnet-bitcoind-${bitcoind_i}:28333'
-      TORSOCKS: 'zebnet-tor-${tor_i}:9050'
-      TORCONTROL: 'zebnet-tor-${tor_i}:9051'
-      TLSEXTRADOMAIN: 'zebnet-lnd-${lnd_i}'
-      BITCOIN_RPCHOST: 'zebnet-bitcoind-${bitcoind_i}'
-      BITCOIN_NODE: 'bitcoind'
-      BITCOIN_RPCUSER: 'bitcoin'
-      BITCOIN_RPCPASS: 'bitcoin'
-      BITCOIN_NETWORK: 'signet'   
+      - n=${lnd_i}
+      - LND_LISTEN=zebnet-lnd-${lnd_i}:9735
+      - LND_RPCLISTEN=zebnet-lnd-${lnd_i}:10009
+      - LND_RESTLISTEN=zebnet-lnd-${lnd_i}:8080
+      - BITCOIN_ZMQPUBRAWBLOCK=tcp://zebnet-bitcoind-${bitcoind_i}:28332
+      - BITCOIN_ZMQPUBRAWTX=tcp://zebnet-bitcoind-${bitcoind_i}:28333
+      - TORSOCKS=zebnet-tor-${tor_i}:9050
+      - TORCONTROL=zebnet-tor-${tor_i}:9051
+      - TORPASSWORD=hello
+      - TLSEXTRADOMAIN=zebnet-lnd-${lnd_i}
+      - BITCOIN_RPCHOST=zebnet-bitcoind-${bitcoind_i}:38332
+      - BITCOIN_NODE=bitcoind
+      - BITCOIN_RPCUSER=bitcoin
+      - BITCOIN_RPCPASS=bitcoin
+      - BITCOIN_NETWORK=signet   
+      - ADDNODE=bitcoin_signet_seeder.lnsandbox.zebedee.io
+      - SEEDNODE=54.205.254.220
     restart: unless-stopped
     container_name: zebnet-lnd-${lnd_i}
     expose:
@@ -71,7 +78,7 @@ services:
         context: ./tor
         dockerfile: Dockerfile
       image: playground-cluster-tor
-      container_name: zeb-tor-${tor_i}
+      container_name: zebnet-tor-${tor_i}
       environment:
         TRIPLET: '${TRIPLET}'
       expose:
