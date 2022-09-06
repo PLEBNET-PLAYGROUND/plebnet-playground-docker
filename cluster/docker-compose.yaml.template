@@ -45,9 +45,9 @@ services:
     - zebnet-tor-${tor_i}
     environment:
       - n=${lnd_i}
-      - LND_LISTEN=zebnet-lnd-${lnd_i}:9735
-      - LND_RPCLISTEN=zebnet-lnd-${lnd_i}:10009
-      - LND_RESTLISTEN=zebnet-lnd-${lnd_i}:8080
+      - LND_LISTEN=0.0.0.0:9735
+      - LND_RPCLISTEN=0.0.0.0:10009
+      - LND_RESTLISTEN=0.0.0.0:8080
       - BITCOIN_ZMQPUBRAWBLOCK=tcp://zebnet-bitcoind-${bitcoind_i}:28332
       - BITCOIN_ZMQPUBRAWTX=tcp://zebnet-bitcoind-${bitcoind_i}:28333
       - TORSOCKS=zebnet-tor-${tor_i}:9050
@@ -73,11 +73,8 @@ services:
         source: ${oc.env:PWD}/volumes/lnd_datadir_${lnd_i}
         target: /root/.lnd/
   tor:
-      restart: unless-stopped
-      build:
-        context: ./tor
-        dockerfile: Dockerfile
-      image: playground-cluster-tor
+      restart: unless-stopped      
+      image: zebedeeops/zbd_tor
       container_name: zebnet-tor-${tor_i}
       environment:
         TRIPLET: '${TRIPLET}'
