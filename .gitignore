@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 /signet/*
-up.sh 
+up.sh
 docker-compose.yaml
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -370,4 +370,11 @@ bos/node/credentials.json
 
 .ipynb_checkpoints/
 
+# MacOS
+.DS_Store
 
+get-pip.py
+
+# don't check in virtualenv, usually named env or venv
+env
+venv

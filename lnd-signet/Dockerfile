@@ -1,9 +1,9 @@
-FROM golang:1.16.3-alpine as builder
+FROM golang:1.18.2-alpine as builder
 
 # Pass a tag, branch or a commit using build-arg.  This allows a docker
 # image to be built from a specified Git state.  The default image
 # will use the Git tip of master by default.
-ARG BRANCH="master"
+ARG BRANCH="tags/v0.15.2-beta"
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
@@ -17,10 +17,10 @@ RUN apk add --no-cache --update alpine-sdk \
 &&  git clone https://github.com/lightningnetwork/lnd /go/src/github.com/lightningnetwork/lnd \
 &&  cd /go/src/github.com/lightningnetwork/lnd \
 &&  git checkout "${BRANCH}" \
-&&  make release-install
+&&  make -j $(nproc) release-install
 
 # Start a new, final image.
-FROM alpine:3 as playground-lnd-signet
+FROM alpine as playground-lnd-signet
 
 LABEL org.opencontainers.image.authors="Richard Safier"
 LABEL org.opencontainers.image.licenses=MIT

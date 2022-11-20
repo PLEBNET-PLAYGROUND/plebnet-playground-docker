@@ -1,0 +1,204 @@
+#!/bin/bash
+
+if hash docker 2>/dev/null; then
+
+BITCOIND_ID=$(echo $(docker ps | awk '/playground-bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
+export BITCOIND_ID
+BITCOIND_IMAGE=$(echo $(docker images | awk '/playground-bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
+export BITCOIND_IMAGE
+
+for ((i=1;i<=$#;i++));
+do
+    if [[ ${!i} = info ]]; then
+        ((i++))
+        echo $BITCOIND_ID
+        echo "!i = ${!i}"
+        echo "0 = $0"
+        echo "1 = $1"
+        echo "2 = $2"
+        echo "3 = $3"
+        echo "4 = $4"
+        echo "5 = $5"
+        echo "6 = $6"
+        echo "7 = $7"
+        exit
+
+    elif [[ ${!i} = id ]]; then
+        ((i++))
+        echo $BITCOIND_ID
+        exit
+
+    elif [[ ${!i} = config ]]; then
+        ((i++))
+        docker inspect $(play-bitcoin id) | jq '.[] | {(.Name) : [(.Config)]}'
+        exit
+
+    elif [[ ${!i} = ip ]]; then
+        ((i++))
+        docker inspect $(play-bitcoin id) | jq '.[] | {(.Name) : [(.NetworkSettings.Networks."plebnet-playground-docker_default".IPAddress)]}' | jq .[] | jq .[]
+        exit
+
+    elif [[ ${!i} = port ]]; then
+        ((i++))
+        docker inspect $(play-bitcoin id) | jq '.[] | {(.Name) : [(.NetworkSettings.Ports."38333/tcp")]}' | jq .[] | jq .[] | jq .[] | jq .HostPort
+        exit
+
+    elif [[ ${!i} = env ]]; then
+        ((i++))
+        play-bitcoin config | jq .[] |  jq .[] | jq .Env
+        exit
+
+    elif [[ ${!i} = top ]]; then
+        ((i++))
+        docker top $BITCOIND_ID
+        exit
+
+    elif [[ ${!i} == iftop ]]; then
+        ((i++))
+        docker exec -it $BITCOIND_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apt update && apt install -qq net-tools iftop > /dev/null && iftop -P -p $2 $3 $4 $5"
+        exit
+
+    elif [[ ${!i} = netinfo ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -netinfo $2"
+        exit
+
+    elif [[ ${!i} = gettxoutsetinfo ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli gettxoutsetinfo"
+        exit
+
+    elif [[ ${!i} = getmininginfo ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli getmininginfo"
+        exit
+
+    elif [[ ${!i} = listwallet* ]]; then
+        ((i++))
+        #docker exec $BITCOIND_ID sh -c "bitcoin-cli listwallets"
+        docker exec $BITCOIND_ID sh -c "ls /root/.bitcoin/signet/wallets"
+        exit
+
+    elif [[ ${!i} = createwallet ]]; then
+        ((i++))
+        if [ -z $2 ]; then
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli createwallet playground-wallet" 2>/dev/null
+        exit
+        fi
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli createwallet $2 $3 $4 $5 $6 $7" 2>/dev/null
+        exit
+
+    elif [[ ${!i} = getbalance ]]; then
+        ((i++))
+        if [ -z $2 ]; then
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=playground-wallet getbalance"
+        fi
+        exit
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 getbalance"
+    elif [[ ${!i} = getbalances ]]; then
+        ((i++))
+        if [ -z $2 ]; then
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=playground-wallet getbalances"
+        exit
+        fi
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 getbalances"
+        exit
+
+    elif [[ ${!i} = getnewaddress ]]; then
+        ((i++))
+        play-bitcoin createwallet
+        if [ -z $2 ]; then
+        # bitcoin-cli -rpcwallet=plebnet1 getnewaddress
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=playground-wallet getnewaddress"
+        exit
+        fi
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 getnewaddress"
+        exit
+
+    elif [[ ${!i} = sendtoaddress ]]; then
+        ((i++))
+        # bitcoin-cli -rpcwallet=playground-wallet sendtoaddress amount feerate
+        #play-bitcoin sendtoaddress playground-wallet $(export newaddress=$(bitcoin-cli getnewaddress rpcwallet=playground-wallet); echo $newaddress)
+        #play-bitcoin sendtoaddress playground-wallet
+        if [ -z $2 ]; then
+            echo "defaulting to playground-wallet"
+            PLAYGROUND_WALLET='playground-wallet'
+            play-bitcoin createwallet $PLAYGROUND_WALLET
+            echo "play-bitcoin sendtoaddress <wallet-name> <address> <amount>"
+            echo "Try:"
+            echo "play-bitcoin listwallets"
+            exit
+        fi
+        if [ -z $3 ]; then
+            echo "include address to send to..."
+            echo "play-bitcoin sendtoaddress $2 <address> <amount>"
+            exit
+        fi
+        if [ -z $4 ]; then
+            echo "include amount to send to $3"
+            echo "play-bitcoin sendtoaddress $2 $3 <amount>"
+            exit
+        fi
+        docker exec $BITCOIND_ID sh -c "bitcoin-cli -rpcwallet=$2 sendtoaddress $3 $4"
+        exit
+
+    elif [[ ${!i} = start ]]; then
+        ((i++))
+        docker-compose up bitcoind
+        exit
+
+    elif [[ ${!i} = restart ]]; then
+        ((i++))
+        docker restart $BITCOIND_ID
+        exit
+
+    elif [[ ${!i} = stop ]]; then
+        ((i++))
+        docker stop $BITCOIND_ID
+        exit
+
+    elif [[ ${!i} = *shell ]]; then
+        ((i++))
+        docker exec -it $BITCOIND_ID sh
+        exit
+
+    elif [[ ${!i} == help ]]; then
+        ((i++))
+        echo "play-bitcoin id"
+        echo "play-bitcoin top"
+        echo "play-bitcoin ifconfig"
+        echo "play-bitcoin iftop"
+        echo "play-bitcoin netinfo 5"
+        echo "play-bitcoin shell"
+        echo "play-bitcoin start"
+        echo "play-bitcoin stop"
+        echo
+        echo "play-bitcoin '<COMMAND>'"
+        echo "play-bitcoin createwallet  playground-wallet"
+        echo "play-bitcoin createwallet  <walletname>"
+        echo "play-bitcoin listwallets"
+        echo "play-bitcoin getnewaddress playground-wallet"
+        echo "play-bitcoin getnewaddress <walletname>"
+        echo "play-bitcoin getbalance"
+        echo "play-bitcoin getbalances"
+        echo "play-bitcoin gettxoutsetinfo"
+        echo
+        echo "https://www.plebnet.fun"
+        echo
+        echo "Fund bitcoin playground-wallet:"
+        echo "play-getcoins -a \$(play-bitcoin getnewaddress)"
+        echo ""
+        echo "newaddress=\$(bitcoin-cli -signet getnewaddress)"
+        echo "play-bitcoin sendtoaddress playground-wallet \$newaddress 0.01"
+        exit
+
+    elif [[ -n ${!i} ]]; then
+        ((i++))
+        docker exec $BITCOIND_ID sh -c  "$1 $2 $3 $4 $5 $6 $7 $8 $9"
+        exit
+    fi
+
+done;
+play-bitcoin help;
+fi #end if docker hash
+

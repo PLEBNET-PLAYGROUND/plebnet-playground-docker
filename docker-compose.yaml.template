@@ -1,3 +1,4 @@
+#version: "3.7" for umbrel compatability
 version: "3.4"
 networks: {}
 services:
@@ -64,6 +65,32 @@ services:
       - type: bind
         source: ${oc.env:PWD}/volumes/lnd_datadir
         target: /root/.lnd/
+  cln:
+    links:
+    - bitcoind
+    - tor
+    depends_on: 
+    - bitcoind
+    - tor
+    environment:
+      CLN_ALIAS: 'NewNode'
+      BITCOIN_RPC_HOST: 'playground-bitcoind'
+      TOR_PROXY: 'playground-tor:9050'
+      TOR_ADDR: 'playground-tor:9051'
+      LIGHTNINGD_PORT: '9736'
+    restart: unless-stopped
+    container_name: playground-cln
+    build: 
+      context: ./cln-signet
+      dockerfile: Dockerfile
+    expose:
+    - "9736"
+    ports:
+    - "9736:9736"
+    volumes:
+      - type: bind
+        source: ${oc.env:PWD}/volumes/cln_datadir
+        target: /root/.lightning/
   tor:
       restart: unless-stopped
       container_name: playground-tor
@@ -156,7 +183,11 @@ services:
     restart: unless-stopped
     ports:
       - "8888:8888"
-    image: plebnet-playground-docker_dashboard
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+      args:
+        - TRIPLET=${TRIPLET}
     volumes:
       - type: bind
         source: ${oc.env:PWD}/notebooks
@@ -177,39 +208,38 @@ services:
       - sh
       - -c
       - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
-  dashboard:
-    container_name: playground-dashboard
-    links: 
-      - lnd      
-      - bitcoind 
-    depends_on: 
-      - lnd
-      - bitcoind
-    restart: unless-stopped
-    ports:
-      - "8050:8050"
-    build:
-      context: ./dashboard
-      dockerfile: Dockerfile
-    image: plebnet-playground-docker_dashboard
-    volumes:
-      - type: bind
-        source: ${oc.env:PWD}/dashboard
-        target: /dashboard
-      - type: bind
-        source: ${oc.env:PWD}/volumes/lnd_datadir
-        target: /root/.lnd/
-        read_only: true
-    environment:
-      JUPYTER_NOTEBOOKS: /dashboard
-      LND_DATADIR: /root/.lnd
-      GRAPH_TEST_DATA: describegraph.json
-      USE_TEST_DATA: ${USE_TEST_DATA}
-    working_dir: /dashboard
-    # use this command to spin up jupyter serving on localhost:8888
-    command:
-      - python
-      - dashboard.py
+#  dashboard:
+#    container_name: playground-dashboard
+#    links: 
+#      - lnd      
+#      - bitcoind 
+#    depends_on: 
+#      - lnd
+#      - bitcoind
+#    restart: unless-stopped
+#    ports:
+#      - "8050:8050"
+#    build:
+#      context: ./dashboard
+#      dockerfile: Dockerfile
+#    volumes:
+#      - type: bind
+#        source: ${oc.env:PWD}/dashboard
+#        target: /dashboard
+#      - type: bind
+#        source: ${oc.env:PWD}/volumes/lnd_datadir
+#        target: /root/.lnd/
+#        read_only: true
+#    environment:
+#      JUPYTER_NOTEBOOKS: /dashboard
+#      LND_DATADIR: /root/.lnd
+#      GRAPH_TEST_DATA: describegraph.json
+#      USE_TEST_DATA: ${USE_TEST_DATA}
+#    working_dir: /dashboard
+#    # use this command to spin up jupyter serving on localhost:8888
+#    command:
+#      - python
+#      - dashboard.py
   lndg:  
     image: ghcr.io/cryptosharks131/lndg:latest  
     container_name: playground-lndg
@@ -217,11 +247,11 @@ services:
       - lnd  
     volumes:  
       - ${oc.env:PWD}/volumes/lnd_datadir:/root/.lnd:ro
-      - ${oc.env:PWD}/volumes/lndg_datadir/db.sqlite3:/lndg/db.sqlite3:rw
+      - ${oc.env:PWD}/volumes/lndg_datadir:/lndg/data:rw
     command:  
       - sh  
       - -c  
-      - python initialize.py -net 'signet' -server 'playground-lnd:10009' -d && python manage.py migrate && sleep 20 && supervisord  && python manage.py runserver 0.0.0.0:8000  
+      - python initialize.py -net 'signet' -server 'playground-lnd:10009' -d && sleep 20 && supervisord && python manage.py runserver 0.0.0.0:8000  
     ports:  
       - 8889:8000
   docs:
@@ -240,11 +270,67 @@ services:
         - TRIPLET=${TRIPLET}
     expose:
     - "8000"
+    - "8008"
     ports:
-    - "8000:8000"
+    - "8008:8000"
     volumes:
       - type: bind
         source: ${oc.env:PWD}/docs
         target: /docs
-
-
+  db:
+    image: postgres:14.3
+    restart: always
+    container_name: playground-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: myPassword
+    expose:
+     - "5432"
+    ports:
+     - "5432:5432"
+    volumes:
+      - type: bind
+        source: ${oc.env:PWD}/volumes/postgres_datadir
+        target: /data
+ 
+  adminer:
+    links:
+     - db
+    depends_on:
+     - db
+    image: adminer
+    container_name: playground-adminer
+    restart: always
+    expose:
+    - 8080
+    ports:
+    - 8890:8080
+  lnbits:
+    container_name: playground-lnbits
+    depends_on:
+    - lnd
+    - bitcoind
+    - db
+    links:
+    - bitcoind
+    - lnd
+    - db
+    build:
+      context: ./lnbits
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    stop_signal: SIGKILL
+    environment:
+        NO_VERSION_CHECK: "true" 
+        ACCOUNT_CONFIG_PATH: '/data/lnbitsConfig.yaml'
+        LOG_LEVEL: debug
+    volumes:
+        - type: bind
+          source: ${oc.env:PWD}/volumes/lnd_datadir
+          target: /etc/lnd
+          read_only: true
+        - type: bind
+          source: ${oc.env:PWD}/volumes/lnbits_datadir
+          target: /data
+    ports:
+        - '5001:5000'  

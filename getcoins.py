@@ -9,22 +9,41 @@ import subprocess
 import requests
 import sys
 import json
+from pprint import pprint
+
+sys.path.append('.')
+sys.path.append("/usr/local/lib/python3.8/site-packages")
+sys.path.append("/usr/local/lib/python3.9/site-packages")
 
 parser = argparse.ArgumentParser(description='Script to get coins from a faucet.')
 parser.add_argument('-c', '--cmd', dest='cmd', default='docker', help='bitcoin-cli command to use')
 parser.add_argument('-f', '--faucet', dest='faucet', default='http://signet.xenon.fun:5000/faucet', help='URL of the faucet')
 parser.add_argument('-a', '--address', dest='address', default='', help='Bitcoin address to which the faucet should send')
+parser.add_argument('-r', '--report', dest='report', default='false', help='Return session data')
+parser.add_argument('-s', '--success', dest='success', default='false', help='return 0 if true')
 
 args = parser.parse_args()
 
-if args.address == '': 
+def print_report():
+    if args.report == 'true':
+        print(args.address)
+        # NOTE: jq expected syntax
+        # echo  {\"address\": \"tb1qhjd4lxv7vkqp7pen34t8zfxvvc8f8eqpppug26\"} | jq .
+        #print(data) #return session data first!
+    else:
+        print(res.text)
+
+if args.address == '':
     # get address for receiving coins
     args.address = json.loads(subprocess.check_output([args.cmd] + ['exec','-it','playground-lnd', 'lncli', '--macaroonpath', '/root/.lnd/data/chain/bitcoin/signet/admin.macaroon', 'newaddress', 'p2wkh']))["address"]
-
     data = {'address': args.address}
+else:
+    data = {'address': args.address}
+
 try:
     res = requests.get(args.faucet, params=data)
+    print_report()
 except:
     print('Unexpected error when contacting faucet:', sys.exc_info()[0])
     exit()
-print(res.text)
+

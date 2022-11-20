@@ -20,11 +20,11 @@
 
 # Project information
 site_name: Plebnet Playground
-site_url: https://squidfunk.github.io/mkdocs-material/
-site_author: Martin Donath
+site_url: http://localhost:8008
+site_author: Richard Safier
 site_description: >-
-  Create a branded static site from a set of Markdown files to host the
-  documentation of your Open Source or commercial project
+  Plebnet Playground Sandbox Docker Package
+  This package will setup a bitcoind, lnd, and tor daemon that will connect to the Plebnet Playground Sandbox (Signet) Chain. This allows users to use and test bitcoin and lightning technologies without the financial risk involved with running on the mainnet chain. RTL (Ride The Lightning) and ThunderHub Web UI is also include to provide a more user friendly experience.
 
 # Repository
 repo_name: plebnet-playground-docker
@@ -32,7 +32,7 @@ repo_url: https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker
 edit_uri: ""
 
 # Copyright
-copyright: Copyright &copy; 2016 - 2021 Martin Donath
+copyright: Copyright &copy; 2021 -  Richard Safier
 
 # Configuration
 theme:
@@ -114,17 +114,13 @@ extra:
     property: !ENV GOOGLE_ANALYTICS_KEY
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/squidfunk
-    - icon: fontawesome/brands/gitter
-      link: https://gitter.im/squidfunk/mkdocs-material
+      link: https://github.com/PLEBNET-PLAYGROUND
     - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/r/squidfunk/mkdocs-material/
+      link: https://github.com/orgs/PLEBNET-PLAYGROUND/packages
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/squidfunk
-    - icon: fontawesome/brands/linkedin
-      link: https://linkedin.com/in/squidfunk/
-    - icon: fontawesome/brands/instagram
-      link: https://instagram.com/squidfunk
+      link: https://twitter.com/NodeHello
+    - icon: fontawesome/solid/faucet
+      link: https://www.plebnet.fun
 
 # Extensions
 markdown_extensions:
@@ -174,3 +170,4 @@ nav:
   - Plebnet TG: https://t.me/plebnet
   - Umbrel TG: https://t.me/getumbrel
   - RaspiBlitz TG: https://t.me/raspiblitz
+  - PlebNet.fun (faucet): https://www.plebnet.fun

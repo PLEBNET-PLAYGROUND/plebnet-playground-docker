@@ -1,6 +1,6 @@
 name: plebnet-playground
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   pull_request:
     branches:       #[ master ]
@@ -29,51 +29,96 @@ on:
 jobs:
   github-workspace:
     name: github-workspace
-    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
       - name: Print github workspace
         run: |
           printenv
 
-  ubuntu-latest-build_and_test:
-    runs-on: ubuntu-latest
+  ubuntu-build_and_test:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: styfle/cancel-workflow-action@0.8.0
+      - uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: install, build, and test
-        run: |
-          sudo apt install python python3
-          sudo apt install -y mkdocs
-          pip install -r docs/requirements.txt
-          pip install -r requirements.txt
-          make init help report
-          play
-          make build nocache=true
-          make build para=true
-          make install verbose=true
-          make uninstall
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
-  ubuntu-20-build_and_test:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: styfle/cancel-workflow-action@0.8.0
-        with:
-          access_token: ${{ github.token }}
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: install, build, and test
+      - run: pip install -r requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+      - name: make initialize init venv build install.sh help report
         run: |
-          sudo apt install python python3
-          sudo apt install -y mkdocs
-          pip install -r docs/requirements.txt
-          pip install -r requirements.txt
-          make init help report
-          play
-          make build nocache=true
+          make initialize init
+          make venv && . .venv/bin/activate
           make build para=true
-          make install verbose=true
-          make uninstall
+          make install
+          ./install.sh
+          make help report
+
+      - name: play
+        run: |
+          play
+
+      - name: play info
+        run: |
+          play info
+
+      - name: play ids
+        run: |
+          play ids
+
+      - name: play-bitcoin "bitcoin-cli -h"
+        run: |
+          play-bitcoin "bitcoin-cli -h"
+
+      - name: play bitcoin config
+        run: |
+          play bitcoin config
+
+      - name: play-bitcoin config
+        run: |
+          play-bitcoin config
+
+      - name: play lnd config
+        run: |
+          # play defaults to the lnd container
+          play lnd config
+
+      - name: play lnd "lncli -h"
+        run: |
+          play lnd "lncli -h"
+
+      - name: play-lnd config
+        run: |
+          play-lnd config
+
+      - name: play-lnd "lncli -h"
+        run: |
+          play-lnd "lncli -h"
+
+      - name: make docs git diff
+        run: |
+          make docs
+          git diff
+
+      - name: uninstall
+        run: |
+          make prune-playground || echo
+          make prune-cluster || echo
+          make prune || echo
+          make uninstall || echo
 

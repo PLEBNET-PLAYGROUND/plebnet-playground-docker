@@ -1,0 +1,82 @@
+version: "3.4"
+networks: {}
+services:
+  bitcoind:
+    build:
+      context: ./bitcoin-signet
+      dockerfile: Dockerfile
+      args:
+        - TRIPLET=${TRIPLET}
+    image: playground-cluster-bitcoind
+    links:
+    - tor-${tor_i}
+    depends_on:
+    - tor-${tor_i}
+    restart: unless-stopped
+    container_name: playground-bitcoind-${bitcoind_i}
+    environment:
+      - TRIPLET=${TRIPLET}
+    expose:
+    - "38332"
+    - "38333"
+    - "38334"
+    volumes:
+      - type: bind
+        source: ${oc.env:PWD}/volumes/bitcoin_datadir_${bitcoind_i}
+        target: /root/.bitcoin/
+  lnd:
+    build:
+      context: ./lnd-signet
+      dockerfile: Dockerfile
+    image: playground-cluster-lnd
+    links:
+    - bitcoind-${bitcoind_i}
+    - tor-${tor_i}
+    depends_on:
+    - bitcoind-${bitcoind_i}
+    - tor-${tor_i}
+    environment:
+      TRIPLET: '${TRIPLET}'
+      n: '${lnd_i}'
+      LND_LISTEN: 'playground-lnd-${lnd_i}:9735'
+      LND_RPCLISTEN: 'playground-lnd-${lnd_i}:10009'
+      LND_RESTLISTEN: 'playground-lnd-${lnd_i}:8080'
+      zmqpubrawblock: 'tcp://playground-bitcoind-${bitcoind_i}:28332'
+      zmqpubrawtx: 'tcp://playground-bitcoind-${bitcoind_i}:28333'
+      torsocks: 'playground-tor-${tor_i}:9050'
+      torcontrol: 'playground-tor-${tor_i}:9051'
+      tlsextradomain: 'playground-lnd-${lnd_i}'
+      rpchost: 'playground-bitcoind-${bitcoind_i}'
+    restart: unless-stopped
+    container_name: playground-lnd-${lnd_i}
+    expose:
+    - 8080
+    - 9735
+    - 9911
+    - 10009
+    volumes:
+      - type: bind
+        source: ${oc.env:PWD}/volumes/lnd_datadir_${lnd_i}
+        target: /root/.lnd/
+  tor:
+      restart: unless-stopped
+      build:
+        context: ./tor
+        dockerfile: Dockerfile
+      image: playground-cluster-tor
+      container_name: playground-tor-${tor_i}
+      environment:
+        TRIPLET: '${TRIPLET}'
+      expose:
+      - 9050
+      - 9051
+      volumes:
+        - type: bind
+          source: ${oc.env:PWD}/volumes/tor_datadir_${tor_i}
+          target: /home/tor/.tor
+        - type: bind
+          source: ${oc.env:PWD}/volumes/tor_torrcdir_${tor_i}
+          target: /usr/local/etc/tor
+        - type: bind
+          source: ${oc.env:PWD}/volumes/tor_servicesdir_${tor_i}
+          target: /var/lib/tor/hidden_services

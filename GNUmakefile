@@ -17,7 +17,22 @@ ifeq ($(ARCH),arm64)
 TRIPLET                                 :=aarch64-linux-gnu
 export TRIPLET
 endif
-
+#available services:
+#	bitcoind
+#	lnd
+#	tor
+#	thunderhub
+#	rtl
+#	notebook
+#	dashboard
+#	lndg
+#	docs
+ifeq ($(services),)
+services                                :=bitcoind,lnd,cln,rtl,thunderhub,docs
+else
+services                                :=$(services)
+endif
+export services
 ifeq ($(user),)
 HOST_USER								:= root
 HOST_UID								:= $(strip $(if $(uid),$(uid),0))
@@ -48,18 +63,45 @@ else
 DOCKER_COMPOSE							:= $(compose)
 endif
 export DOCKER_COMPOSE
+ifeq ($(reset),true)
+RESET:=true
+else
+RESET:=false
+endif
+export RESET
 
 PYTHON                                  := $(shell which python)
 export PYTHON
+PYTHON2                                 := $(shell which python2)
+export PYTHON2
 PYTHON3                                 := $(shell which python3)
 export PYTHON3
 
 PIP                                     := $(shell which pip)
 export PIP
+PIP2                                    := $(shell which pip2)
+export PIP2
 PIP3                                    := $(shell which pip3)
 export PIP3
 
-# PROJECT_NAME defaults to name of the current directory.
+python_version_full := $(wordlist 2,4,$(subst ., ,$(shell python3 --version 2>&1)))
+python_version_major := $(word 1,${python_version_full})
+python_version_minor := $(word 2,${python_version_full})
+python_version_patch := $(word 3,${python_version_full})
+
+my_cmd.python.3 := $(PYTHON3) some_script.py3
+my_cmd := ${my_cmd.python.${python_version_major}}
+
+PYTHON_VERSION                         := ${python_version_major}.${python_version_minor}.${python_version_patch}
+PYTHON_VERSION_MAJOR                   := ${python_version_major}
+PYTHON_VERSION_MINOR                   := ${python_version_minor}
+
+export python_version_major
+export python_version_minor
+export python_version_patch
+export PYTHON_VERSION
+
+#PROJECT_NAME defaults to name of the current directory.
 ifeq ($(project),)
 PROJECT_NAME							:= $(notdir $(PWD))
 else
@@ -83,6 +125,7 @@ export GIT_REPO_NAME
 #make package-all profile=asherp
 #note on GH_TOKEN.txt file below
 ifeq ($(profile),)
+GIT_PROFILE								:= $(GIT_USER_NAME)
 ifeq ($(GIT_REPO_ORIGIN),git@github.com:PLEBNET_PLAYGROUND/plebnet-playground-docker.dev.git)
 GIT_PROFILE								:= PLEBNET-PLAYGROUND
 endif
@@ -98,7 +141,7 @@ GIT_BRANCH								:= $(shell git rev-parse --abbrev-ref HEAD)
 export GIT_BRANCH
 GIT_HASH								:= $(shell git rev-parse --short HEAD)
 export GIT_HASH
-GIT_PREVIOUS_HASH						:= $(shell git rev-parse --short master@{1})
+GIT_PREVIOUS_HASH						:= $(shell git rev-parse --short HEAD^1)
 export GIT_PREVIOUS_HASH
 GIT_REPO_ORIGIN							:= $(shell git remote get-url origin)
 export GIT_REPO_ORIGIN
@@ -117,7 +160,7 @@ NOCACHE					     			:= --no-cache
 #Force parallel build when --no-cache to speed up build
 PARALLEL                                := --parallel
 else
-NOCACHE						    		:=	
+NOCACHE						    		:=
 PARALLEL                                :=
 endif
 ifeq ($(parallel),true)
@@ -132,7 +175,7 @@ export PARALLEL
 ifeq ($(verbose),true)
 VERBOSE									:= --verbose
 else
-VERBOSE									:=	
+VERBOSE									:=
 endif
 export VERBOSE
 
@@ -153,13 +196,13 @@ export NODE_PORT
 
 ifneq ($(passwd),)
 PASSWORD								:= $(passwd)
-else 
+else
 PASSWORD								:= changeme
 endif
 export PASSWORD
 
 ifeq ($(cmd),)
-CMD_ARGUMENTS							:= 	
+CMD_ARGUMENTS							:=
 else
 CMD_ARGUMENTS							:= $(cmd)
 endif
@@ -179,80 +222,99 @@ export CMD_ARGUMENTS
 
 PACKAGE_PREFIX                          := ghcr.io
 export PACKAGE_PREFIX
+.PHONY: - all
+-:
+	#NOTE: 2 hashes are detected as 1st column output with color
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .PHONY: help
-help:
+help:## 	print verbose help
+	@echo 'make [COMMAND] [EXTRA_ARGUMENTS]	'
 	@echo ''
-	@echo '	[USAGE]: make [COMMAND] [EXTRA_ARGUMENTS]	'
-	@echo ''
-	@echo ''
-	@echo '		 make '
-	@echo '		 make help             print help'
-	@echo '		 make init             initialize basic dependencies'
-	@echo '		 make report           print environment variables'
-	@echo '		 make build'
-	@echo '		 make run'
-	@echo '		                       user=root uid=0 nocache=false verbose=false'
+	#@echo ''
+	@echo 'make '
+	@echo '	 make all                        install and run playground and cluster'
+	@echo '	 make help                       print help'
+	@echo '	 make report                     print environment variables'
+	@echo '	 make initialize                 install dependencies - ubuntu/macOS'
+	@echo '	 make init                       initialize basic dependencies'
+	@echo '	 make build'
+	@echo '	 make build para=true            parallelized build'
+	@echo '	 make install'
+	@echo '	 make install-cluster'
+	@echo '	                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook'
+	@echo '	 make run'
+	@echo '	                                 nocache=true verbose=true'
 	@echo ''
 	@echo '	[DEV ENVIRONMENT]:	'
 	@echo ''
-#	@echo '		 make shell            compiling environment on host machine'
-	@echo '		 make signin           ~/GH_TOKEN.txt required from github.com'
-#	@echo '		 make header package-header'
-	@echo '		 make build'
-#	@echo '		 make build package-statoshi'
-	@echo '		 make package-all'
+#	@echo '	 make shell            compiling environment on host machine'
+	@echo '	 make signin profile=gh-user     ~/GH_TOKEN.txt required from github.com'
+#	@echo '	 make header package-header'
+	@echo '	 make build'
+#	@echo '	 make build package-statoshi'
+	@echo '	 make package-all'
+	@echo ''
+	@echo '	 make install-python38-sh'
+	@echo '	 make install-python39-sh'
 	@echo ''
 #	@echo '	[EXTRA_ARGUMENTS]:	set build variables	'
 #	@echo ''
-#	@echo '		nocache=true'
-#	@echo '		            	add --no-cache to docker command and apk add $(NOCACHE)'
-#	@echo '		port=integer'
-#	@echo '		            	set PUBLIC_PORT default 80'
+#	@echo '	nocache=true'
+#	@echo '	            	add --no-cache to docker command and apk add $(NOCACHE)'
+#	@echo '	port=integer'
+#	@echo '	            	set PUBLIC_PORT default 80'
 #	@echo ''
-#	@echo '		nodeport=integer'
-#	@echo '		            	set NODE_PORT default 8333'
+#	@echo '	nodeport=integer'
+#	@echo '	            	set NODE_PORT default 8333'
 #	@echo ''
-#	@echo '		            	TODO'
+#	@echo '	            	TODO'
 #	@echo ''
 #	@echo '	[DOCKER COMMANDS]:	push a command to the container	'
 #	@echo ''
-#	@echo '		cmd=command 	'
-#	@echo '		cmd="command"	'
-#	@echo '		             	send CMD_ARGUMENTS to the [TARGET]'
+#	@echo '	cmd=command 	'
+#	@echo '	cmd="command"	'
+#	@echo '	             	send CMD_ARGUMENTS to the [TARGET]'
 	@echo ''
 	@echo '	[EXAMPLES]:'
 	@echo ''
-	@echo '		make all run user=root uid=0 no-cache=true verbose=true'
-	@echo '		make report all run user=root uid=0 no-cache=true verbose=true cmd="top"'
+	@echo '	make run nocache=true verbose=true'
 	@echo ''
-	@echo '		make init && play help'
-	@echo '	'
+	@echo '	make init && play help'
+	@echo ''
+	@sed -n 's/^# //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/# /'
+	@sed -n 's/^## //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/## /'
+	@sed -n 's/^### //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/### /'
 
 .PHONY: report
-report:
+report:## 	print environment arguments
 	@echo ''
 	@echo '	[ARGUMENTS]	'
 	@echo '      args:'
+	@echo '        - PROJECT_NAME=${PROJECT_NAME}'
 	@echo '        - HOME=${HOME}'
 	@echo '        - PWD=${PWD}'
 	@echo '        - PYTHON=${PYTHON}'
+	# @echo '        - PYTHON2=${PYTHON2}'
 	@echo '        - PYTHON3=${PYTHON3}'
+	@echo '        - PYTHON_VERSION=${PYTHON_VERSION}'
+	@echo '        - PYTHON_VERSION_MAJOR=${PYTHON_VERSION_MAJOR}'
+	@echo '        - PYTHON_VERSION_MINOR=${PYTHON_VERSION_MINOR}'
 	@echo '        - PIP=${PIP}'
+	# @echo '        - PIP2=${PIP2}'
 	@echo '        - PIP3=${PIP3}'
-	@echo '        - UMBREL=${UMBREL}'
-	@echo '        - THIS_FILE=${THIS_FILE}'
+	# @echo '        - UMBREL=${UMBREL}'
+	# @echo '        - THIS_FILE=${THIS_FILE}'
 	@echo '        - TIME=${TIME}'
 	@echo '        - PACKAGE_PREFIX=${PACKAGE_PREFIX}'
 	@echo '        - ARCH=${ARCH}'
 	@echo '        - TRIPLET=${TRIPLET}'
+	@echo '        - services=${services}'
 	@echo '        - HOST_USER=${HOST_USER}'
 	@echo '        - HOST_UID=${HOST_UID}'
 	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
 	@echo '        - NODE_PORT=${NODE_PORT}'
-	@echo '        - SERVICE_TARGET=${SERVICE_TARGET}'
-	@echo '        - PROJECT_NAME=${PROJECT_NAME}'
-	@echo '        - DOCKER_BUILD_TYPE=${DOCKER_BUILD_TYPE}'
+	# @echo '        - SERVICE_TARGET=${SERVICE_TARGET}'
 	@echo '        - DOCKER_COMPOSE=${DOCKER_COMPOSE}'
 	@echo '        - GIT_USER_NAME=${GIT_USER_NAME}'
 	@echo '        - GIT_USER_EMAIL=${GIT_USER_EMAIL}'
@@ -264,15 +326,10 @@ report:
 	@echo '        - GIT_REPO_ORIGIN=${GIT_REPO_ORIGIN}'
 	@echo '        - GIT_REPO_NAME=${GIT_REPO_NAME}'
 	@echo '        - GIT_REPO_PATH=${GIT_REPO_PATH}'
-	@echo '        - BITCOIN_CONF=${BITCOIN_CONF}'
-	@echo '        - BITCOIN_DATA_DIR=${BITCOIN_DATA_DIR}'
-	@echo '        - STATOSHI_DATA_DIR=${STATOSHI_DATA_DIR}'
 	@echo '        - NOCACHE=${NOCACHE}'
-	@echo '        - VERBOSE=${VERBOSE}'
-	@echo '        - PUBLIC_PORT=${PUBLIC_PORT}'
-	@echo '        - NODE_PORT=${NODE_PORT}'
-	@echo '        - PASSWORD=${PASSWORD}'
-	@echo '        - CMD_ARGUMENTS=${CMD_ARGUMENTS}'
+	# @echo '        - VERBOSE=${VERBOSE}'
+	# @echo '        - PASSWORD=${PASSWORD}'
+	# @echo '        - CMD_ARGUMENTS=${CMD_ARGUMENTS}'
 
 #######################
 
@@ -282,50 +339,78 @@ LINUX_TARGET_DIR:=/root/$(PROJECT_NAME)
 export ORIGIN_DIR
 export TARGET_DIR
 
-.PHONY: super
-super:
+all: initialize init install-cluster install## 	all
+.PHONY: venv
+venv:## 	create python3 virtualenv .venv
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -r requirements.txt; \
+	);
+	@echo "To activate (venv)"
+	@echo "try:"
+	@echo ". .venv/bin/activate"
+	@echo "or:"
+	@echo "make test-venv"
+##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
+test-venv:## 	test virutalenv .venv
+	# insert test commands here
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -r requirements.txt; \
+	);
+.PHONY: init setup
+.SILENT:
+setup: init venv## 	basic setup
+init:## 	basic setup
+
 ifneq ($(shell id -u),0)
-	@echo switch to superuser
-	@echo cd $(TARGET_DIR)
-	#sudo ln -s $(PWD) $(TARGET_DIR)
-#.ONESHELL:
-	sudo -s
+	@echo
+	@echo $(shell id -u -n) 'try:'
+	@echo 'make super'
+	@echo 'If permissions issue...'
+	@echo
 endif
-.PHONY: init
-init: report
-ifneq ($(shell id -u),0)
-	@echo 'sudo make init #try if permissions issue'
-endif
-	@echo 'init'
-ifneq ($(shell id -u),0)
-	sudo -s bash -c 'rm -f /usr/local/bin/play'
-	sudo -s bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
-ifneq ($(PIP3),)
-	$(PIP3) install -r requirements.txt
-	$(PYTHON3) ./plebnet_generate.py TRIPLET=$(TRIPLET)
-	pushd docs && $(PIP3) install -r requirements.txt && popd
-else
-	$(PIP) install -r requirements.txt
-	$(PYTHON) ./plebnet_generate.py TRIPLET=$(TRIPLET)
-	pushd docs && $(PIP) install -r requirements.txt && popd
-endif
-	
-else
-	        bash -c 'install -v $(PWD)/scripts/*  /usr/local/bin'
-endif
+
+	git config --global --add safe.directory $(PWD)
+	mkdir -p volumes
+	mkdir -p cluster/volumes
+	chown -R $(shell id -u) *                 || echo
+
+	install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin/
+	install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
+
+	$(PYTHON3) -m pip install --upgrade pip 2>/dev/null
+	$(PYTHON3) -m pip install -q omegaconf 2>/dev/null
+	$(PYTHON3) -m pip install -q -r requirements.txt 2>/dev/null
+	pushd docs 2>/dev/null && $(PYTHON3) -m pip install -q -r requirements.txt && popd  2>/dev/null
+	$(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
+
+	pushd scripts > /dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  2>/dev/null || echo
+
+
 #######################
-.PHONY: install
-install: init
+.PHONY: blocknotify
+blocknotify:
+	bash -c 'install -v $(PWD)/scripts/blocknotify  /usr/local/bin/blocknotify'
+#######################
+.PHONY: initialize
+initialize:## 	install libs and dependencies
+	./scripts/initialize  #>&/dev/null
+#######################
+.PHONY: install install-cluster
+.SILENT:
+install: venv## 	create docker-compose.yml and run playground
 	bash -c './install.sh $(TRIPLET)'
-	#bash -c 'make btcd'
+install-cluster: venv## 	create cluster/docker-compose.yml and run playground-cluster
+	bash -c 'pushd cluster && ./up-generic.sh 5 && popd'
 #######################
 .PHONY: uninstall
-uninstall:
+uninstall: 	run uninstall.sh script
 	bash -c './uninstall.sh $(TRIPLET)'
 #######################
 .PHONY: run
-run: docs init
-	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up --remove-orphans &
+run: docs init## 	docker-compose up -d
+	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up -d
 #######################
 .PHONY: build
 build: init
@@ -336,13 +421,44 @@ build: init
 btcd:
 	bash -c "cd btcd && make btcd && cd .."
 .PHONY: docs
-docs:
+docs: init
 	@echo "Use 'make docs nocache=true' to force docs rebuild..."
+
+	echo "## MAKE COMMAND" >> MAKE.md
+	echo '```' > MAKE.md
+	make help >> MAKE.md
+	echo '```' >> MAKE.md
+
+	echo "## PLAY COMMAND" > PLAY.md
+	echo '```' >> PLAY.md
+	play >> PLAY.md
+	echo '```' >> PLAY.md
+#
+	echo "## PLAY-BITCOIN COMMAND" >> PLAY.md
+	echo '```' >> PLAY.md
+	play-bitcoin >> PLAY.md
+	echo '```' >> PLAY.md
+#
+	echo "## PLAY-LND COMMAND" >> PLAY.md
+	echo '```' >> PLAY.md
+	play-lnd >> PLAY.md
+	echo '```' >> PLAY.md
+
 	install -v README.md docs/docs/index.md
+	install -v MAKE.md docs/docs/MAKE.md
+	install -v PLAY.md docs/docs/PLAY.md
 	sed 's/images/.\/images/' README.md > docs/docs/index.md
 	cp -R ./images ./docs/docs
 	$(DOCKER_COMPOSE) $(VERBOSE) build $(NOCACHE) docs
-
+#######################
+.PHONY: install-python38-sh
+install-python38-sh:
+	bash -c './scripts/install-python3.8.sh'
+	make init
+#######################
+.PHONY: install-python39-sh
+install-python39-sh: init
+	bash -c './scripts/install-python3.9.sh'
 #######################
 #.PHONY: run
 #run: build
@@ -388,29 +504,32 @@ endif
 .PHONY: clean
 clean:
 	# remove created images
-	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down --remove-orphans --rmi all 2>/dev/null \
-	&& echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" removed.' \
-	|| echo 'Image(s) for "$(PROJECT_NAME):$(HOST_USER)" already removed.'
+	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down --remove-orphans --rmi all 2>/dev/null \
+	&& echo 'Image(s) for "$(PROJECT_NAME)" removed.' \
+	|| echo 'Image(s) for "$(PROJECT_NAME)" already removed.'
 #######################
 .PHONY: prune
-prune:
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
-	docker system prune -af
+prune:## 	docker system prune -af (very destructive!)
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
+	docker system prune -af &
 #######################
 .PHONY: prune-network
-prune-network:
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)_$(HOST_UID) down
-	docker network prune -f
+prune-playground:## 	remove plebnet-playground-docker network
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
+	docker network rm plebnet-playground-docker* 2>/dev/null || echo
+prune-cluster:## 	remove plebnet-playground-cluster network
+	$(DOCKER_COMPOSE) -p plebnet-playground-cluster down
+	docker network rm plebnet-playground-cluster* 2>/dev/null || echo
 #######################
 .PHONY: push
 push:
-	@echo 'push'
-	#bash -c "git reset --soft HEAD~1 || echo failed to add docs..."
-	#bash -c "git add README.md docker/README.md docker/DOCKER.md *.md docker/*.md || echo failed to add docs..."
-	#bash -c "git commit --amend --no-edit --allow-empty -m '$(GIT_HASH)'          || echo failed to commit --amend --no-edit"
-	#bash -c "git commit         --no-edit --allow-empty -m '$(GIT_PREVIOUS_HASH)' || echo failed to commit --amend --no-edit"
-	bash -c "git push -f --all git@github.com:$(GIT_PROFILE)/$(PROJECT_NAME).git || echo failed to push docs"
-	bash -c "git push -f --all git@github.com:bitcoincore-dev/statoshi.host.git || echo failed to push to statoshi.host"
+	@echo push
+	git checkout -b $(TIME)/$(GIT_PREVIOUS_HASH)/$(GIT_HASH)
+	git push --set-upstream origin $(TIME)/$(GIT_PREVIOUS_HASH)/$(GIT_HASH)
+	git add docs
+	git commit --amend --no-edit --allow-empty || echo failed to commit --amend --no-edit
+	git push -f origin $(TIME)/$(GIT_PREVIOUS_HASH)/$(GIT_HASH):$(TIME)/$(GIT_PREVIOUS_HASH)/$(GIT_HASH)
+
 .PHONY: push-docs
 push-docs: statoshi-docs push
 	@echo 'push-docs'
@@ -449,7 +568,7 @@ package-plebnet: signin
 ########################
 .PHONY: package-all
 package-all: init package-plebnet
-#INSERT other scripting here 
+#INSERT other scripting here
 	bash -c "echo insert more scripting here..."
 ########################
 

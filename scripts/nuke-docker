@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+test -z "$(docker ps -q 2>/dev/null)" || $(docker ps -q 2>/dev/null | xargs -L1 docker stop) || echo "docker already stopped!"
+
+function nuke-docker(){
+
+    if hash systemctl 2>/dev/null; then
+        if hash docker 2>/dev/null; then
+            if hash apt-get 2>/dev/null; then
+                sudo apt-get purge docker-ce docker-ce-cli containerd.io moby-engine moby-cli
+            fi
+        fi
+    fi
+
+    sudo rm -rf /var/lib/docker
+
+    sudo apt-get install runc containerd
+
+    curl -fsSL https://get.docker.com | sudo sh
+    docker --version
+
+    sudo rm -rf /etc/docker/daemon.json
+    echo '{"experimental": true}' | sudo tee -a /etc/docker/daemon.json
+
+    if hash systemctl 2>/dev/null; then
+        sudo systemctl restart docker
+    fi
+}
+nuke-docker

@@ -61,4 +61,8 @@ if [[ -f /root/.lnd/localhostip ]]; then
 fi
 echo $localhostip > /root/.lnd/localhostip
 
-exec "$@"
+if [[ "$@" = "lnd" ]]; then
+  exec lnd "--tor.targetipaddress=${localhostip}"
+else
+  exec "$@"
+fi
