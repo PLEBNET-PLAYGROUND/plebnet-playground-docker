@@ -1,3 +1,36 @@
+* debugging serialization
+
+* testing dashboard service on mac (M1) to fix  https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker/issues/102
+
+```sh
+services=bitcoind,lnd,dashboard ./install.sh
+```
+
+The container is stuck in a restart loop with the following error:
+
+```sh
+FileNotFoundError: [Errno 2] No such file or directory: '/root/.lnd/data/chain/bitcoin/signet/admin.macaroon'
+```
+
+This file should have been in `volumes/lnd_datadir/data/chin/bitcoin/signet` but this folder is empty when you first run `install.sh`.
+
+```sh
+lncli create
+# <create password>
+```
+
+Saw this error in dashboard (notebook container)
+```sh
+debug_error_string = "UNKNOWN:Error received from peer ipv4:192.168.128.4:10009 {grpc_message:"wallet locked, unlock it to enable full RPC access", grpc_status:2, created_time:"2022-11-20T22:49:57.069274676+00:00"}"
+```
+
+had to run the following
+
+```sh
+lncli unlock
+# <enter password>
+```
+
 
 ### 2022-11-20 16:24:17.170420: clock-in
 

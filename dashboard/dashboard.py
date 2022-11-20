@@ -5,9 +5,9 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.11.5
+#       jupytext_version: 1.14.0
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
@@ -38,8 +38,8 @@ import sys
 # %%
 from jupyter_dash import JupyterDash
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 
 from psidash import load_app # for production
 from psidash.psidash import get_callbacks, load_conf, load_dash, load_components, assign_callbacks
@@ -108,6 +108,39 @@ else:
 
 
 # %%
+def to_dict(dictlike):
+    """recursively maps a dict-like object to dict"""
+    d = {}
+    for k,v in dictlike.items():
+        if type(v) in (int, str, list):
+            d[k] = v
+        elif isinstance(v, dict):
+            d[k] = to_dict(**v)
+        elif isinstance(v, Feature):
+            d[k] = dict(name=v.name,
+                        is_required=v.is_required,
+                        is_known=v.is_known)
+        else:
+            raise NotImplementedError(f"can't handle type {type(v)}")
+    return d
+
+
+# %%
+def get_features(features):
+    results = []
+    for f in features:
+        try:
+            results.append(dict(name=f.name,
+                     is_required=f.is_required,
+                     is_known=f.is_known,
+                    ))
+        except:
+            print(f)
+            raise
+    return results
+
+
+# %%
 def get_node_multigraph(response):
     MG = nx.MultiDiGraph()
 
@@ -115,7 +148,7 @@ def get_node_multigraph(response):
                         dict(alias=node.alias,
                              pub_key=node.pub_key,
                              color=node.color,
-                             features=node.features,
+                             features=get_features(node.features),
                              last_update=node.last_update)) for node in response.nodes))
     # MG.number_of_nodes()
 
@@ -418,6 +451,15 @@ def find_node(G, key, value):
         if G.nodes[node][key] == value:
             return node
 
+
+# %%
+DN = get_directed_nodes(MG)
+
+# %%
+from omegaconf import OmegaConf
+
+# %%
+from lightning_pb2 import Feature
 
 # %%
 MG = get_node_multigraph(response)
