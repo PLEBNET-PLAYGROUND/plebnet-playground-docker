@@ -108,32 +108,13 @@ else:
 
 
 # %%
-def to_dict(dictlike):
-    """recursively maps a dict-like object to dict"""
-    d = {}
-    for k,v in dictlike.items():
-        if type(v) in (int, str, list):
-            d[k] = v
-        elif isinstance(v, dict):
-            d[k] = to_dict(**v)
-        elif isinstance(v, Feature):
-            d[k] = dict(name=v.name,
-                        is_required=v.is_required,
-                        is_known=v.is_known)
-        else:
-            raise NotImplementedError(f"can't handle type {type(v)}")
-    return d
-
-
-# %%
 def get_features(features):
-    results = []
-    for f in features:
+    results = {}
+    for k, f in features.items():
         try:
-            results.append(dict(name=f.name,
+            results[k] = dict(name=f.name,
                      is_required=f.is_required,
-                     is_known=f.is_known,
-                    ))
+                     is_known=f.is_known,)
         except:
             print(f)
             raise
@@ -452,8 +433,6 @@ def find_node(G, key, value):
             return node
 
 
-# %%
-DN = get_directed_nodes(MG)
 
 # %%
 from omegaconf import OmegaConf
@@ -465,9 +444,6 @@ from lightning_pb2 import Feature
 MG = get_node_multigraph(response)
 DG = assign_capacity(get_directed_nodes(MG))
 G = DG.to_undirected()
-
-# %%
-MG.nodes['0221b5a1c10bc1ae69e09227491dcd28af8dea7ab80734fb18a00d56524947c837']
 
 # %%
 # hello_jessica = find_node(G, 'alias', 'HelloJessica')
@@ -539,8 +515,8 @@ def update_node_hover(hoverData):
 
     features = dict(node['features'])
 
-    features_ = {features[f_id].name: {'is_required': features[f_id].is_required,
-                                       'is_known': features[f_id].is_known,
+    features_ = {features[f_id]['name']: {'is_required': features[f_id]['is_required'],
+                                       'is_known': features[f_id]['is_known'],
                                        'feature_id': f_id} for f_id in sorted(features)}
     
     features = pd.DataFrame(features_).reset_index()
@@ -554,3 +530,5 @@ def update_node_hover(hoverData):
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=8050, mode='external', debug=True)
+
+# %%

@@ -1,7 +1,8 @@
 import:
-  dcc: dash_core_components
-  html: dash_html_components
+  dcc: dash.dcc
+  html: dash.html
   dbc: dash_bootstrap_components
+  dash_table: dash.dash_table
 
 app:
   jupyter_dash.JupyterDash:

@@ -213,7 +213,7 @@ bos --version
 
 ## How to setup plebnet dashboard
 
-The interactive dashboard is an experimental visualization engine for viewing the lightning network.
+The interactive dashboard is an experimental visualization engine for viewing theoretical payment paths through the lightning network.
 If you used the `docker-compose up -d` command above, then the dashboard will run on http://localhost:8050
 
 By default only the playground nodes are visualized. However, you can also visualize real lightning network data by placing a `describegraph.json` file in the repo's `dashboard/` directory, then restart the dashboard setting environment variable `USE_TEST_DATA=TRUE`:
@@ -222,7 +222,9 @@ By default only the playground nodes are visualized. However, you can also visua
 USE_TEST_DATA=TRUE docker-compose up dashboard
 ```
 
-![Plebnet Dashboard](images/plebnet_dashboard.png)
+![Plebnet Dashboard](dashboard/dashboard_screen_shot.png)
+
+The shortest 10 paths are shown. Features supported by a given node is revealed on hover
 
 ## Additional reference material
 
