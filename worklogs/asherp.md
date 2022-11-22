@@ -1,5 +1,49 @@
-### 2022-04-24 18:13:02.806289: clock-out
+### 2022-11-21 18:29:43.260850: clock-out
 
+* got dashboard running again
+
+### 2022-11-21 17:38:31.918362: clock-in
+
+### 2022-11-20 17:32:18.830095: clock-out
+
+* debugging serialization
+
+* testing dashboard service on mac (M1) to fix  https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker/issues/102
+
+```sh
+services=bitcoind,lnd,dashboard ./install.sh
+```
+
+The container is stuck in a restart loop with the following error:
+
+```sh
+FileNotFoundError: [Errno 2] No such file or directory: '/root/.lnd/data/chain/bitcoin/signet/admin.macaroon'
+```
+
+This file should have been in `volumes/lnd_datadir/data/chin/bitcoin/signet` but this folder is empty when you first run `install.sh`.
+
+```sh
+lncli create
+# <create password>
+```
+
+Saw this error in dashboard (notebook container)
+```sh
+debug_error_string = "UNKNOWN:Error received from peer ipv4:192.168.128.4:10009 {grpc_message:"wallet locked, unlock it to enable full RPC access", grpc_status:2, created_time:"2022-11-20T22:49:57.069274676+00:00"}"
+```
+
+had to run the following
+
+```sh
+lncli unlock
+# <enter password>
+```
+
+
+### 2022-11-20 16:24:17.170420: clock-in
+
+
+### 2022-04-24 18:13:02.806289: clock-out
 
 * testing c-lightning fix from jonmthomson
 
@@ -85,6 +129,15 @@
 * adding c-lighting
 
 ### 2021-12-26 19:50:09.021401: clock-in
+
+### 2021-10-03 17:32:20.189514: clock-out
+
+* remove test node0
+* added node hover data
+* bolt spec https://github.com/lightningnetwork/lightning-rfc/blob/master/01-messaging.md
+
+### 2021-10-03 13:49:00.003873: clock-in
+
 
 ### 2021-09-25 14:59:37.408376: clock-out
 

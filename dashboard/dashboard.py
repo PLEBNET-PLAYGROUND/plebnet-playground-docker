@@ -5,9 +5,9 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.11.5
+#       jupytext_version: 1.14.0
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
@@ -38,8 +38,8 @@ import sys
 # %%
 from jupyter_dash import JupyterDash
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 
 from psidash import load_app # for production
 from psidash.psidash import get_callbacks, load_conf, load_dash, load_components, assign_callbacks
@@ -106,11 +106,31 @@ else:
     response = stub.DescribeGraph(request, metadata=[('macaroon', macaroon)])
 
 
+
+# %%
+def get_features(features):
+    results = {}
+    for k, f in features.items():
+        try:
+            results[k] = dict(name=f.name,
+                     is_required=f.is_required,
+                     is_known=f.is_known,)
+        except:
+            print(f)
+            raise
+    return results
+
+
 # %%
 def get_node_multigraph(response):
     MG = nx.MultiDiGraph()
 
-    MG.add_nodes_from(((node.pub_key, dict(alias=node.alias, color=node.color, last_update=node.last_update)) for node in response.nodes))
+    MG.add_nodes_from(((node.pub_key,
+                        dict(alias=node.alias,
+                             pub_key=node.pub_key,
+                             color=node.color,
+                             features=get_features(node.features),
+                             last_update=node.last_update)) for node in response.nodes))
     # MG.number_of_nodes()
 
 #     Add edges. Use `channel_id` as edge keys to so future updates don't duplicate edges.
@@ -337,6 +357,7 @@ def multipath_layout(path, path_nodes, path_posns, weight=None, iterations=10, s
     path_nodes: {path_number: new_nodes} nodes introduced for each new path
     """
     pos = path_posns
+    pos['node_id'] = pos.index
     pos['alias'] = [path.nodes[_]['alias'] for _ in pos.index]
     pos['color'] = [path.nodes[_]['color'] for _ in pos.index]
     pos['capacity'] = [path.nodes[_]['capacity'] for _ in pos.index]
@@ -347,6 +368,7 @@ def plot_multipath(path, pos, edge_pos, highlight):
     node_trace = go.Scattergl(
                      x=pos.x,
                      y=pos.y,
+                     customdata=pos.node_id,
                      text=pos.alias,
                      hoverinfo='text',
                      name='nodes',
@@ -411,6 +433,13 @@ def find_node(G, key, value):
             return node
 
 
+
+# %%
+from omegaconf import OmegaConf
+
+# %%
+from lightning_pb2 import Feature
+
 # %%
 MG = get_node_multigraph(response)
 DG = assign_capacity(get_directed_nodes(MG))
@@ -469,6 +498,35 @@ def render(node_1, node_2):
     path_edge_pos = get_edge_posns(path, path_pos)
     logging.info('{} -> {}'.format(path.nodes[trip[0]]['alias'], path.nodes[trip[1]]['alias']))
     return plot_multipath(path, path_pos, path_edge_pos, [trip[0], trip[1]])
+
+@callbacks.update_node_hover
+def update_node_hover(hoverData):
+    if hoverData is None:
+        raise PreventUpdate
+    points = hoverData['points']
+    if len(points) == 0:
+        raise PreventUpdate
+        
+    node_id = hoverData['points'][0]['customdata']
+    node = dict(G.nodes[node_id])
+    columns = [ c for c in node if c not in ['features']]
+    cols = [{'name': c, 'id': c} for c in columns]
+    data = [{c: node[c] for c in columns}]
+
+    features = dict(node['features'])
+
+    features_ = {features[f_id]['name']: {'is_required': features[f_id]['is_required'],
+                                       'is_known': features[f_id]['is_known'],
+                                       'feature_id': f_id} for f_id in sorted(features)}
+    
+    features = pd.DataFrame(features_).reset_index()
+    features.rename(columns={"index": " ",}, inplace=True)
+
+    
+    feature_cols = [{"name": i, "id": i} for i in features.columns]
+    feature_data = features.to_dict('records')
+
+    return cols, data, feature_cols, feature_data
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=8050, mode='external', debug=True)
