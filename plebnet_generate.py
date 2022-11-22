@@ -10,6 +10,8 @@ sys.path.append('.')
 sys.path.append("/usr/local/lib/python3.7/site-packages")
 sys.path.append("/usr/local/lib/python3.8/site-packages")
 sys.path.append("/usr/local/lib/python3.9/site-packages")
+sys.path.append("/usr/local/lib/python3.10/site-packages")
+sys.path.append("/usr/local/lib/python3.11/site-packages")
 #print(sys.path)
 
 from omegaconf import OmegaConf

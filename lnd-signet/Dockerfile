@@ -3,7 +3,7 @@ FROM golang:1.18.2-alpine as builder
 # Pass a tag, branch or a commit using build-arg.  This allows a docker
 # image to be built from a specified Git state.  The default image
 # will use the Git tip of master by default.
-ARG BRANCH="tags/v0.15.2-beta"
+ARG BRANCH="tags/v0.15.4-beta"
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
