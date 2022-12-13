@@ -245,4 +245,5 @@ The shortest 10 paths are shown. Features supported by a given node is revealed 
 - [@asherp](https://github.com/asherp)
 - [@RandyMcMillan](https://github.com/randymcmillan)
 - [@nitesh_btc](https://twitter.com/nitesh_btc)
+- [@bitkarrot](https://github.com/bitkarrot)
 
