@@ -24,7 +24,7 @@ jobs:
         run: |
           sudo apt install asciidoctor
           pip3 install -U codespell
-          go get github.com/client9/misspell/cmd/misspell
+          go install github.com/client9/misspell/cmd/misspell@latest
       - name: markdown-syntax
         run: |
           git grep -n --color $'\r' -- "*.md" && echo "^ Possible Windows style line ending detected. Please use Unix style line endings (\n)." && exit 0 || true
