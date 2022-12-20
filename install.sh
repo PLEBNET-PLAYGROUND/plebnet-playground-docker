@@ -25,7 +25,7 @@ fi
 
 docker compose down || docker-compose down
 
-python3 plebnet_generate.py TRIPLET=$TRIPLET services=$services
+$(which python3) plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
 if [ "$RESET" == "true" ]; then
     read -p "Clobber volumes directory - This will destroy private keys!!! (y/n) " -n 1;
