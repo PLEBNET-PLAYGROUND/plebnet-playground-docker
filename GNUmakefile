@@ -500,9 +500,16 @@ else
 	$(DOCKER_COMPOSE) $(VERBOSE) -f docker-compose.yml -p $(PROJECT_NAME)_$(HOST_UID) run --publish 8118:8118 --publish 9050:9050  --publish 9051:9051 --rm torproxy sh -c "$(CMD_ARGUMENTS)"
 endif
 	@echo ''
+.PHONY: nostr-rs-relay
+nostr-rs-relay:## 	pushd nostr-rs-relay && make build run && popd
+	pushd $(PWD)/nostr-rs-relay && make build run && popd
+nostr-rs-relay-build:## 	pushd nostr-rs-relay-build && make && popd
+	pushd $(PWD)/nostr-rs-relay && make build && popd
+nostr-rs-relay-run:## 	pushd nostr-rs-relay-run && make && popd
+	pushd $(PWD)/nostr-rs-relay && make run && popd
 #######################
 .PHONY: clean
-clean:
+clean:## 	docker compose down --remove-orphans --rmi all
 	# remove created images
 	@$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down --remove-orphans --rmi all 2>/dev/null \
 	&& echo 'Image(s) for "$(PROJECT_NAME)" removed.' \
