@@ -68,7 +68,8 @@ jobs:
           test docker && echo $(which docker) || make nuke-docker
       - name: make initialize init
         run: |
-          make initialize init
+          echo $(which brew) || true
+          #make initialize init
       - name: make venv && . .venv/bin/activate
         run: |
           make venv && . .venv/bin/activate
