@@ -60,14 +60,27 @@ jobs:
       - run: pip install -r requirements.txt
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
-      - name: make initialize init venv build install.sh help report
+      - name: make help report
+        run: |
+          make help report
+      - name: make initialize init
         run: |
           make initialize init
+      - name: make venv && . .venv/bin/activate
+        run: |
           make venv && . .venv/bin/activate
+      - name: make build para=true
+        run: |
           make build para=true
+      - name: make install
+        run: |
           make install
+      - name: ./install.sh
+        run: |
           ./install.sh
-          make help report
+      - name: make docs && git diff
+        run: |
+          make docs && git diff
 
       - name: play
         run: |
@@ -109,11 +122,6 @@ jobs:
       - name: play-lnd "lncli -h"
         run: |
           play-lnd "lncli -h"
-
-      - name: make docs git diff
-        run: |
-          make docs
-          git diff
 
       - name: uninstall
         run: |
