@@ -513,7 +513,7 @@ nostr-rs-relay:## 	pushd nostr-rs-relay && make build run && popd
 	pushd $(PWD)/nostr-rs-relay && make build run && popd
 nostr-rs-relay-build:## 	pushd nostr-rs-relay-build && make && popd
 	@mkdir -p nostr-rs-relay/data
-	pushd $(PWD)/nostr-rs-relay && make build && popd
+	pushd $(PWD)/nostr-rs-relay && make init build && popd
 nostr-rs-relay-run:## 	pushd nostr-rs-relay-run && make && popd
 	pushd $(PWD)/nostr-rs-relay && make run && popd
 #######################
