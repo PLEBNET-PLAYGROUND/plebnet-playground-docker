@@ -63,6 +63,9 @@ jobs:
       - name: make help report
         run: |
           make help report
+      - name: make nuke-docker
+        run: |
+          test docker && echo $(which docker) || make nuke-docker
       - name: make initialize init
         run: |
           make initialize init
