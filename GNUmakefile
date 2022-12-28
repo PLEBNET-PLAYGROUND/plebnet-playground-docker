@@ -506,6 +506,8 @@ else
 	$(DOCKER_COMPOSE) $(VERBOSE) -f docker-compose.yml -p $(PROJECT_NAME)_$(HOST_UID) run --publish 8118:8118 --publish 9050:9050  --publish 9051:9051 --rm torproxy sh -c "$(CMD_ARGUMENTS)"
 endif
 	@echo ''
+nuke-docker:## 	force reinstall of docker
+	@./scripts/nuke-docker
 .PHONY: nostr-rs-relay
 nostr-rs-relay:## 	pushd nostr-rs-relay && make build run && popd
 	pushd $(PWD)/nostr-rs-relay && make build run && popd
