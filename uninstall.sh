@@ -1,3 +1,3 @@
 #Remove
-docker-compose down 
+docker compose down
 sudo rm -rf volumes
