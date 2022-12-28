@@ -128,5 +128,7 @@ jobs:
           make prune-playground || echo
           make prune-cluster || echo
           make prune || echo
-          make uninstall || echo
+          docker ps
+          docker images
+          #make uninstall || echo
 
