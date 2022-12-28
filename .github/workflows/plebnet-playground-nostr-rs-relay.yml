@@ -1,0 +1,75 @@
+name: plebnet-playground-nostr-rs-relay
+
+# Controls when the action will run.
+on:
+  pull_request:
+    branches:       #[ master ]
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - 'master'    # includes master
+      - 'main'      # includes main
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    #paths:
+    #  - '.github/workflows/automate.yml'
+    #schedule:
+    #  - cron: "*/5 * * * *"
+    branches:       #[ master ]
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - 'master'    # includes master
+      - 'main'      # includes main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  github-workspace:
+    name: github-workspace
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Print github workspace
+        run: |
+          printenv
+
+  ubuntu-build_and_test:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+      - run: pip install -r requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+      - name: make help report
+        run: |
+          make help report
+      - name: make initialize init
+        run: |
+          make initialize init
+      - name: make venv && . .venv/bin/activate
+        run: |
+          make venv && . .venv/bin/activate
+          make test-venv
+      - name: make nostr-rs-relay-build
+        run: |
+          make nostr-rs-relay-build
