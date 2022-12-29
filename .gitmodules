@@ -1,0 +1,4 @@
+[submodule "nostr-rs-relay"]
+	path = nostr-rs-relay
+	url = https://github.com/PLEBNET-PLAYGROUND/playground-nostr-rs-relay.git
+	branch = master
