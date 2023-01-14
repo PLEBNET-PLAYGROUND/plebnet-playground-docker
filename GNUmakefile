@@ -553,9 +553,9 @@ SIGNIN=randymcmillan
 export SIGNIN
 
 .PHONY: signin
-signin:
+signin:## 	signin
 #Place a file named GH_TOKEN.txt in your $HOME - create in https://github.com/settings/tokens (Personal access tokens)
-	bash -c 'cat ~/GH_TOKEN.txt | docker login ghcr.io -u $(GIT_PROFILE) --password-stdin'
+	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX)/v1 -u $(GIT_PROFILE) --password-stdin'
 #######################
 package-plebnet: signin
 
