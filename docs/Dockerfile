@@ -50,6 +50,7 @@ RUN \
   && \
     if [ "${WITH_PLUGINS}" = "true" ]; then \
       pip install --no-cache-dir \
+        "pymdown-extensions" \
         "mkdocs-minify-plugin>=0.3" \
         "mkdocs-redirects>=1.0"; \
     fi \
@@ -74,6 +75,7 @@ WORKDIR /docs
 # Expose MkDocs development server port
 EXPOSE 8000
 
+CMD ["python", "-V"]
 # Start development server by default
 ENTRYPOINT ["mkdocs"]
 CMD ["serve", "--dev-addr=0.0.0.0:8000"]
