@@ -371,9 +371,7 @@ init:## 	basic setup
 
 ifneq ($(shell id -u),0)
 	@echo
-	@echo $(shell id -u -n) 'try:'
-	@echo 'make super'
-	@echo 'If permissions issue...'
+	@echo $(shell id -u -n) 'not root'
 	@echo
 endif
 
