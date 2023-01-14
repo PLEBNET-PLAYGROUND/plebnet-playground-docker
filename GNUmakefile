@@ -37,7 +37,7 @@ ifeq ($(user),)
 HOST_USER								:= root
 HOST_UID								:= $(strip $(if $(uid),$(uid),0))
 else
-HOST_USER								:=  $(strip $(if $(USER),$(USER),nodummy))
+HOST_USER								:=  $(strip $(if $(user),$(user),nodummy))
 HOST_UID								:=  $(strip $(if $(shell id -u),$(shell id -u),4000))
 endif
 export HOST_USER
