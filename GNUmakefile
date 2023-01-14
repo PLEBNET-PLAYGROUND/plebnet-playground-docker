@@ -549,7 +549,7 @@ push:
 push-docs: statoshi-docs push
 	@echo 'push-docs'
 
-SIGNIN=randymcmillan
+SIGNIN=$(GIT_PROFILE)
 export SIGNIN
 
 .PHONY: signin
@@ -562,6 +562,8 @@ package-plebnet: signin
 	#touch TIME && echo $(TIME) > TIME && git add -f TIME
 	#legit . -m "make package-header at $(TIME)" -p 00000
 	#git commit --amend --no-edit --allow-empty
+
+	@docker compose build
 
 	bash -c 'docker tag  $(PROJECT_NAME)_thunderhub   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip thunderhub'
 	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip thunderhub'
