@@ -20,8 +20,10 @@
 
 # Direct dependencies
 mkdocs>=1.2.2
-jinja2>=2.11.1
+jinja2>=3.0.0
 Pygments>=2.4
 markdown>=3.2
 pymdown-extensions>=7.0
-mkdocs-material-extensions>=1.0
+pymdown-extensions
+mkdocs-material-extensions>=1.1.1
+mkdocs-material-extensions
