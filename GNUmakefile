@@ -530,11 +530,11 @@ prune:## 	docker system prune -af (very destructive!)
 #######################
 .PHONY: prune-network
 prune-playground:## 	remove plebnet-playground-docker network
-	$(DOCKER_COMPOSE) -p $(PROJECT_NAME) down
-	docker network rm plebnet-playground-docker* 2>/dev/null || echo
+	$(DOCKER_COMPOSE) -p $(PROJECT_NAME)            down --remove-orphans 2>/dev/null || echo
+	docker network rm plebnet-playground-docker*                          2>/dev/null || echo
 prune-cluster:## 	remove plebnet-playground-cluster network
-	$(DOCKER_COMPOSE) -p plebnet-playground-cluster down
-	docker network rm plebnet-playground-cluster* 2>/dev/null || echo
+	$(DOCKER_COMPOSE) -p plebnet-playground-cluster down --remove-orphans 2>/dev/null || echo
+	docker network rm plebnet-playground-cluster*                         2>/dev/null || echo
 #######################
 .PHONY: push
 push:
