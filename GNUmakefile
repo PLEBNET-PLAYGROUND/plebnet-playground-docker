@@ -376,20 +376,20 @@ ifneq ($(shell id -u),0)
 endif
 
 	git config --global --add safe.directory $(PWD)
-	mkdir -p volumes
-	mkdir -p cluster/volumes
-	chown -R $(shell id -u) *                 || echo
+	@mkdir -p volumes
+	@mkdir -p cluster/volumes
+	@chown -R $(shell id -u) *                 || echo
 
-	install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin/
-	install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
+	@install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin/
+	@install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
 
-	$(PYTHON3) -m pip install --upgrade pip 2>/dev/null
+	#$(PYTHON3) -m pip install --upgrade pip 2>/dev/null
 	$(PYTHON3) -m pip install -q omegaconf 2>/dev/null
 	$(PYTHON3) -m pip install -q -r requirements.txt 2>/dev/null
-	pushd docs 2>/dev/null && $(PYTHON3) -m pip install -q -r requirements.txt && popd  2>/dev/null
+	# pushd docs 2>/dev/null && $(PYTHON3) -m pip install -q -r requirements.txt && popd  2>/dev/null
 	$(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
 
-	pushd scripts > /dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  2>/dev/null || echo
+	#pushd scripts 2>/dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  2>/dev/null || echo
 
 
 #######################
