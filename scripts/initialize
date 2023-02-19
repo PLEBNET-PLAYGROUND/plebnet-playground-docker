@@ -73,6 +73,10 @@ if hash brew 2>/dev/null; then
     fi
     #brew install python@3.8
     if ! hash docker 2>/dev/null; then
+		rm -rf /usr/local/share/zsh/site-functions/_docker && \
+			rm -rf /usr/local/share/fish/vendor_completions.d/docker.fish && \
+			rm -rf /usr/local/etc/bash_completion.d/docker
+
         brew install --cask docker
         brew install docker
         brew link docker
