@@ -350,7 +350,8 @@ LINUX_TARGET_DIR:=/root/$(PROJECT_NAME)
 export ORIGIN_DIR
 export TARGET_DIR
 
-all: initialize init install-cluster install## 	all
+.ONESHELL:
+all: initialize init install## 	all
 .PHONY: venv
 venv:## 	create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
