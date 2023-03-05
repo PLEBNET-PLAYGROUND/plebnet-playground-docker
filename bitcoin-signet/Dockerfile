@@ -1,4 +1,4 @@
-FROM debian:buster-slim as builder
+FROM debian:sid-slim as builder
 
 ARG BITCOIN_VERSION=24.0.1
 ARG TRIPLET=${TRIPLET}
@@ -21,7 +21,7 @@ RUN BITCOIN_URL="https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bit
     mkdir -p bin && \
     tar -xzvf "${BITCOIN_FILE}" -C /tmp/bin --strip-components=2 "bitcoin-${BITCOIN_VERSION}/bin/bitcoin-cli" "bitcoin-${BITCOIN_VERSION}/bin/bitcoind" "bitcoin-${BITCOIN_VERSION}/bin/bitcoin-wallet" 
 
-FROM debian:buster-slim as playground-bitcoin-signet
+FROM debian:sid-slim as playground-bitcoin-signet
 
 LABEL org.opencontainers.image.authors="Richard Safier"
 LABEL org.opencontainers.image.licenses=MIT
