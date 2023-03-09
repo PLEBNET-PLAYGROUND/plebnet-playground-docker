@@ -1,0 +1,7 @@
+#!/bin/bash
+#This file is executed when sending/recieving/confirming bitcoin
+#It can be used to automate things in the container
+ADDRESS=tb1q550ph67a0qztgg7zx5lxnuj6qj20wxav2mx47k
+play-getcoins -a "$(play-getcoins -a $ADDRESS -r true)" > /dev/null 2>&1
+echo %s
+echo %w
