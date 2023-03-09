@@ -401,7 +401,7 @@ endif
 #######################
 .PHONY: blocknotify
 blocknotify:
-	bash -c 'install -v $(PWD)/scripts/blocknotify  /usr/local/bin/blocknotify'
+	bash -c 'install -v $(PWD)/bitcoin-signet/blocknotify  /usr/local/bin/blocknotify'
 #######################
 .PHONY: initialize
 initialize:## 	install libs and dependencies

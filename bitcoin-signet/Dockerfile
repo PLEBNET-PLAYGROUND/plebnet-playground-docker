@@ -34,6 +34,8 @@ EXPOSE 8332 8333 28332 28333 28334 38332 38333 38334
 
 COPY --from=builder "/tmp/bin" /usr/local/bin
 
+COPY blocknotify  /usr/local/bin/blocknotify
+COPY walletnotify /usr/local/bin/walletnotify
 COPY bitcoin.conf /usr/local/etc/bitcoin.conf
 COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
 
