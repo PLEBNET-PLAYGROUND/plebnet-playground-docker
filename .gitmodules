@@ -1,10 +1,5 @@
-[submodule "nostr-rs-relay"]
-	path = nostr-rs-relay
-	url = https://github.com/PLEBNET-PLAYGROUND/playground-nostr-rs-relay.git
-	branch = v0.0.3
-	ignore = dirty
 [submodule "rs-relay"]
 	path = nostr/rs-relay
 	url = https://github.com/PLEBNET-PLAYGROUND/playground-nostr-rs-relay.git
-	branch = v0.0.3
+	branch = v0.0.4
 	ignore = dirty
