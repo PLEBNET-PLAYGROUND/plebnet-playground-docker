@@ -512,15 +512,15 @@ endif
 	@echo ''
 submodules:## 	git submodule update --init --recursive
 	@git submodule update --init --recursive
-.PHONY: nostr-rs-relay
-nostr-rs-relay:## 	pushd nostr-rs-relay && make build run && popd
-	pushd $(PWD)/nostr-rs-relay && make build run && popd || $(MAKE) submodules $@
-nostr-rs-relay-build:## 	pushd nostr-rs-relay-build && make && popd
-	pushd $(PWD)/nostr-rs-relay && make build && popd || $(MAKE) submodules $@
-nostr-rs-relay-run:## 	pushd nostr-rs-relay-run && make && popd
-	pushd $(PWD)/nostr-rs-relay && make run && popd || $(MAKE) submodules $@
-nostr-rs-relay-restart:## 	pushd nostr-rs-relay-run && make && popd
-	pushd $(PWD)/nostr-rs-relay && docker-compose restart && popd || $(MAKE) submodules $@
+.PHONY: nostr/rs-relay
+nostr-rs-relay:## 	pushd nostr/rs-relay && make build run && popd
+	pushd $(PWD)/nostr/rs-relay && make build run && popd || $(MAKE) submodules $@
+nostr-rs-relay-build:## 	pushd nostr/rs-relay && make build && popd
+	pushd $(PWD)/nostr/rs-relay && make build && popd || $(MAKE) submodules $@
+nostr-rs-relay-run:## 	pushd nostr/rs-relay && make && popd
+	pushd $(PWD)/nostr/rs-relay && make run && popd || $(MAKE) submodules $@
+nostr-rs-relay-restart:## 	pushd nostr/rs-relay && make && popd
+	pushd $(PWD)/nostr/rs-relay && docker-compose restart && popd || $(MAKE) submodules $@
 #######################
 .PHONY: clean
 clean:## 	docker compose down --remove-orphans --rmi all
