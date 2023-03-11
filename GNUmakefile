@@ -563,34 +563,61 @@ signin:## 	signin
 #Place a file named GH_TOKEN.txt in your $HOME - create in https://github.com/settings/tokens (Personal access tokens)
 	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX)/v1 -u $(GIT_PROFILE) --password-stdin'
 #######################
-package-plebnet: signin
+package-plebnet: signin## 	plackage-plebnet
+	$(MAKE) package-bitcoind
+	$(MAKE) package-docs
+	$(MAKE) package-tor
+	$(MAKE) package-lnd
+	$(MAKE) package-thunderhub
+	#$(MAKE) package-rtl
+	#$(MAKE) package-dashboard
+	#$(MAKE) package-notebook
 
-	#touch TIME && echo $(TIME) > TIME && git add -f TIME
-	#legit . -m "make package-header at $(TIME)" -p 00000
-	#git commit --amend --no-edit --allow-empty
-
-	@docker compose build
-
-	bash -c 'docker tag  $(PROJECT_NAME)-thunderhub   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip thunderhub'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip thunderhub'
-#	bash -c 'docker tag  $(PROJECT_NAME)-dashboard    $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip dashboard'
-#	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip dashboard'
-#	bash -c 'docker tag  $(PROJECT_NAME)-notebook     $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip notebook'
-#	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip notebook'
-	bash -c 'docker tag  $(PROJECT_NAME)-bitcoind     $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip bitcoind'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip bitcoind'
-	bash -c 'docker tag  $(PROJECT_NAME)-docs         $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip docs'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip docs'
-	bash -c 'docker tag  $(PROJECT_NAME)-tor          $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip tor'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip tor'
-	bash -c 'docker tag  $(PROJECT_NAME)-lnd          $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip lnd'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip lnd'
-	bash -c 'docker tag  shahanafarooqui/rtl:0.11.0   $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip rtl'
-	bash -c 'docker push                              $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip rtl'
+package-bitcoind: signin## 	package-bitcoind
+	@docker compose build bitcoind
+	bash -c 'docker tag  $(PROJECT_NAME)-bitcoind \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip bitcoind'
+	bash -c 'docker push \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip bitcoind'
+package-docs: signin## 	package-docs
+	bash -c 'docker tag  $(PROJECT_NAME)-docs \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip docs'
+	bash -c 'docker push \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip docs'
+package-tor: signin## 	package-tor
+	bash -c 'docker tag  $(PROJECT_NAME)-tor \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip tor'
+	bash -c 'docker push \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip tor'
+package-lnd: signin## 	package-lnd
+	bash -c 'docker tag  $(PROJECT_NAME)-lnd \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip lnd'
+	bash -c 'docker push \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip lnd'
+package-thunderhub: signin## 	package-thunderhub
+	bash -c 'docker tag  $(PROJECT_NAME)-thunderhub \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip thunderhub'
+	bash -c 'docker push \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip thunderhub'
+#package-rtl: signin## 	package-rtl
+#	bash -c 'docker tag  $(PROJECT_NAME)-rtl \
+#	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip rtl'
+#	bash -c 'docker push \
+#	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/rtl-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip rtl'
+#package-dashboard: signin## 	package-dashboard
+#	bash -c 'docker tag  $(PROJECT_NAME)-dashboard \
+#	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip dashboard'
+#	bash -c 'docker push \
+#	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/dashboard-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip dashboard'
+#package-notebook: signin## 	package-notebook
+#	bash -c 'docker tag  $(PROJECT_NAME)-notebook \
+#	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip notebook'
+#	bash -c 'docker push \
+#	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/notebook-$(TRIPLET)/$(HOST_USER):$(TIME) || echo skip notebook'
 
 ########################
 .PHONY: package-all
-package-all: init package-plebnet
+package-all: init package-plebnet##
 #INSERT other scripting here
 	bash -c "echo insert more scripting here..."
 ########################
