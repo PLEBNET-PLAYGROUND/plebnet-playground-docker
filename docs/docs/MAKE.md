@@ -10,10 +10,13 @@ make
 	 make build
 	 make build para=true            parallelized build
 	 make install
-	 make install-cluster
+	                                 basic=true - services=bitcoind,lnd,docs,tor
+	                                 cluster=[true || remove]
+	                                 relay=[true || remove]
 	                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook
 	 make run
-	                                 nocache=true verbose=true
+	                                 nocache=true
+	                                 verbose=true
 
 	[NOSTR SERVICES]:	
 	 make nostr-rs-relay              build & run a nostr relay
