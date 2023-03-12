@@ -386,7 +386,7 @@ endif
 	@mkdir -p cluster/volumes
 	@chown -R $(shell id -u) *                 || echo
 
-	@install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin/
+	@install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin
 	@install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
 
 	#$(PYTHON3) -m pip install --upgrade pip 2>/dev/null
