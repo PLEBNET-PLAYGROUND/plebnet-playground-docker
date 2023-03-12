@@ -10,11 +10,11 @@ make
 	 make build
 	 make build para=true            parallelized build
 	 make install
+	 make run
 	                                 basic=true - services=bitcoind,lnd,docs,tor
 	                                 cluster=[true || remove]
 	                                 relay=[true || remove]
 	                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook
-	 make run
 	                                 nocache=true
 	                                 verbose=true
 
@@ -40,4 +40,5 @@ make
 
 	make init && play help
 
+## catch install commands
 ```
