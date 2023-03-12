@@ -244,10 +244,13 @@ help:## 	print verbose help
 	@echo '	 make build'
 	@echo '	 make build para=true            parallelized build'
 	@echo '	 make install'
-	@echo '	 make install-cluster'
-	@echo '	                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook'
 	@echo '	 make run'
-	@echo '	                                 nocache=true verbose=true'
+	@echo '	                                 basic=true - services=bitcoind,lnd,docs,tor'
+	@echo '	                                 cluster=[true || remove]'
+	@echo '	                                 relay=[true || remove]'
+	@echo '	                                 services=bitcoind,lnd,lndg,rtl,thunderhub,docs,tor,dashboard,notebook'
+	@echo '	                                 nocache=true'
+	@echo '	                                 verbose=true'
 	@echo ''
 	@echo '	[NOSTR SERVICES]:	'
 	@echo '	 make nostr-rs-relay              build & run a nostr relay'
@@ -373,7 +376,7 @@ test-venv:## 	test virutalenv .venv
 .PHONY: init setup
 .SILENT:
 setup: init venv## 	basic setup
-init:## 	basic setup
+init:submodules
 
 ifneq ($(shell id -u),0)
 	@echo
@@ -407,19 +410,43 @@ blocknotify:
 initialize:## 	install libs and dependencies
 	./scripts/initialize  #>&/dev/null
 #######################
-.PHONY: install install-cluster
+.PHONY: install cluster
 .SILENT:
-install: venv## 	create docker-compose.yml and run playground
+install:## 	create docker-compose.yml and run playground
+
+ifeq ($(basic),true)
+	@echo "installing basic stack..."
+	bash -c 'services=bitcoind,lnd,docs ./install.sh $(TRIPLET)'
+else
 	bash -c './install.sh $(TRIPLET)'
-install-cluster: venv## 	create cluster/docker-compose.yml and run playground-cluster
+endif
+ifneq ($(cluster),)
+	$(MAKE) cluster
+endif
+ifeq ($(relay),true)
+	$(MAKE) nostr-rs-relay
+endif
+ifeq ($(relay),remove)
+	@docker stop rs-relay
+endif
+
+cluster:## 	create playground-cluster
+ifeq ($(cluster),remove)
+	$(MAKE) prune-cluster
+else
 	bash -c 'pushd cluster && ./up-generic.sh 5 && popd'
+endif
 #######################
 .PHONY: uninstall
 uninstall: 	run uninstall.sh script
 	bash -c './uninstall.sh $(TRIPLET)'
 #######################
 .PHONY: run
-run: docs init## 	docker-compose up -d
+run:## 	docker-compose up -d
+## catch install commands
+ifneq ($(basic), || $(cluster), || $(relay), )
+	$(MAKE) install
+endif
 	$(DOCKER_COMPOSE) $(VERBOSE) $(NOCACHE) up -d
 #######################
 .PHONY: build
@@ -617,7 +644,7 @@ package-thunderhub: signin## 	package-thunderhub
 
 ########################
 .PHONY: package-all
-package-all: init package-plebnet##
+package-all: init package-plebnet## 	package-plebnet
 #INSERT other scripting here
 	bash -c "echo insert more scripting here..."
 ########################
