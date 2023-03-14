@@ -360,6 +360,7 @@ venv:## 	create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
 	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   python3 -m pip install omegaconf \
 	);
 	@echo "To activate (venv)"
 	@echo "try:"
@@ -372,6 +373,7 @@ test-venv:## 	test virutalenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
 	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   python3 -m pip install omegaconf \
 	);
 .PHONY: init setup
 .SILENT:
