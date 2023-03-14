@@ -6,3 +6,5 @@
 [submodule "cluster"]
 	path = cluster
 	url = https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-cluster.git
+	branch = master
+	ignore = dirty
