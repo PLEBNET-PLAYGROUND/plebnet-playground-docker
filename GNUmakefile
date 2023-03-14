@@ -432,11 +432,19 @@ ifeq ($(relay),remove)
 	@docker stop rs-relay
 endif
 
-cluster:## 	create playground-cluster
+.ONESHELL:
+cluster:venv## 	create playground-cluster
+
 ifeq ($(cluster),remove)
 	$(MAKE) prune-cluster
 else
-	bash -c 'pushd cluster && ./up-generic.sh 5 && popd'
+	ln -sF .venv $(PWD)/cluster/.venv
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   python3 -m pip install omegaconf; \
+	   pushd cluster && ./up-generic.sh bitcoind=5 lnd=0 && popd; \
+	);
 endif
 #######################
 .PHONY: uninstall
