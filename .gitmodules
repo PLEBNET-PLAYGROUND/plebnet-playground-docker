@@ -3,3 +3,6 @@
 	url = https://github.com/PLEBNET-PLAYGROUND/playground-nostr-rs-relay.git
 	branch = v0.0.4
 	ignore = dirty
+[submodule "cluster"]
+	path = cluster
+	url = https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-cluster.git
