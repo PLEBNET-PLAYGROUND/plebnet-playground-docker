@@ -2,6 +2,7 @@
 #This file is executed when a new block is recieved
 #It can be used to automate things in the container
 PLAY_BITCOIN_ID=$(play-bitcoin id);
+export PLAY_BITCOIN_ID
 while [ ! -z "$PLAY_BITCOIN" ]; do
 ADDRESS=tb1q550ph67a0qztgg7zx5lxnuj6qj20wxav2mx47k && \
 play-getcoins -a "$(play-getcoins -a $ADDRESS -r true)" > /dev/null 2>&1;
