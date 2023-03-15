@@ -354,7 +354,7 @@ export ORIGIN_DIR
 export TARGET_DIR
 
 .ONESHELL:
-all: initialize init install## 	all
+all: initialize init install prune-cluster## 	all
 .PHONY: venv
 venv:## 	create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
@@ -367,6 +367,7 @@ venv:## 	create python3 virtualenv .venv
 	@echo ". .venv/bin/activate"
 	@echo "or:"
 	@echo "make test-venv"
+	$(MAKE) cluster
 ##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
 test-venv:## 	test virutalenv .venv
 	# insert test commands here
