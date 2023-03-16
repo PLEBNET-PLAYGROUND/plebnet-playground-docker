@@ -368,7 +368,6 @@ venv:## 	create python3 virtualenv .venv
 	@echo ". .venv/bin/activate"
 	@echo "or:"
 	@echo "make test-venv"
-	$(MAKE) cluster
 ##:	test-venv            source .venv/bin/activate; pip install -r requirements.txt;
 test-venv:## 	test virutalenv .venv
 	# insert test commands here
