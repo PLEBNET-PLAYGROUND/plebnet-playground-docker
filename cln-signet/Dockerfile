@@ -1,5 +1,5 @@
 FROM elementsproject/lightningd:v0.10.2 as playground-cln
-LABEL org.opencontainers.image.authors="Jonathan Thomson"
+LABEL org.opencontainers.image.authors="Plebnet Playground Developers"
 LABEL org.opencontainers.image.licenses=MIT
 LABEL org.opencontainers.image.source="https://github.com/PLEBNET-PLAYGROUND/plebnet-playground-docker"
 
