@@ -36,7 +36,7 @@ services:
     - tor
     environment:
       TRIPLET: '${TRIPLET}'
-      LND_ALIAS: 'NewNode'
+      LND_ALIAS: 'LNDNode'
       LND_LISTEN: 'playground-lnd:9735'
       LND_RPCLISTEN: 'playground-lnd:10009'
       LND_RESTLISTEN: 'playground-lnd:8080'
@@ -73,7 +73,7 @@ services:
     - bitcoind
     - tor
     environment:
-      CLN_ALIAS: 'NewNode'
+      CLN_ALIAS: 'CLNNode'
       BITCOIN_RPC_HOST: 'playground-bitcoind'
       TOR_PROXY: 'playground-tor:9050'
       TOR_ADDR: 'playground-tor:9051'
