@@ -1,0 +1,137 @@
+#!/bin/bash
+
+if hash docker 2>/dev/null; then
+
+CLN_ID=$(echo $(docker ps | awk '/-cln/'|awk ' {print $1}' | awk 'NR==1'))
+export CLN_ID
+CLN_IMAGE=$(echo $(docker images | awk '/-cln/'|awk ' {print $3}' | awk 'NR==1'))
+export CLN_IMAGE
+
+for ((i=1;i<=$#;i++));
+do
+
+    if [[ ${!i} = info ]]; then
+        ((i++))
+        echo "!i = ${!i}"
+        echo "0 = $0"
+        echo "1 = $1"
+        echo "2 = $2"
+        echo "3 = $3"
+        echo "4 = $4"
+        echo "5 = $5"
+        echo "6 = $6"
+        echo "7 = $7"
+        echo $CLN_ID
+        exit
+
+    elif [[ ${!i} = id ]]; then
+        ((i++))
+        echo $CLN_ID
+        exit
+
+    elif [[ ${!i} = config ]]; then
+        ((i++))
+        docker inspect $(play-cln id) | jq '.[] | {(.Name) : [(.Config)]}'
+        exit
+
+    elif [[ ${!i} = ip ]]; then
+        ((i++))
+        docker inspect $(play-cln id) | jq '.[] | {(.Name) : [(.NetworkSettings.Networks."plebnet-playground-docker_default".IPAddress)]}' | jq .[] | jq .[]
+        exit
+
+    elif [[ ${!i} = port* ]]; then
+        ((i++))
+        docker inspect $(play-cln id) | jq '.[] | {(.Name) : [(.NetworkSettings.Ports)]}'
+        exit
+
+    elif [[ ${!i} = env ]]; then
+        ((i++))
+        play-cln config | jq .[] |  jq .[] | jq .Env
+        exit
+
+    elif [[ ${!i} = top ]]; then
+        ((i++))
+        docker top $CLN_ID
+        exit
+
+    elif [[ ${!i} = *start ]]; then
+        ((i++))
+        docker-compose up cln &
+        exit
+
+    elif [[ ${!i} = stop ]]; then
+        ((i++))
+        docker stop $CLN_ID
+        exit
+
+    elif [[ ${!i} = *shell ]]; then
+        ((i++))
+        docker exec -it $CLN_ID sh
+        exit
+
+    elif [[ ${!i} = iftop ]]; then
+        ((i++))
+        echo "TODO" #docker exec -it $CLN_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apt install iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        #docker exec $CLN_ID /bin/bash -c "test -x '$(which iftop)' && iftop -P -p -i eth0 $2 $3 $4 $5 || apk add iftop && iftop -P -p -i eth0 $2 $3 $4 $5"
+        exit
+
+    elif [[ ${!i} = *newaddress ]]; then
+        ((i++))
+        echo "TODO" #docker exec $CLN_ID sh -c "lightning-cli -n signet newaddress p2wkh | jq -r .address"
+        exit
+
+    elif [[ ${!i} = walletbalance ]]; then
+        ((i++))
+        echo "TODO" #docker exec $CLN_ID sh -c "lightning-cli -n signet walletbalance"
+        exit
+    elif [[ ${!i} = total-balance ]]; then
+        ((i++))
+        echo "TODO" #docker exec $CLN_ID sh -c "lightning -n signet walletbalance | jq -r .total_balance"
+        exit
+    elif [[ ${!i} = confirmed-balance ]]; then
+        ((i++))
+        echo "TODO" #docker exec $CLN_ID sh -c "lightning-cli -n signet walletbalance | jq -r .confirmed_balance"
+        exit
+    elif [[ ${!i} = unconfirmed-balance ]]; then
+        ((i++))
+        echo "TODO" #docker exec $CLN_ID sh -c "lightning-cli -n signet walletbalance | jq -r .unconfirmed_balance"
+        exit
+
+    elif [[ ${!i} = stop ]]; then
+        ((i++))
+        docker stop $CLN_ID
+        exit
+
+    elif [[ ${!i} == help ]]; then
+        ((i++))
+        echo "play-cln id"
+        echo "play-cln top"
+        echo "play-cln ifconfig"
+        echo "play-cln iftop"
+        echo "play-cln shell"
+        echo "play-cln start"
+        echo "play-cln stop"
+        echo
+        echo "play-cln '<COMMAND>'"
+        echo "play-cln newaddress"
+        echo "play-cln walletbalance"
+        echo "play-cln total-balance"
+        echo "play-cln confirmed-balance"
+        echo "play-cln unconfirmed-balance"
+        echo
+        echo "https://www.plebnet.fun"
+        echo
+        echo "Fund CLN signet wallet:"
+        echo "play-getcoins -a \$(play-cln getnewaddress)"
+        exit
+
+    elif [[ -n ${!i} ]]; then
+        ((i++))
+        docker exec $CLN_ID sh -c  "$1 $2 $3 $4 $5 $6 $7 $8 $9"
+        exit
+    fi
+
+done;
+play-cln help;
+fi #end if docker hash
+
