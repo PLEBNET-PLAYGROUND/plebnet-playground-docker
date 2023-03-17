@@ -410,7 +410,7 @@ blocknotify:
 	bash -c 'install -v $(PWD)/bitcoin-signet/blocknotify  /usr/local/bin/blocknotify'
 #######################
 .PHONY: initialize
-initialize:## 	install libs and dependencies
+initialize:submodules## 	install libs and dependencies
 	./scripts/initialize  #>&/dev/null
 #######################
 .PHONY: install cluster
