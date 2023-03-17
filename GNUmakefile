@@ -395,7 +395,7 @@ endif
 	@chown -R $(shell id -u) *                 || echo
 
 	@install -v -m=o+rwx $(PWD)/scripts/*  /usr/local/bin
-	@install -v -m=o+rwx $(PWD)/bitcoin-signet/blocknotify  /usr/local/bin
+	@install -v -m=o+rwx $(PWD)/bitcoin-signet/*notify  /usr/local/bin
 	@install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
 
 	#$(PYTHON3) -m pip install --upgrade pip 2>/dev/null
