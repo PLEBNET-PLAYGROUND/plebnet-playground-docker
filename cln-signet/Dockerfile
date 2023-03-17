@@ -9,6 +9,8 @@ VOLUME /root/.lightning
 # Expose lightningd ports
 EXPOSE 9736
 
+RUN apt update -y && apt install -y iftop
+
 COPY docker-entrypoint.sh /usr/local/etc/entrypoint.sh
 ENTRYPOINT ["/usr/local/etc/entrypoint.sh"]
 
