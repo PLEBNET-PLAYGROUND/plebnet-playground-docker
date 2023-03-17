@@ -2,7 +2,7 @@
 
 if hash docker 2>/dev/null; then
 
-LND_ID=$(echo $(docker ps | awk '/docker_lnd/'|awk ' {print $1}' | awk 'NR==1'))
+LND_ID=$(echo $(docker ps | awk '/-lnd/'|awk ' {print $1}' | awk 'NR==1'))
 export LND_ID
 LND_IMAGE=$(echo $(docker images | awk '/docker_lnd/'|awk ' {print $3}' | awk 'NR==1'))
 export LND_IMAGE
@@ -95,6 +95,11 @@ do
     elif [[ ${!i} = unconfirmed-balance ]]; then
         ((i++))
         docker exec $LND_ID sh -c "lncli -n signet walletbalance | jq -r .unconfirmed_balance"
+        exit
+
+    elif [[ ${!i} = stop ]]; then
+        ((i++))
+        docker stop $LND_ID
         exit
 
     elif [[ ${!i} == help ]]; then
