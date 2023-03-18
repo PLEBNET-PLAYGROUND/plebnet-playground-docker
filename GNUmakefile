@@ -450,6 +450,7 @@ else
 	   pushd cluster && ./up-generic.sh bitcoind=5 lnd=0 && popd; \
 	);
 endif
+	@docker ps | grep cluster || echo
 #######################
 .PHONY: uninstall
 uninstall: 	run uninstall.sh script
