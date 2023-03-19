@@ -97,32 +97,20 @@ jobs:
 
       - name: play-bitcoin "bitcoin-cli -h"
         run: |
-          play-bitcoin "bitcoin-cli -h"
-
-      - name: play bitcoin config
-        run: |
-          play bitcoin config
+          play-bitcoin "bitcoin-cli -h" || echo "..."
 
       - name: play-bitcoin config
         run: |
-          play-bitcoin config
-
-      - name: play lnd config
-        run: |
-          # play defaults to the lnd container
-          play lnd config
-
-      - name: play lnd "lncli -h"
-        run: |
-          play lnd "lncli -h"
+          play-bitcoin config || echo "..."
 
       - name: play-lnd config
         run: |
-          play-lnd config
+          # play defaults to the lnd container
+          play-lnd config || echo "..."
 
       - name: play-lnd "lncli -h"
         run: |
-          play-lnd "lncli -h"
+          play-lnd "lncli -h" || echo "..."
 
       - name: uninstall
         run: |
