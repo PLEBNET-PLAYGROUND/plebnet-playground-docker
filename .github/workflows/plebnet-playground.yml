@@ -54,12 +54,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: make init install
         run: |
-          docker pull ghcr.io/randymcmillan/plebnet-playground-docker/notebook-x86_64-linux-gnu/root:1657567301
+          docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-x86_64-linux-gnu/root
+          docker pull docker.io/elementsproject/lightningd:v0.10.2
           docker pull ghcr.io/randymcmillan/plebnet-playground-docker/cln-x86_64-linux-gnu/root:1653883165
-          docker pull ghcr.io/randymcmillan/plebnet-playground-docker/thunderhub-x86_64-linux-gnu/root:1679181974
-          docker pull ghcr.io/randymcmillan/plebnet-playground-docker/tor-x86_64-linux-gnu/root:1679181839
+          docker pull ghcr.io/randymcmillan/plebnet-playground-docker/tor-x86_64-linux-gnu/root
+          docker pull ghcr.io/randymcmillan/plebnet-playground-docker/notebook-x86_64-linux-gnu/root:1657567301
           docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-x86_64-linux-gnu/root:1679181686
           docker pull ghcr.io/randymcmillan/plebnet-playground-docker/dashboard-x86_64-linux-gnu/root:1653194797
+          docker pull ghcr.io/randymcmillan/plebnet-playground-docker/thunderhub-x86_64-linux-gnu/root:1679181974
           docker ps
           docker images
           make init install all
