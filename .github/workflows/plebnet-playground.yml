@@ -54,7 +54,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: make init install
         run: |
+          docker ps
+          docker images
           make init install all
+          docker ps
+          docker images
 
   make-all:
     strategy:
@@ -79,8 +83,12 @@ jobs:
           make help report
           make venv && . .venv/bin/activate
           make test-venv
+          docker ps
+          docker images
           ./install.sh
           make docs && git diff
+          docker ps
+          docker images
 
   play-commands:
     strategy:
@@ -102,6 +110,8 @@ jobs:
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
       - name: play
         run: |
+          docker ps
+          docker images
           make all cluster
           play
       - name: play info
