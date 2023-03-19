@@ -31,7 +31,7 @@ jobs:
     name: github-workspace
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
@@ -41,11 +41,27 @@ jobs:
         run: |
           printenv
 
-  ubuntu-build_and_test:
+  make-init-install-all:
+    name: make-init-install-all
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
+    steps:
+      - uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v3
+      - name: make init install
+        run: |
+          make init install all
+
+  make-all:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    needs: make-init-install-all
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
         with:
@@ -56,62 +72,57 @@ jobs:
         id: cache-virtualenv
       - uses: syphar/restore-pip-download-cache@v1
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-
       - run: pip install -r requirements.txt
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-
-      - name: make help report
+      - name: make help report all
         run: |
           make help report
-      - name: make initialize init
-        run: |
-          make initialize init
-      - name: make venv && . .venv/bin/activate
-        run: |
           make venv && . .venv/bin/activate
           make test-venv
-      - name: make build para=true
-        run: |
-          make build para=true
-      - name: make install
-        run: |
-          make install
-      - name: ./install.sh
-        run: |
+          make all
           ./install.sh
-      - name: make docs && git diff
-        run: |
           make docs && git diff
 
+  play-commands:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    needs: make-all
+    steps:
+      - uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4.5.0
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+      - run: pip install -r requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
       - name: play
         run: |
           play
-
       - name: play info
         run: |
           play info
-
       - name: play ids
         run: |
           play ids
-
       - name: play-bitcoin "bitcoin-cli -h"
         run: |
           play-bitcoin "bitcoin-cli -h" || echo "..."
-
       - name: play-bitcoin config
         run: |
           play-bitcoin config || echo "..."
-
       - name: play-lnd config
         run: |
           # play defaults to the lnd container
           play-lnd config || echo "..."
-
       - name: play-lnd "lncli -h"
         run: |
           play-lnd "lncli -h" || echo "..."
-
       - name: uninstall
         run: |
           make prune-playground || echo
