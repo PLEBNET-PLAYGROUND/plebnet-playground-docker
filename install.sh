@@ -23,7 +23,7 @@ if [ ! -z "$services" ]; then
     echo "services="$services
 fi
 
-docker compose down || docker-compose down
+type -P docker-compose && docker-compose down || docker compose down
 
 $(which python3) plebnet_generate.py TRIPLET=$TRIPLET services=$services
 
@@ -64,6 +64,6 @@ while ! docker system info > /dev/null 2>&1; do
 
 done
 
-docker compose build --build-arg TRIPLET=$TRIPLET || docker-compose build --build-arg TRIPLET=$TRIPLET
-docker compose up --remove-orphans -d || docker-compose up --remove-orphans -d
+type -P docker-compose && docker-compose build --build-arg TRIPLET=$TRIPLET || docker compose build --build-arg TRIPLET=$TRIPLET
+type -P docker-compose && docker-compose up --remove-orphans -d || docker compose up --remove-orphans -d
 
