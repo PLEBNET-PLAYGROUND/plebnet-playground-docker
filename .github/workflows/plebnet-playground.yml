@@ -65,7 +65,7 @@ jobs:
           make help report
       - name: make initialize init
         run: |
-          make initialize init
+          make initialize init docker-pull
       - name: make venv && . .venv/bin/activate
         run: |
           make venv && . .venv/bin/activate
