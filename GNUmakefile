@@ -114,6 +114,14 @@ PROJECT_NAME							:= $(project)
 endif
 export PROJECT_NAME
 
+ifeq ($(tag),)
+TAG                                     :=$(shell git tag --sort=committerdate | grep -E '^v[0-9]' | tail -1)
+#TAG                                     :=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+else
+TAG                                     :=v$(tag)
+endif
+export TAG
+
 #GIT CONFIG
 GIT_USER_NAME							:= $(shell git config user.name)
 export GIT_USER_NAME
@@ -232,6 +240,13 @@ export PACKAGE_PREFIX
 	#NOTE: 2 hashes are detected as 1st column output with color
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+version:
+#get the most recent
+	#@TAG=$(shell git tag --sort=committerdate | grep -E '^v[0-9]' | tail -1)
+	#@TAG=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+	#@export TAG
+	@echo $(TAG)
+
 .PHONY: help
 help:## 	print verbose help
 	@echo 'make [COMMAND] [EXTRA_ARGUMENTS]	'
@@ -306,6 +321,7 @@ report:## 	print environment arguments
 	@echo '	[ARGUMENTS]	'
 	@echo '      args:'
 	@echo '        - PROJECT_NAME=${PROJECT_NAME}'
+	@echo '        - TAG=${TAG}'
 	@echo '        - HOME=${HOME}'
 	@echo '        - PWD=${PWD}'
 	@echo '        - PYTHON=${PYTHON}'
