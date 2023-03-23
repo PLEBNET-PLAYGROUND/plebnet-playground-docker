@@ -362,9 +362,9 @@ all: initialize init install prune-cluster## 	all
 venv:## 	create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
-	   python3 -m pip install omegaconf \
-	   pip install --upgrade pip; \
+	   source .venv/bin/activate; pip install -q -r requirements.txt; \
+	   python3 -m pip install -q omegaconf \
+	   pip install -q --upgrade pip; \
 	);
 	@echo "To activate (venv)"
 	@echo "try:"
@@ -376,9 +376,9 @@ test-venv:## 	test virutalenv .venv
 	# insert test commands here
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
-	   python3 -m pip install omegaconf \
-	   pip install --upgrade pip; \
+	   source .venv/bin/activate; pip install -q -r requirements.txt; \
+	   python3 -m pip install -q omegaconf \
+	   pip install -q --upgrade pip; \
 	);
 .PHONY: init setup
 .SILENT:
@@ -400,7 +400,7 @@ endif
 	@install -v -m=o+rwx $(PWD)/bitcoin-signet/*notify  /usr/local/bin
 	@install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
 
-	#$(PYTHON3) -m pip install --upgrade pip 2>/dev/null
+	#$(PYTHON3) -m pip install -q --upgrade pip 2>/dev/null
 	$(PYTHON3) -m pip install -q omegaconf 2>/dev/null
 	$(PYTHON3) -m pip install -q -r requirements.txt 2>/dev/null
 	# pushd docs 2>/dev/null && $(PYTHON3) -m pip install -q -r requirements.txt && popd  2>/dev/null
@@ -414,9 +414,9 @@ endif
 docker:## 	docker
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
-	   python3 -m pip install omegaconf \
-	   pip install --upgrade pip; \
+	   source .venv/bin/activate; pip install -q -r requirements.txt; \
+	   python3 -m pip install -q omegaconf \
+	   pip install -q --upgrade pip; \
 	);
 	( \
 	    while ! docker system info > /dev/null 2>&1; do\
@@ -435,7 +435,7 @@ mytarget:
     set -e ;\
     echo 'msg=$$msg' ;\
     )
-docker-pull:## 	docker-pull
+docker-pull:docker## 	docker-pull
 	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/cln-$(TRIPLET)/root:1653883165
 .PHONY: blocknotify
 blocknotify:
@@ -474,8 +474,8 @@ else
 	ln -sF .venv $(PWD)/cluster/.venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
-	   python3 -m pip install omegaconf; \
+	   source .venv/bin/activate; pip install -q -r requirements.txt; \
+	   python3 -m pip install -q omegaconf; \
 	   pushd cluster && ./up-generic.sh bitcoind=5 lnd=0 && popd; \
 	);
 endif
