@@ -7,6 +7,8 @@ export THIS_FILE
 TIME									:= $(shell date +%s)
 export TIME
 
+OS                                      :=$(shell uname -s)
+export OS
 ARCH                                    :=$(shell uname -m)
 export ARCH
 ifeq ($(ARCH),x86_64)
@@ -381,7 +383,7 @@ test-venv:## 	test virutalenv .venv
 .PHONY: init setup
 .SILENT:
 setup: init venv## 	basic setup
-init:submodules
+init:submodules venv docker-pull
 
 ifneq ($(shell id -u),0)
 	@echo
@@ -408,6 +410,33 @@ endif
 
 
 #######################
+.ONESHELL:
+docker:## 	docker
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   python3 -m pip install omegaconf \
+	   pip install --upgrade pip; \
+	);
+	( \
+	    while ! docker system info > /dev/null 2>&1; do\
+	    echo 'Waiting for docker to start...';\
+	    if [[ '$(OS)' == 'Linux' ]]; then\
+	     systemctl restart docker.service;\
+	    fi;\
+	    if [[ '$(OS)' == 'Darwin' ]]; then\
+	     open --background -a /./Applications/Docker.app/Contents/MacOS/Docker;\
+	    fi;\
+	sleep 1;\
+	done\
+	)
+mytarget:
+	( \
+    set -e ;\
+    echo 'msg=$$msg' ;\
+    )
+docker-pull:## 	docker-pull
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/cln-$(TRIPLET)/root:1653883165
 .PHONY: blocknotify
 blocknotify:
 	bash -c 'install -v $(PWD)/bitcoin-signet/blocknotify  /usr/local/bin/blocknotify'
@@ -663,4 +692,3 @@ package-all: init package-plebnet## 	package-plebnet
 #INSERT other scripting here
 	bash -c "echo insert more scripting here..."
 ########################
-
