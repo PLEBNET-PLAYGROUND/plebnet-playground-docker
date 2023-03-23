@@ -436,7 +436,29 @@ mytarget:
     echo 'msg=$$msg' ;\
     )
 docker-pull:docker## 	docker-pull
+
+	docker pull debian:sid-slim
+	docker pull elementsproject/lightningd:v0.10.2
+
+	docker pull docker.io/library/rust:slim-buster
+
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-$(TRIPLET)/root:1679534785
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-$(TRIPLET)/root:1679181686
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/tor-$(TRIPLET)/root:1679181839
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/tor-$(TRIPLET)/root:1679534813
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/lnd-$(TRIPLET)/root:1679181877
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/lnd-$(TRIPLET)/root:1679534818
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/docs-$(TRIPLET)/root:1679181733
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/docs-$(TRIPLET)/root:1679534805
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/thunderhub-$(TRIPLET)/root:1679181974
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/thunderhub-$(TRIPLET)/root:1679534824
+	docker pull rust:slim-buster
+	docker pull rust:latest
+	docker pull alpine
 	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/cln-$(TRIPLET)/root:1653883165
+	docker pull elementsproject/lightningd:v0.10.2
+	docker pull shahanafarooqui/rtl:0.11.0
+
 .PHONY: blocknotify
 blocknotify:
 	bash -c 'install -v $(PWD)/bitcoin-signet/blocknotify  /usr/local/bin/blocknotify'
