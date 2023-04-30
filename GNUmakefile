@@ -136,21 +136,27 @@ GIT_REPO_NAME							:= $(PROJECT_NAME)
 export GIT_REPO_NAME
 
 #Usage
-#make package-all profile=rsafier
-#make package-all profile=asherp
-#note on GH_TOKEN.txt file below
-ifeq ($(profile),)
-GIT_PROFILE								:= $(GIT_USER_NAME)
-ifeq ($(GIT_REPO_ORIGIN),git@github.com:PLEBNET_PLAYGROUND/plebnet-playground-docker.dev.git)
-GIT_PROFILE								:= PLEBNET-PLAYGROUND
+#note on ~/GH_TOKEN.txt file below for package publishing
+#profile=plebnet-playground make report
+#profile=plebnet-playground make package-all
+#test:
+#profile=PLEBNET-PLAYGROUND make report
+ifeq ($(profile), PLEBNET-PLAYGROUND)
+#github push needs to be all lower case
+profile                                 := $(shell echo $(profile) | tr '[:upper:]' '[:lower:]' | sed 's/@//')
+export profile
 endif
-ifeq ($(GIT_REPO_ORIGIN),https://github.com/PLEBNET_PLAYGROUND/plebnet-playground-docker.dev.git)
-GIT_PROFILE								:= PLEBNET-PLAYGROUND
-endif
+ifeq ($(profile),plebnet-playground)
+#we point to the PLEBNET-PLAYGROUND organization on github.com
+GIT_PROFILE                             := $(profile)
+#ssh access url
+GIT_REPO_ORIGIN                         := git@github.com/$(GIT_PROFILE)/$(PROJECT_NAME).git
 else
-GIT_PROFILE								:= $(profile)
+#GIT_PROFILE equals GIT_USER_NAME detected by the make file above
+GIT_PROFILE                             := $(GIT_USER_NAME)
 endif
 export GIT_PROFILE
+export GIT_REPO_ORIGIN
 
 GIT_BRANCH								:= $(shell git rev-parse --abbrev-ref HEAD)
 export GIT_BRANCH
@@ -284,7 +290,14 @@ help:## 	print verbose help
 #	@echo '	 make header package-header'
 	@echo '	 make build'
 #	@echo '	 make build package-statoshi'
+	@echo ''
 	@echo '	 make package-all'
+	@echo '	 profile=plebnet-playground make report'
+	@echo '	 profile=plebnet-playground make package-all'
+	@echo '	 profile=plebnet-playground make package-lnd'
+	@echo '	 profile=plebnet-playground make package-tor'
+	@echo '	 profile=plebnet-playground make package-docs'
+	@echo '	 profile=plebnet-playground make package-bitcoind'
 	@echo ''
 	@echo '	 make install-python38-sh'
 	@echo '	 make install-python39-sh'
@@ -695,7 +708,9 @@ export SIGNIN
 
 .PHONY: signin
 signin:## 	signin
-#Place a file named GH_TOKEN.txt in your $HOME - create in https://github.com/settings/tokens (Personal access tokens)
+#Place a file named GH_TOKEN.txt in your $HOME
+#Create in https://github.com/settings/tokens (Personal access tokens)
+#Reference $(profile) logic toward the top of the GNUmakefile
 	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX)/v1 -u $(GIT_PROFILE) --password-stdin'
 #######################
 package-plebnet: signin## 	plackage-plebnet
