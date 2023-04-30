@@ -424,7 +424,29 @@ endif
 
 	#pushd scripts 2>/dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  2>/dev/null || echo
 
-docker-install:
+#######################
+.ONESHELL:
+docker-start:## 	start docker
+	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	( \
+	   source .venv/bin/activate; pip install -q -r requirements.txt; \
+	   python3 -m pip install -q omegaconf \
+	   pip install -q --upgrade pip; \
+	);
+	( \
+	    while ! docker system info > /dev/null 2>&1; do\
+	    echo 'Waiting for docker to start...';\
+	    if [[ '$(OS)' == 'Linux' ]]; then\
+	     systemctl restart docker.service;\
+	    fi;\
+	    if [[ '$(OS)' == 'Darwin' ]]; then\
+	     open --background -a /./Applications/Docker.app/Contents/MacOS/Docker;\
+	    fi;\
+	sleep 1;\
+	done\
+	)
+
+docker-install:## 	Download Docker.amd64.93002.dmg for MacOS Intel Compatibility
 
 	@[[ '$(shell uname -s)' == 'Darwin' ]] && echo "is Darwin" || echo "not Darwin";
 	@[[ '$(shell uname -m)' == 'x86_64' ]] && echo "is x86_64" || echo "not x86_64";
@@ -447,27 +469,6 @@ docker-install:
 	@[[ '$(shell uname -s)' == 'Darwin'* ]] && echo "bee41d646916e579b16b7fae014e2fb5e5e7b5dbaf7c1949821fd311d3ce430b"
 	@[[ '$(shell uname -s)' == 'Darwin'* ]] && type -P open 2>/dev/null && open Docker.amd64.93002.dmg
 
-#######################
-.ONESHELL:
-docker:## 	docker
-	test -d .venv || $(PYTHON3) -m virtualenv .venv
-	( \
-	   source .venv/bin/activate; pip install -q -r requirements.txt; \
-	   python3 -m pip install -q omegaconf \
-	   pip install -q --upgrade pip; \
-	);
-	( \
-	    while ! docker system info > /dev/null 2>&1; do\
-	    echo 'Waiting for docker to start...';\
-	    if [[ '$(OS)' == 'Linux' ]]; then\
-	     systemctl restart docker.service;\
-	    fi;\
-	    if [[ '$(OS)' == 'Darwin' ]]; then\
-	     open --background -a /./Applications/Docker.app/Contents/MacOS/Docker;\
-	    fi;\
-	sleep 1;\
-	done\
-	)
 mytarget:
 	( \
     set -e ;\
