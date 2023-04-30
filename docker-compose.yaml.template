@@ -159,7 +159,7 @@ services:
         LN_IMPLEMENTATION: LND
       ports:
       - "3000:3000"
-      image: shahanafarooqui/rtl:0.11.0 
+      image: shahanafarooqui/rtl:0.13.6
       volumes:
         - type: bind
           source: ${oc.env:PWD}/volumes/lnd_datadir
