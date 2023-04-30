@@ -511,11 +511,11 @@ docker-pull:docker-start## 	docker-pull
 	docker pull shahanafarooqui/rtl:0.13.6
 	docker pull elementsproject/lightningd:latest
 
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/lnd-$(TRIPLET)/root:v0.5.10
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/tor-$(TRIPLET)/root:v0.5.10
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/docs-$(TRIPLET)/root:v0.5.10
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/thunderhub-$(TRIPLET)/root:v0.5.10
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-$(TRIPLET)/root:v0.5.10
+	docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/root:$(TAG)
+	docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/root:$(TAG)
+	docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/root:$(TAG)
+	docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/root:$(TAG)
+	docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/root:$(TAG)
 
 .PHONY: blocknotify
 blocknotify:
