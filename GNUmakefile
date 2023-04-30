@@ -125,6 +125,8 @@ export TAG
 #GIT CONFIG
 GIT_USER_NAME							:= $(shell git config user.name)
 export GIT_USER_NAME
+GIT_USER_NAME                           := $(shell echo $(GIT_USER_NAME) | tr '[:upper:]' '[:lower:]' | sed 's/@//')
+export GIT_USER_NAME
 GIT_USER_EMAIL							:= $(shell git config user.email)
 export GIT_USER_EMAIL
 GIT_SERVER								:= https://github.com
