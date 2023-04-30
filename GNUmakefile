@@ -492,7 +492,7 @@ mytarget:
     set -e ;\
     echo 'msg=$$msg' ;\
     )
-docker-pull:docker-start## 	docker-pull
+docker-pull:docker-start signin## 	docker-pull
 
 	@[[ '$(shell uname -s)' == 'Darwin' ]] && \
 		[[ '$(shell uname -m)' == 'x86_64' ]] && \
