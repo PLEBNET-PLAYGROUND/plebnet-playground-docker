@@ -31,10 +31,11 @@ jobs:
     name: github-workspace
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
+        if: ${{ !env.ACT }}
         with:
           access_token: ${{ github.token }}
       - name: Print github workspace
@@ -44,10 +45,11 @@ jobs:
   ubuntu-build_and_test:
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
+        if: ${{ !env.ACT }}
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v3
@@ -60,71 +62,92 @@ jobs:
       - run: pip install -r requirements.txt
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
-      - name: make help report
+      - name: sudo apt install gawk
         run: |
-          make help report
+          sudo apt install gawk
+      - name: make help report
+        #if: ${{ !env.ACT }}
+        run: |
+          make help report submodules
       - name: make initialize init
+        #if: ${{ !env.ACT }}
         run: |
           make initialize init docker-pull
       - name: make venv && . .venv/bin/activate
+        #if: ${{ !env.ACT }}
         run: |
           make venv && . .venv/bin/activate
           make test-venv
       - name: make build para=true
+        if: ${{ !env.ACT }}
         run: |
           make build para=true
       - name: make install
+        if: ${{ !env.ACT }}
         run: |
           make install
       - name: ./install.sh
+        if: ${{ !env.ACT }}
         run: |
           ./install.sh
       - name: make docs && git diff
+        if: ${{ !env.ACT }}
         run: |
           make docs && git diff
 
       - name: play
+        if: ${{ !env.ACT }}
         run: |
           play
 
       - name: play info
+        if: ${{ !env.ACT }}
         run: |
           play info
 
       - name: play ids
+        if: ${{ !env.ACT }}
         run: |
           play ids
 
       - name: play-bitcoin "bitcoin-cli -h"
+        if: ${{ !env.ACT }}
         run: |
           play-bitcoin "bitcoin-cli -h"
 
       - name: play bitcoin config
+        if: ${{ !env.ACT }}
         run: |
           play bitcoin config
 
       - name: play-bitcoin config
+        if: ${{ !env.ACT }}
         run: |
           play-bitcoin config
 
       - name: play lnd config
+        if: ${{ !env.ACT }}
         run: |
           # play defaults to the lnd container
           play lnd config
 
       - name: play lnd "lncli -h"
+        if: ${{ !env.ACT }}
         run: |
           play lnd "lncli -h"
 
       - name: play-lnd config
+        if: ${{ !env.ACT }}
         run: |
           play-lnd config
 
       - name: play-lnd "lncli -h"
+        if: ${{ !env.ACT }}
         run: |
           play-lnd "lncli -h"
 
       - name: uninstall
+        if: ${{ !env.ACT }}
         run: |
           make prune-playground || echo
           make prune-cluster || echo
