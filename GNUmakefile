@@ -478,27 +478,28 @@ mytarget:
     )
 docker-pull:docker-start## 	docker-pull
 
-	docker pull debian:sid-slim
-	docker pull elementsproject/lightningd:v0.10.2
+	@[[ '$(shell uname -s)' == 'Darwin' ]] && \
+		[[ '$(shell uname -m)' == 'x86_64' ]] && \
+		echo "is Darwin AND x86_64"     || \
+		echo "not Darwin AND x86_64";
 
-	docker pull docker.io/library/rust:slim-buster
+	@[[ '$(shell uname -s)' == 'Darwin' ]] && \
+		[[ ! '$(shell uname -m)' == 'x86_64' ]] && \
+		echo "is Darwin AND NOT x86_64" || \
+		echo "is NOT (Darwin AND NOT x86_64)";
 
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-$(TRIPLET)/root:1679534785
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-$(TRIPLET)/root:1679181686
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/tor-$(TRIPLET)/root:1679181839
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/tor-$(TRIPLET)/root:1679534813
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/lnd-$(TRIPLET)/root:1679181877
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/lnd-$(TRIPLET)/root:1679534818
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/docs-$(TRIPLET)/root:1679181733
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/docs-$(TRIPLET)/root:1679534805
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/thunderhub-$(TRIPLET)/root:1679181974
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/thunderhub-$(TRIPLET)/root:1679534824
-	docker pull rust:slim-buster
-	docker pull rust:latest
 	docker pull alpine
-	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/cln-$(TRIPLET)/root:1653883165
-	docker pull elementsproject/lightningd:v0.10.2
-	docker pull shahanafarooqui/rtl:0.11.0
+	docker pull rust:latest
+	docker pull debian:sid-slim
+	docker pull rust:slim-buster
+	docker pull shahanafarooqui/rtl:0.13.6
+	docker pull elementsproject/lightningd:latest
+
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/lnd-$(TRIPLET)/root:v0.5.10
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/tor-$(TRIPLET)/root:v0.5.10
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/docs-$(TRIPLET)/root:v0.5.10
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/thunderhub-$(TRIPLET)/root:v0.5.10
+	docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-$(TRIPLET)/root:v0.5.10
 
 .PHONY: blocknotify
 blocknotify:
