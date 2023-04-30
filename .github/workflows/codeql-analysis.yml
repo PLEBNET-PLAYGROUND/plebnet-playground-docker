@@ -37,6 +37,7 @@ jobs:
 
     steps:
     - uses: styfle/cancel-workflow-action@0.11.0
+      if: ${{ !env.ACT }}
       with:
         access_token: ${{ github.token }}
     - name: Checkout repository
@@ -54,6 +55,7 @@ jobs:
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
+      if: ${{ !env.ACT }}
       with:
         languages: ${{ matrix.language }}
 
@@ -62,32 +64,38 @@ jobs:
             make init
 
     - name: Perform CodeQL Analysis
+      if: ${{ !env.ACT }}
       uses: github/codeql-action/analyze@v2
 
   pylint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      if: ${{ !env.ACT }}
     - name: Set up Python 3.9
       uses: actions/setup-python@v4.5.0
       with:
         python-version: 3.9
     - name: Install dependencies
+      if: ${{ !env.ACT }}
       run: |
         python -m pip install --upgrade pip
         pip install pylint
     - name: Analysing the code with pylint
+      if: ${{ !env.ACT }}
       run: |
         # make explicite to each directory
         # We don't want this to fail CI
         cd $PWD      && pylint -s n --exit-zero `ls -R|grep .py$|xargs` > pylint.log && cat pylint.log
         cd dashboard && pylint -s n --exit-zero `ls -R|grep .py$|xargs` > pylint.log && cat pylint.log
     - name: upload-pylint.log
+      if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v2
       with:
         path: pylint.log
         name: pylint.log
     - name: upload-dashbaord-pylint.log
+      if: ${{ !env.ACT }}
       uses: actions/upload-artifact@v2
       with:
         path: dashboard/pylint.log
