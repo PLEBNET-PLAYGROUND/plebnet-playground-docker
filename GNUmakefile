@@ -474,7 +474,7 @@ mytarget:
     set -e ;\
     echo 'msg=$$msg' ;\
     )
-docker-pull:docker## 	docker-pull
+docker-pull:docker-start## 	docker-pull
 
 	docker pull debian:sid-slim
 	docker pull elementsproject/lightningd:v0.10.2
