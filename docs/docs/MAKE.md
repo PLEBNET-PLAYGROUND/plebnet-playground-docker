@@ -37,6 +37,9 @@ make
 	 profile=plebnet-playground make package-docs
 	 profile=plebnet-playground make package-bitcoind
 
+	 Quick Test:
+	 make signin && profile=plebnet-playground make docker-pull package-all && make package-all docker-pull
+
 	 make install-python38-sh
 	 make install-python39-sh
 
