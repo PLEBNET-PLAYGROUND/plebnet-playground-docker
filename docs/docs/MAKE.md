@@ -28,7 +28,14 @@ make
 
 	 make signin profile=gh-user     ~/GH_TOKEN.txt required from github.com
 	 make build
+
 	 make package-all
+	 profile=plebnet-playground make report
+	 profile=plebnet-playground make package-all
+	 profile=plebnet-playground make package-lnd
+	 profile=plebnet-playground make package-tor
+	 profile=plebnet-playground make package-docs
+	 profile=plebnet-playground make package-bitcoind
 
 	 make install-python38-sh
 	 make install-python39-sh
