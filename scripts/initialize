@@ -13,10 +13,12 @@ export ARCH
 export AWK
 export GAWK
 
-if [[ ! -z "$GAWK" ]]; then
-    AWK=$(which gawk)
+if hash gawk 2>/dev/null; then
+#if [[ ! -z "$GAWK" ]]; then
+	AWK=$(which gawk) || AWK=$(which awk) || AWK=	
     export AWK
-    echo $AWK
+    echo "$AWK"
+#fi
 fi
 
 export PATH=$PATH:/usr/local/opt/python@${python_version_major}.${python_version_minor}/Frameworks/Python.framework/Versions/${python_version_major}.${python_version_minor}/bin
@@ -168,14 +170,14 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     checkbrew
 elif [[ "$OSTYPE" == "cygwin" ]]; then
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 elif [[ "$OSTYPE" == "msys" ]]; then
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 elif [[ "$OSTYPE" == "win32" ]]; then
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 else
-    echo TODO add support for $OSTYPE
+    echo TODO add support for "$OSTYPE"
 fi
 
