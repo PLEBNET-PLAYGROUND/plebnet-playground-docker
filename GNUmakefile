@@ -726,11 +726,12 @@ signin:## 	signin
 #Reference $(profile) logic toward the top of the GNUmakefile
 	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX)/v1 -u $(GIT_PROFILE) --password-stdin'
 #######################
-package-plebnet: ## 	plackage-plebnet
+package-plebnet: ## 	package-plebnet
 	$(MAKE) package-bitcoind
 	$(MAKE) package-docs
 	$(MAKE) package-tor
 	$(MAKE) package-lnd
+	$(MAKE) package-cln
 	$(MAKE) package-thunderhub
 	#$(MAKE) package-rtl
 	#$(MAKE) package-dashboard
@@ -757,6 +758,11 @@ package-lnd: ## 	package-lnd
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip lnd'
 	bash -c 'docker push \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip lnd'
+package-cln: ## 	package-cln
+	bash -c 'docker tag  $(PROJECT_NAME)-cln \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/cln-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip cln'
+	bash -c 'docker push \
+	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/cln-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip cln'
 package-thunderhub: ## 	package-thunderhub
 	bash -c 'docker tag  $(PROJECT_NAME)-thunderhub \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip thunderhub'
