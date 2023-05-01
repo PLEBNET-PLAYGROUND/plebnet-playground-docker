@@ -299,6 +299,10 @@ help:## 	print verbose help
 	@echo '	 profile=plebnet-playground make package-docs'
 	@echo '	 profile=plebnet-playground make package-bitcoind'
 	@echo ''
+	@echo '	 Example:'
+	@echo '	 profile=${GIT_USER_NAME} tag=0.5.12  make package-all'
+	@echo '	 profile=plebnet-playground tag=0.5.12  make package-all'
+	@echo ''
 	@echo '	 Quick Test:'
 	@echo '	 make signin && profile=plebnet-playground make docker-pull package-all && make package-all docker-pull'
 	@echo ''
@@ -492,7 +496,7 @@ mytarget:
     set -e ;\
     echo 'msg=$$msg' ;\
     )
-docker-pull:docker-start signin## 	docker-pull
+docker-pull:docker-start## 	docker-pull
 
 	@echo "Try:"
 	@echo "profile=randymcmillan      tag=0.5.12 make docker-pull"
@@ -722,7 +726,7 @@ signin:## 	signin
 #Reference $(profile) logic toward the top of the GNUmakefile
 	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX)/v1 -u $(GIT_PROFILE) --password-stdin'
 #######################
-package-plebnet: signin## 	plackage-plebnet
+package-plebnet: ## 	plackage-plebnet
 	$(MAKE) package-bitcoind
 	$(MAKE) package-docs
 	$(MAKE) package-tor
@@ -732,28 +736,28 @@ package-plebnet: signin## 	plackage-plebnet
 	#$(MAKE) package-dashboard
 	#$(MAKE) package-notebook
 
-package-bitcoind: signin## 	package-bitcoind
+package-bitcoind: ## 	package-bitcoind
 	@docker compose build bitcoind
 	bash -c 'docker tag  $(PROJECT_NAME)-bitcoind \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip bitcoind'
 	bash -c 'docker push \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip bitcoind'
-package-docs: signin## 	package-docs
+package-docs: ## 	package-docs
 	bash -c 'docker tag  $(PROJECT_NAME)-docs \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip docs'
 	bash -c 'docker push \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip docs'
-package-tor: signin## 	package-tor
+package-tor: ## 	package-tor
 	bash -c 'docker tag  $(PROJECT_NAME)-tor \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip tor'
 	bash -c 'docker push \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip tor'
-package-lnd: signin## 	package-lnd
+package-lnd: ## 	package-lnd
 	bash -c 'docker tag  $(PROJECT_NAME)-lnd \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip lnd'
 	bash -c 'docker push \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip lnd'
-package-thunderhub: signin## 	package-thunderhub
+package-thunderhub: ## 	package-thunderhub
 	bash -c 'docker tag  $(PROJECT_NAME)-thunderhub \
 	$(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/$(HOST_USER):$(TAG) || echo skip thunderhub'
 	bash -c 'docker push \
@@ -776,7 +780,7 @@ package-thunderhub: signin## 	package-thunderhub
 
 ########################
 .PHONY: package-all
-package-all: init package-plebnet## 	package-plebnet
+package-all: package-plebnet## 	package-plebnet
 #INSERT other scripting here
 	bash -c "echo insert more scripting here..."
 ########################
