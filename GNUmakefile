@@ -492,7 +492,7 @@ mytarget:
     set -e ;\
     echo 'msg=$$msg' ;\
     )
-docker-pull:docker-start## 	docker-pull
+docker-pull:docker-start signin## 	docker-pull
 
 	@[[ '$(shell uname -s)' == 'Darwin' ]] && \
 		[[ '$(shell uname -m)' == 'x86_64' ]] && \
@@ -714,7 +714,11 @@ signin:## 	signin
 #Place a file named GH_TOKEN.txt in your $HOME
 #Create in https://github.com/settings/tokens (Personal access tokens)
 #Reference $(profile) logic toward the top of the GNUmakefile
+ifneq ($(CI),true)
 	bash -c 'cat ~/GH_TOKEN.txt | docker login $(PACKAGE_PREFIX)/v1 -u $(GIT_PROFILE) --password-stdin'
+else
+	echo "CI=$(CI)"
+endif
 #######################
 package-plebnet: signin## 	plackage-plebnet
 	$(MAKE) package-bitcoind
