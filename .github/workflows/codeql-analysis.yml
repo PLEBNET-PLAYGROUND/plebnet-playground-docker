@@ -61,7 +61,6 @@ jobs:
 
     - run: |
             make
-            make init
 
     - name: Perform CodeQL Analysis
       if: ${{ !env.ACT }}
@@ -69,24 +68,26 @@ jobs:
 
   pylint:
     runs-on: ubuntu-latest
+    if: ${{ !env.ACT }}
     steps:
     - uses: actions/checkout@v3
-      if: ${{ !env.ACT }}
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v4.5.0
+      #if: ${{ !env.ACT }}
+    - name: Set up Python 3.11.0
+      uses: actions/setup-python@v4.6.0
       with:
-        python-version: 3.9
+        python-version: 3.11.0
     - name: Install dependencies
-      if: ${{ !env.ACT }}
+      #if: ${{ !env.ACT }}
       run: |
+        sudo apt install python-is-python3
         python -m pip install --upgrade pip
         pip install pylint
     - name: Analysing the code with pylint
-      if: ${{ !env.ACT }}
+      #if: ${{ !env.ACT }}
       run: |
         # make explicite to each directory
         # We don't want this to fail CI
-        cd $PWD      && pylint -s n --exit-zero `ls -R|grep .py$|xargs` > pylint.log && cat pylint.log
+        pylint -s n --exit-zero `ls -R|grep .py$|xargs` > pylint.log && cat pylint.log
         cd dashboard && pylint -s n --exit-zero `ls -R|grep .py$|xargs` > pylint.log && cat pylint.log
     - name: upload-pylint.log
       if: ${{ !env.ACT }}
