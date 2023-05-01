@@ -421,7 +421,7 @@ test-venv:## 	test virutalenv .venv
 .PHONY: init setup
 .SILENT:
 setup: init venv## 	basic setup
-init:submodules venv docker-pull
+init:submodules venv #docker-pull
 
 ifneq ($(shell id -u),0)
 	@echo
