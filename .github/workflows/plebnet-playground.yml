@@ -62,26 +62,20 @@ jobs:
       - run: pip install -r requirements.txt
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
-      - name: sudo apt install gawk
-        run: |
-          sudo apt install gawk
       - name: make help report
         #if: ${{ !env.ACT }}
         run: |
-          make help report submodules
-      - name: make initialize init
-        #if: ${{ !env.ACT }}
-        run: |
-          make initialize init #docker-pull
+          profile=randymcmillan tag=0.5.12 make docker-pull
+          make help report submodules cluster
       - name: make venv && . .venv/bin/activate
-        #if: ${{ !env.ACT }}
+        if: ${{ !env.ACT }}
         run: |
           make venv && . .venv/bin/activate
           make test-venv
-      - name: make build para=true
+      - name: make build #para=true
         if: ${{ !env.ACT }}
         run: |
-          make verbose=true build para=true
+          make verbose=true para=true build
       - name: make install
         if: ${{ !env.ACT }}
         run: |
@@ -90,15 +84,11 @@ jobs:
         if: ${{ !env.ACT }}
         run: |
           ./install.sh
-      - name: make docs && git diff
-        if: ${{ !env.ACT }}
-        run: |
-          make verbose=true docs && git diff
 
       - name: play
         if: ${{ !env.ACT }}
         run: |
-          make init
+          V=1 make init
           play
 
       - name: play info
