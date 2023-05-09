@@ -81,7 +81,7 @@ jobs:
       - name: make build para=true
         if: ${{ !env.ACT }}
         run: |
-          make build para=true
+          make verbose=true build para=true
       - name: make install
         if: ${{ !env.ACT }}
         run: |
@@ -93,11 +93,12 @@ jobs:
       - name: make docs && git diff
         if: ${{ !env.ACT }}
         run: |
-          make docs && git diff
+          make verbose=true docs && git diff
 
       - name: play
         if: ${{ !env.ACT }}
         run: |
+          make init
           play
 
       - name: play info
