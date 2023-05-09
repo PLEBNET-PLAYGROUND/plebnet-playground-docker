@@ -3,9 +3,13 @@
 #It can be used to automate things in the container
 PLAY_BITCOIN_ID=$(play-bitcoin id);
 export PLAY_BITCOIN_ID
-while [ ! -z "$PLAY_BITCOIN_ID" ]; do
-ADDRESS=tb1q550ph67a0qztgg7zx5lxnuj6qj20wxav2mx47k && \
-play-getcoins -a "$(play-getcoins -a $ADDRESS -r true)" > /dev/null 2>&1;
+while [ -n "$PLAY_BITCOIN_ID" ]; do
+	if [ -n "$1" ]; then
+		ADDRESS=$1
+	else
+		ADDRESS=tb1qd88yvsaa87jd3vpftd0v5ecx2zrkmalja3gy5g
+	fi
+play-getcoins -a "$(play-getcoins -a "$ADDRESS" -r true)" > /dev/null 2>&1;
 PLAY_BITCOIN_ID=$(play-bitcoin id);
-echo $PLAY_BITCOIN_ID
+echo "$PLAY_BITCOIN_ID"
 done
