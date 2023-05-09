@@ -514,18 +514,18 @@ docker-pull:docker-start## 	docker-pull
 	@docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-x86_64-linux-gnu/root:v0.5.11
 	@docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-x86_64-linux-gnu/root:v0.5.12
 	
-	@echo $(PACKAGE_PREFIX)
-	@echo $(GIT_PROFILE)
-	@echo $(PROJECT_NAME)
-	@echo $(TRIPLET)
-	@echo $(TAG)
+	#@echo $(PACKAGE_PREFIX)
+	#@echo $(GIT_PROFILE)
+	#@echo $(PROJECT_NAME)
+	#@echo $(TRIPLET)
+	#@echo $(TAG)
 
-	@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/root:$(TAG)
-	@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/cln-$(TRIPLET)/root:$(TAG)
-	@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/root:$(TAG)
-	@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/root:$(TAG)
-	@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/root:$(TAG)
-	@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/root:$(TAG)
+	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/root:$(TAG)
+	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/cln-$(TRIPLET)/root:$(TAG)
+	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/root:$(TAG)
+	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/root:$(TAG)
+	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/root:$(TAG)
+	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/root:$(TAG)
 
 .PHONY: blocknotify
 blocknotify:

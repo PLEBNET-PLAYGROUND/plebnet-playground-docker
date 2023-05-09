@@ -68,7 +68,6 @@ jobs:
 
   pylint:
     runs-on: ubuntu-latest
-    if: ${{ !env.ACT }}
     steps:
     - uses: actions/checkout@v3
       #if: ${{ !env.ACT }}

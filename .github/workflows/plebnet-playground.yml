@@ -52,53 +52,47 @@ jobs:
         if: ${{ !env.ACT }}
         with:
           access_token: ${{ github.token }}
+
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4.5.0
-      - uses: syphar/restore-virtualenv@v1
-        id: cache-virtualenv
-      - uses: syphar/restore-pip-download-cache@v1
-        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
-      - run: pip install -r requirements.txt
-        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+      - uses: actions/setup-python@v4
+        id: py3
+        with:
+          python-version: "3.9"
+          cache: 'pip'
+      - run: |
+          sudo apt-get update
+          sudo apt-get install --fix-missing -y python-is-python3 python3 python3-pip || echo
+          pip install -r requirements.txt
+        if: steps.py3.outputs.cache-hit != 'true'
 
-      - name: sudo apt install gawk
-        run: |
-          sudo apt install gawk
-      - name: make help report
+      - name: make help report submodules
         #if: ${{ !env.ACT }}
         run: |
-          make help report submodules
-      - name: make initialize init
+          make help report submodules venv && . .venv/bin/activate &
+
+      - name: make docker-pull
         #if: ${{ !env.ACT }}
         run: |
-          make initialize init #docker-pull
+          profile=randymcmillan tag=$(git tag --sort=committerdate | grep -E '^v[0-9]' | tail -1) make docker-pull || true
       - name: make venv && . .venv/bin/activate
-        #if: ${{ !env.ACT }}
+        if: ${{ !env.ACT }}
         run: |
           make venv && . .venv/bin/activate
           make test-venv
-      - name: make build para=true
+      - name: make build #para=true
         if: ${{ !env.ACT }}
         run: |
-          make verbose=true build para=true
+          make verbose=true para=true build
       - name: make install
         if: ${{ !env.ACT }}
         run: |
           make install
-      - name: ./install.sh
-        if: ${{ !env.ACT }}
-        run: |
-          ./install.sh
-      - name: make docs && git diff
-        if: ${{ !env.ACT }}
-        run: |
-          make verbose=true docs && git diff
 
       - name: play
         if: ${{ !env.ACT }}
         run: |
-          make init
+          V=1 make init
           play
 
       - name: play info
