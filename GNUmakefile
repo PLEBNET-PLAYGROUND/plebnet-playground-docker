@@ -502,17 +502,17 @@ docker-pull:docker-start## 	docker-pull
 	@echo "profile=randymcmillan      tag=0.5.12 make docker-pull"
 	@echo "profile=plebnet-playground tag=0.5.12 make docker-pull"
 	@echo "for example..."
-	@docker pull alpine
-	@docker pull rust:latest
-	@docker pull debian:sid-slim
-	@docker pull rust:slim-buster
-	@docker pull shahanafarooqui/rtl:0.11.0
-	@docker pull shahanafarooqui/rtl:0.13.6
-	@docker pull elementsproject/lightningd:v0.10.2
-	@docker pull elementsproject/lightningd:v22.11.1
+	@docker pull alpine || true
+	@docker pull rust:latest || true
+	@docker pull debian:sid-slim || true
+	@docker pull rust:slim-buster || true
+	@docker pull shahanafarooqui/rtl:0.11.0 || true
+	@docker pull shahanafarooqui/rtl:0.13.6 || true
+	@docker pull elementsproject/lightningd:v0.10.2 || true
+	@docker pull elementsproject/lightningd:v22.11.1 || true
+	@docker pull elementsproject/lightningd:latest || true
 
-	@docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-x86_64-linux-gnu/root:v0.5.11
-	@docker pull ghcr.io/randymcmillan/plebnet-playground-docker/bitcoind-x86_64-linux-gnu/root:v0.5.12
+	@docker pull ghcr.io/randymcmillan/$(PROJECT_NAME)/bitcoind-x86_64-linux-gnu/root:v$(TAG) || true
 	
 	#@echo $(PACKAGE_PREFIX)
 	#@echo $(GIT_PROFILE)
@@ -520,12 +520,12 @@ docker-pull:docker-start## 	docker-pull
 	#@echo $(TRIPLET)
 	#@echo $(TAG)
 
-	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/lnd-$(TRIPLET)/root:$(TAG)
-	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/cln-$(TRIPLET)/root:$(TAG)
-	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/tor-$(TRIPLET)/root:$(TAG)
-	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/docs-$(TRIPLET)/root:$(TAG)
-	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/root:$(TAG)
-	#@docker pull $(PACKAGE_PREFIX)/$(GIT_PROFILE)/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/root:$(TAG)
+	@docker pull ghcr.io/randymcmillan/$(PROJECT_NAME)/lnd-$(TRIPLET)/root:$(TAG)
+	@docker pull ghcr.io/randymcmillan/$(PROJECT_NAME)/cln-$(TRIPLET)/root:$(TAG)
+	@docker pull ghcr.io/randymcmillan/$(PROJECT_NAME)/tor-$(TRIPLET)/root:$(TAG)
+	@docker pull ghcr.io/randymcmillan/$(PROJECT_NAME)/docs-$(TRIPLET)/root:$(TAG)
+	@docker pull ghcr.io/randymcmillan/$(PROJECT_NAME)/bitcoind-$(TRIPLET)/root:$(TAG)
+	@docker pull ghcr.io/randymcmillan/$(PROJECT_NAME)/thunderhub-$(TRIPLET)/root:$(TAG)
 
 .PHONY: blocknotify
 blocknotify:
