@@ -45,8 +45,8 @@ jobs:
   ubuntu-build_and_test:
     strategy:
       matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+        python-version: [ '3.7','3.8','3.9','3.10', '3.11' ]
+    runs-on: ubuntu-latest
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
         if: ${{ !env.ACT }}
@@ -58,96 +58,97 @@ jobs:
       - uses: actions/setup-python@v4
         id: py3
         with:
-          python-version: "3.9"
+          python-version: ${{ matrix.python-version }}
           cache: 'pip'
       - run: |
           sudo apt-get update
-          sudo apt-get install --fix-missing -y python-is-python3 python3 python3-pip || echo
-          pip install -r requirements.txt
+          sudo apt-get install --fix-missing -y make bash python3 python3-pip python-is-python3 || echo
+          pip install -r requirements.txt && exec bash
         if: steps.py3.outputs.cache-hit != 'true'
 
       - name: make help report submodules
         #if: ${{ !env.ACT }}
         run: |
-          make help report submodules venv && . .venv/bin/activate &
+          V=1 make help report submodules venv && . .venv/bin/activate && exec bash #&
 
       - name: make docker-pull
         #if: ${{ !env.ACT }}
         run: |
           profile=randymcmillan tag=$(git tag --sort=committerdate | grep -E '^v[0-9]' | tail -1) make docker-pull || true
+
       - name: make venv && . .venv/bin/activate
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
-          make venv && . .venv/bin/activate
-          make test-venv
+          V=1 make venv && . .venv/bin/activate && make test-venv
+
       - name: make build #para=true
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
-          make verbose=true para=true build
+          V=1 make verbose=true para=true build
       - name: make install
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
-          make install
+          V=1 make init all
 
       - name: play
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           V=1 make init
           play
 
       - name: play info
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           play info
 
       - name: play ids
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           play ids
 
       - name: play-bitcoin "bitcoin-cli -h"
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           play-bitcoin "bitcoin-cli -h"
 
       - name: play bitcoin config
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           play bitcoin config
 
       - name: play-bitcoin config
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           play-bitcoin config
 
       - name: play lnd config
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           # play defaults to the lnd container
           play lnd config
 
       - name: play lnd "lncli -h"
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           play lnd "lncli -h"
 
       - name: play-lnd config
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           play-lnd config
 
       - name: play-lnd "lncli -h"
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           play-lnd "lncli -h"
 
       - name: uninstall
-        if: ${{ !env.ACT }}
+        #if: ${{ !env.ACT }}
         run: |
           make prune-playground || echo
           make prune-cluster || echo
           make prune || echo
           docker ps
           docker images
-          #make uninstall || echo
+          make uninstall || echo
 
