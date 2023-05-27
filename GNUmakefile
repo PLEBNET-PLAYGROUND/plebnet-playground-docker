@@ -401,7 +401,7 @@ venv:## 	create python3 virtualenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
 	   source .venv/bin/activate; pip install -q -r requirements.txt; \
-	   python3 -m pip install -q omegaconf \
+	   $(PYTHON3) -m pip install -q omegaconf \
 	   pip install -q --upgrade pip; \
 	);
 	@echo "To activate (venv)"
@@ -415,7 +415,7 @@ test-venv:## 	test virutalenv .venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
 	   source .venv/bin/activate; pip install -q -r requirements.txt; \
-	   python3 -m pip install -q omegaconf \
+	   $(PYTHON3) -m pip install -q omegaconf \
 	   pip install -q --upgrade pip; \
 	);
 .PHONY: init setup
