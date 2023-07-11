@@ -267,6 +267,7 @@ services:
     container_name: playground-docs
     environment:
       - TRIPLET=${TRIPLET}
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/docs-${TRIPLET}/root:v0.5.12
     build: 
       context: ${oc.env:PWD}/docs
       dockerfile: Dockerfile
