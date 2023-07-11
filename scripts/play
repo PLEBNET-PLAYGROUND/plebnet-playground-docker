@@ -7,9 +7,9 @@ do
 
 NOSTR_RELAY=$(docker ps | awk '/nostr-rs-relay/'|awk ' {print $1}' | awk 'NR==1')
 export NOSTR_RELAY
-THUNDERHUB_ID=$(docker ps | awk '/docker_thunderhub/'|awk ' {print $1}' | awk 'NR==1')
+THUNDERHUB_ID=$(docker ps | awk '/thunderhub/'|awk ' {print $1}' | awk 'NR==1')
 export THUNDERHUB_ID
-THUNDERHUB_IMAGE=$(docker images | awk '/docker_thunderhub/'|awk ' {print $3}' | awk 'NR==1')
+THUNDERHUB_IMAGE=$(docker images | awk '/thunderhub/'|awk ' {print $3}' | awk 'NR==1')
 export THUNDERHUB_IMAGE
 
 RTL_ID=$(docker ps | awk '/rtl/'|awk ' {print $1}' | awk 'NR==1')
@@ -17,14 +17,14 @@ export RTL_ID
 RTL_IMAGE=$(docker images | awk '/rtl/'|awk ' {print $3}' | awk 'NR==1')
 export RTL_IMAGE
 
-LND_ID=$(docker ps | awk '/docker_lnd/'|awk ' {print $1}' | awk 'NR==1')
+LND_ID=$(docker ps | awk '/lnd/'|awk ' {print $1}' | awk 'NR==1')
 export LND_ID
-LND_IMAGE=$(docker images | awk '/docker_lnd/'|awk ' {print $3}' | awk 'NR==1')
+LND_IMAGE=$(docker images | awk '/lnd/'|awk ' {print $3}' | awk 'NR==1')
 export LND_IMAGE
 
-CLN_ID=$(docker ps | awk '/docker_cln/'|awk ' {print $1}' | awk 'NR==1')
+CLN_ID=$(docker ps | awk '/cln/'|awk ' {print $1}' | awk 'NR==1')
 export CLN_ID
-CLN_IMAGE=$(docker images | awk '/docker_cln/'|awk ' {print $3}' | awk 'NR==1')
+CLN_IMAGE=$(docker images | awk '/cln/'|awk ' {print $3}' | awk 'NR==1')
 export CLN_IMAGE
 
 LNDG_ID=$(docker ps | awk '/cryptosharks131/'|awk ' {print $1}' | awk 'NR==1')
@@ -32,19 +32,19 @@ export LNDG_ID
 LNDG_IMAGE=$(docker images | awk '/cryptosharks131/'|awk ' {print $3}' | awk 'NR==1')
 export LNDG_IMAGE
 
-DOCS_ID=$(docker ps | awk '/docker_docs/'|awk ' {print $1}' | awk 'NR==1')
+DOCS_ID=$(docker ps | awk '/docs/'|awk ' {print $1}' | awk 'NR==1')
 export DOCS_ID
-DOCS_IMAGE=$(docker images | awk '/docker_docs/'|awk ' {print $3}' | awk 'NR==1')
+DOCS_IMAGE=$(docker images | awk '/docs/'|awk ' {print $3}' | awk 'NR==1')
 export DOCS_IMAGE
 
-BITCOIND_ID=$(docker ps | awk '/docker_bitcoind/'|awk ' {print $1}' | awk 'NR==1')
+BITCOIND_ID=$(docker ps | awk '/bitcoind/'|awk ' {print $1}' | awk 'NR==1')
 export BITCOIND_ID
-BITCOIND_IMAGE=$(docker images | awk '/docker_bitcoind/'|awk ' {print $3}' | awk 'NR==1')
+BITCOIND_IMAGE=$(docker images | awk '/bitcoind/'|awk ' {print $3}' | awk 'NR==1')
 export BITCOIND_IMAGE
 
-TOR_ID=$(docker ps | awk '/docker_tor/'|awk ' {print $1}' | awk 'NR==1')
+TOR_ID=$(docker ps | awk '/tor/'|awk ' {print $1}' | awk 'NR==1')
 export TOR_ID
-TOR_IMAGE=$(docker images | awk '/docker_tor/'|awk ' {print $3}' | awk 'NR==1')
+TOR_IMAGE=$(docker images | awk '/tor/'|awk ' {print $3}' | awk 'NR==1')
 export TOR_IMAGE
 
 BTCD_ID=$(docker ps | awk '/btcd/'|awk ' {print $1}' | awk 'NR==1')

@@ -2,9 +2,9 @@
 
 if hash docker 2>/dev/null; then
 
-LND_ID=$(echo $(docker ps | awk '/docker_lnd/'|awk ' {print $1}' | awk 'NR==1'))
+LND_ID=$(echo $(docker ps | awk '/lnd/'|awk ' {print $1}' | awk 'NR==1'))
 export LND_ID
-LND_IMAGE=$(echo $(docker images | awk '/docker_lnd/'|awk ' {print $3}' | awk 'NR==1'))
+LND_IMAGE=$(echo $(docker images | awk '/lnd/'|awk ' {print $3}' | awk 'NR==1'))
 export LND_IMAGE
 
 for ((i=1;i<=$#;i++));

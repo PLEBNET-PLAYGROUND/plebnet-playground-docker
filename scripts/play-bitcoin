@@ -2,9 +2,9 @@
 
 if hash docker 2>/dev/null; then
 
-BITCOIND_ID=$(echo $(docker ps | awk '/playground-bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
+BITCOIND_ID=$(echo $(docker ps | awk '/bitcoind/'|awk ' {print $1}' | awk 'NR==1'))
 export BITCOIND_ID
-BITCOIND_IMAGE=$(echo $(docker images | awk '/playground-bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
+BITCOIND_IMAGE=$(echo $(docker images | awk '/bitcoind/'|awk ' {print $3}' | awk 'NR==1'))
 export BITCOIND_IMAGE
 
 for ((i=1;i<=$#;i++));
