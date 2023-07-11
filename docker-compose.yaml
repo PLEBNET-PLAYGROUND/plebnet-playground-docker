@@ -1,0 +1,201 @@
+version: '3.4'
+networks: {}
+services:
+  bitcoind:
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/bitcoind-x86_64-linux-gnu/root:v0.5.12
+    build:
+      context: ./bitcoin-signet
+      dockerfile: Dockerfile
+      args:
+      - TRIPLET=x86_64-linux-gnu
+    links:
+    - tor
+    depends_on:
+    - tor
+    restart: unless-stopped
+    container_name: playground-bitcoind
+    environment:
+      TRIPLET: x86_64-linux-gnu
+      GET_COINS_ON_STARTUP: 'true'
+    expose:
+    - '38332'
+    - '38333'
+    - '38334'
+    ports:
+    - 38333:38333
+    volumes:
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/bitcoin_datadir
+      target: /root/.bitcoin/
+  lnd:
+    links:
+    - bitcoind
+    - tor
+    depends_on:
+    - bitcoind
+    - tor
+    environment:
+      TRIPLET: x86_64-linux-gnu
+      LND_ALIAS: LNDNode
+      LND_LISTEN: playground-lnd:9735
+      LND_RPCLISTEN: playground-lnd:10009
+      LND_RESTLISTEN: playground-lnd:8080
+      zmqpubrawblock: tcp://playground-bitcoind:28332
+      zmqpubrawtx: tcp://playground-bitcoind:28333
+      torsocks: playground-tor:9050
+      torcontrol: playground-tor:9051
+      tlsextradomain: playground-lnd
+      rpchost: playground-bitcoind
+    restart: unless-stopped
+    container_name: playground-lnd
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/lnd-x86_64-linux-gnu/root:v0.5.12
+    build:
+      context: ./lnd-signet
+      dockerfile: Dockerfile
+    expose:
+    - '8080'
+    - '9735'
+    - '9911'
+    - '10009'
+    ports:
+    - 8080:8080
+    - 9735:9735
+    - 9911:9911
+    - 10009:10009
+    volumes:
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/lnd_datadir
+      target: /root/.lnd/
+  cln:
+    links:
+    - bitcoind
+    - tor
+    depends_on:
+    - bitcoind
+    - tor
+    environment:
+      CLN_ALIAS: CLNNode
+      BITCOIN_RPC_HOST: playground-bitcoind
+      TOR_PROXY: playground-tor:9050
+      TOR_ADDR: playground-tor:9051
+      LIGHTNINGD_PORT: '9736'
+    restart: unless-stopped
+    container_name: playground-cln
+    build:
+      context: ./cln-signet
+      dockerfile: Dockerfile
+    expose:
+    - '9736'
+    ports:
+    - 9736:9736
+    volumes:
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/cln_datadir
+      target: /root/.lightning/
+  tor:
+    restart: unless-stopped
+    container_name: playground-tor
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/tor-x86_64-linux-gnu/root:v0.5.12
+    build:
+      context: ./tor
+      dockerfile: Dockerfile
+    expose:
+    - 9050
+    - 9051
+    volumes:
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/tor_datadir
+      target: /home/tor/.tor
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/tor_torrcdir
+      target: /usr/local/etc/tor
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/tor_servicesdir
+      target: /var/lib/tor/hidden_services
+  thunderhub:
+    container_name: playground-thub
+    depends_on:
+    - lnd
+    - bitcoind
+    links:
+    - bitcoind
+    - lnd
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/thunderhub-x86_64-linux-gnu/root:v0.5.12
+    build:
+      context: ./thub
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    stop_signal: SIGKILL
+    environment:
+      NO_VERSION_CHECK: 'true'
+      ACCOUNT_CONFIG_PATH: /data/thubConfig.yaml
+      LOG_LEVEL: debug
+    volumes:
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/lnd_datadir
+      target: /etc/lnd
+      read_only: true
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/thub_datadir
+      target: /data
+    ports:
+    - 3001:3000
+  rtl:
+    container_name: playground-rtl
+    links:
+    - lnd
+    - bitcoind
+    depends_on:
+    - lnd
+    - bitcoind
+    restart: unless-stopped
+    environment:
+      LND_SERVER_URL: https://playground-lnd:8080/v1
+      MACAROON_PATH: /root/.lnd/data/chain/bitcoin/signet
+      RTL_CONFIG_PATH: /data/
+      LND_CONFIG_PATH: /root/.lnd/lnd.conf
+      BITCOIND_CONFIG_PATH: /etc/bitcoin/bitcoin.conf
+      RTL_SSO: 0
+      RTL_COOKIE_PATH: ''
+      LOGOUT_REDIRECT_LINK: ''
+      CONFIG_PATH: ''
+      LN_IMPLEMENTATION: LND
+    ports:
+    - 3000:3000
+    image: shahanafarooqui/rtl:0.13.6
+    volumes:
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/lnd_datadir
+      target: /root/.lnd/
+      read_only: true
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/bitcoin_datadir
+      target: /etc/bitcoin/
+      read_only: true
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/volumes/rtl_datadir
+      target: /data
+  docs:
+    links:
+    - tor
+    depends_on:
+    - tor
+    restart: unless-stopped
+    container_name: playground-docs
+    environment:
+    - TRIPLET=x86_64-linux-gnu
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/docs-x86_64-linux-gnu/root:v0.5.12
+    build:
+      context: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/docs
+      dockerfile: Dockerfile
+      args:
+      - TRIPLET=x86_64-linux-gnu
+    expose:
+    - '8000'
+    - '8008'
+    ports:
+    - 8008:8000
+    volumes:
+    - type: bind
+      source: /Users/Shared/PLEBNET-PLAYGROUND/plebnet-playground-docker/docs
+      target: /docs
