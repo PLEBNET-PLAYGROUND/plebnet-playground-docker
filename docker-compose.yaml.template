@@ -121,6 +121,7 @@ services:
     links: 
       - bitcoind
       - lnd
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/thunderhub-${TRIPLET}/root:v0.5.12
     build:
         context: ./thub
         dockerfile: Dockerfile
