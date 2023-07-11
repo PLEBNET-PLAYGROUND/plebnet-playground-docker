@@ -96,6 +96,7 @@ services:
   tor:
       restart: unless-stopped
       container_name: playground-tor
+      image: ghcr.io/plebnet-playground/plebnet-playground-docker/tor-${TRIPLET}/root:v0.5.12
       build:
         context: ./tor
         dockerfile: Dockerfile
