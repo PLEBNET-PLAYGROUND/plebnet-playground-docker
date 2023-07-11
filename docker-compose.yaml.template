@@ -49,6 +49,7 @@ services:
       rpchost: 'playground-bitcoind'
     restart: unless-stopped
     container_name: playground-lnd
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/lnd-${TRIPLET}/root:v0.5.12
     build: 
       context: ./lnd-signet
       dockerfile: Dockerfile
