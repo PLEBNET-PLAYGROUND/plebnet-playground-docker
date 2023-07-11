@@ -172,74 +172,74 @@ services:
         - type: bind
           source: ${oc.env:PWD}/volumes/rtl_datadir
           target: /data
-  notebook:
-    container_name: playground-notebook
-    links: 
-      - lnd
-      - bitcoind
-    depends_on:
-      - lnd
-      - bitcoind
-    restart: unless-stopped
-    ports:
-      - "8888:8888"
-    build:
-      context: ./dashboard
-      dockerfile: Dockerfile
-      args:
-        - TRIPLET=${TRIPLET}
-    volumes:
-      - type: bind
-        source: ${oc.env:PWD}/notebooks
-        target: /notebooks
-      - type: bind
-        source: ${oc.env:PWD}/dashboard
-        target: /dashboard
-      - type: bind
-        source: ${oc.env:PWD}/volumes/lnd_datadir
-        target: /root/.lnd/
-        read_only: true
-    environment:
-      JUPYTER_NOTEBOOKS: /
-      JUPYTER_PORT: 8888
-      LND_DATADIR: /root/.lnd
-    working_dir: /
-    command:
-      - sh
-      - -c
-      - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
-  dashboard:
-    container_name: playground-dashboard
-    links:
-      - lnd
-      - bitcoind
-    depends_on:
-      - lnd
-      - bitcoind
-    restart: unless-stopped
-    ports:
-      - "8050:8050"
-    build:
-      context: ./dashboard
-      dockerfile: Dockerfile
-    volumes:
-      - type: bind
-        source: ${oc.env:PWD}/dashboard
-        target: /dashboard
-      - type: bind
-        source: ${oc.env:PWD}/volumes/lnd_datadir
-        target: /root/.lnd/
-        read_only: true
-    environment:
-      JUPYTER_NOTEBOOKS: /dashboard
-      LND_DATADIR: /root/.lnd
-      GRAPH_TEST_DATA: describegraph.json
-      USE_TEST_DATA: ${USE_TEST_DATA}
-    working_dir: /dashboard
-    # use this command to spin up jupyter serving on localhost:8888
-    command:
-      - python
-      - dashboard.py
+#  notebook:
+#    container_name: playground-notebook
+#    links: 
+#      - lnd
+#      - bitcoind
+#    depends_on:
+#      - lnd
+#      - bitcoind
+#    restart: unless-stopped
+#    ports:
+#      - "8888:8888"
+#    build:
+#      context: ./dashboard
+#      dockerfile: Dockerfile
+#      args:
+#        - TRIPLET=${TRIPLET}
+#    volumes:
+#      - type: bind
+#        source: ${oc.env:PWD}/notebooks
+#        target: /notebooks
+#      - type: bind
+#        source: ${oc.env:PWD}/dashboard
+#        target: /dashboard
+#      - type: bind
+#        source: ${oc.env:PWD}/volumes/lnd_datadir
+#        target: /root/.lnd/
+#        read_only: true
+#    environment:
+#      JUPYTER_NOTEBOOKS: /
+#      JUPYTER_PORT: 8888
+#      LND_DATADIR: /root/.lnd
+#    working_dir: /
+#    command:
+#      - sh
+#      - -c
+#      - chmod +x /dashboard/jupyter_run.sh && /dashboard/jupyter_run.sh
+#  dashboard:
+#    container_name: playground-dashboard
+#    links:
+#      - lnd
+#      - bitcoind
+#    depends_on:
+#      - lnd
+#      - bitcoind
+#    restart: unless-stopped
+#    ports:
+#      - "8050:8050"
+#    build:
+#      context: ./dashboard
+#      dockerfile: Dockerfile
+#    volumes:
+#      - type: bind
+#        source: ${oc.env:PWD}/dashboard
+#        target: /dashboard
+#      - type: bind
+#        source: ${oc.env:PWD}/volumes/lnd_datadir
+#        target: /root/.lnd/
+#        read_only: true
+#    environment:
+#      JUPYTER_NOTEBOOKS: /dashboard
+#      LND_DATADIR: /root/.lnd
+#      GRAPH_TEST_DATA: describegraph.json
+#      USE_TEST_DATA: ${USE_TEST_DATA}
+#    working_dir: /dashboard
+#    # use this command to spin up jupyter serving on localhost:8888
+#    command:
+#      - python
+#      - dashboard.py
   lndg:  
     image: ghcr.io/cryptosharks131/lndg:latest  
     container_name: playground-lndg
