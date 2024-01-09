@@ -1,6 +1,6 @@
 FROM debian:sid-slim as builder
 
-ARG BITCOIN_VERSION=25.1
+ARG BITCOIN_VERSION=26.0
 ARG TRIPLET=${TRIPLET}
 
 
