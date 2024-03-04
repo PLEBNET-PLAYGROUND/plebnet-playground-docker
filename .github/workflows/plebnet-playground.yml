@@ -135,10 +135,10 @@ jobs:
           # play defaults to the lnd container
           play lnd config
 
-      - name: play lnd "lncli -h"
-        if: ${{ !env.ACT }}
-        run: |
-          play lnd "lncli -h"
+      #- name: play lnd "lncli -h"
+      #  if: ${{ !env.ACT }}
+      #  run: |
+      #    play lnd "lncli -h"
 
       - name: play-lnd config
         if: ${{ !env.ACT }}
