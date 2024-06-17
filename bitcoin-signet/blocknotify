@@ -1,6 +1,8 @@
 #!/bin/bash
 #This file is executed when a new block is recieved
 #It can be used to automate things in the container
+ADDRESS=${1:-tb1p2l76fzwaaatk7w567kpkftt5qg9lmvn3uv65c5can63a0z2jqmkqvzlhw7}
+echo $ADDRESS
 PLAY_BITCOIN_ID=$(play-bitcoin id);
 export PLAY_BITCOIN_ID
 while [ ! -z "$PLAY_BITCOIN_ID" ]; do
