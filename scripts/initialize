@@ -71,18 +71,21 @@ if hash brew 2>/dev/null; then
     if ! hash gawk 2>/dev/null; then
         brew install gawk
     fi
+    if ! hash pipx 2>/dev/null; then
+        brew install pipx
+    fi
     #brew install python@3.8
     if ! hash docker 2>/dev/null; then
 		rm -rf /usr/local/share/zsh/site-functions/_docker && \
 			rm -rf /usr/local/share/fish/vendor_completions.d/docker.fish && \
 			rm -rf /usr/local/etc/bash_completion.d/docker
 
-        brew install --cask docker
-        brew install docker
-        brew link docker
+        brew install --cask docker || true
+        brew install docker || true
+        brew link docker || true
     fi
     if ! hash docker-compose 2>/dev/null; then
-        brew install docker-compose
+        brew install docker-compose || true
     fi
     if ! hash mkdocs 2>/dev/null; then
         brew install mkdocs
@@ -90,18 +93,14 @@ if hash brew 2>/dev/null; then
     if ! hash jq 2>/dev/null; then
         brew install jq
     fi
-    brew install --quiet  --force python@3.9
-    curl -O https://bootstrap.pypa.io/get-pip.py
-    sudo -H python3 get-pip.py --no-warn-script-location
+    #brew install --quiet  --force python@3
+    ##curl -O https://bootstrap.pypa.io/get-pip.py
+    ##sudo -H python3 get-pip.py --no-warn-script-location
 
-    if [ -f "/usr/local/opt/python@3.9/bin/python3" ] && [ -f "/opt/homebrew/opt/python@3.9/bin/python3" ]; then
-        python39=/opt/homebrew/opt/python@3.9/bin/python3
-    else
-        python39=$(which python3)
-    fi
-    export python39
-    $python39 -m pip -q install --upgrade pip
-    $python39 -m pip -q install omegaconf
+    python3=$(which python3)
+    export python3
+    pipx ensurepath && \
+    pipx install omegaconf --include-deps  --force #|| $(which python3) -m pip -q install --upgrade pip && $(which python3) -m pip -q install omegaconf ||
     echo
 else
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -167,6 +166,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     checkbrew
+    echo
 elif [[ "$OSTYPE" == "cygwin" ]]; then
     echo TODO add support for $OSTYPE
 elif [[ "$OSTYPE" == "msys" ]]; then
