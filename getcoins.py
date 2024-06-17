@@ -36,6 +36,9 @@ def print_report():
 if args.address == '':
     # get address for receiving coins
     args.address = json.loads(subprocess.check_output([args.cmd] + ['exec','-it','playground-lnd', 'lncli', '--macaroonpath', '/root/.lnd/data/chain/bitcoin/signet/admin.macaroon', 'newaddress', 'p2wkh']))["address"]
+if args.address == '':
+    # get address for receiving coins
+    args.address = json.loads(subprocess.check_output([args.cmd] + ['exec','-it','playground-lnd', 'lncli', '--macaroonpath', '/root/.lnd/data/chain/bitcoin/signet/admin.macaroon', 'newaddress', 'p2tr']))["address"]
     data = {'address': args.address}
 else:
     data = {'address': args.address}
