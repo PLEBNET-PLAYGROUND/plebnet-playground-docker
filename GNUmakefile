@@ -391,10 +391,10 @@ all: initialize init install prune-cluster## 	all
 
 .PHONY: venv
 venv:## 	create python3 virtualenv .venv
-	test -d .venv || $(PYTHON3) -m virtualenv .venv
+	test -d .venv || python3 -m virtualenv .venv || pipx install virtualenv && virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -q -r requirements.txt; \
-	   python3 -m pip install -q omegaconf \
+	   source .venv/bin/activate; pip install -q -r requirements.txt --break-system-package; \
+	   pip install -q omegaconf --break-system-package \
 	   pip install -q --upgrade pip; \
 	);
 	@echo "To activate (venv)"
@@ -432,10 +432,11 @@ endif
 	@install -v -m=o+rwx $(PWD)/getcoins.py  /usr/local/bin/play-getcoins
 
 	#$(PYTHON3) -m pip install -q --upgrade pip 2>/dev/null
-	$(PYTHON3) -m pip install -q omegaconf 2>/dev/null
-	$(PYTHON3) -m pip install -q -r requirements.txt 2>/dev/null
+	$(PYTHON3) -m pip install -q omegaconf 2>/dev/null || $(MAKE) venv
+	$(PYTHON3) -m pip install -q -r requirements.txt 2>/dev/null || true
 	# pushd docs 2>/dev/null && $(PYTHON3) -m pip install -q -r requirements.txt && popd  2>/dev/null
-	$(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES)
+	source .venv/bin/activate; $(PYTHON3) plebnet_generate.py TRIPLET=$(TRIPLET) services=$(SERVICES) || \
+	pip3 install omegaconf --break-system-packages
 
 	#pushd scripts 2>/dev/null; for string in *; do sudo chmod -R o+rwx /usr/local/bin/$$string; done; popd  2>/dev/null || echo
 
