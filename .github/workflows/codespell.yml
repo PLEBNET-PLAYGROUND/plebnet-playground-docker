@@ -24,11 +24,10 @@ jobs:
       - name: install-codespell-asciidoctor
         run: |
           export DEBIAN_FRONTEND=noninteractive
-          sudo apt list --upgradable
-          sudo apt upgrade -y
-          sudo apt update -y
-          sudo apt install apt-utils asciidoctor python3-pip golang-go -y
-          pip3 install -U codespell
+          sudo apt-get update -y
+          sudo apt-get install apt-utils asciidoctor pipx python3-pip golang-go -y --fix-missing
+          pipx ensurepath
+          pipx install codespell
       - name: markdown-syntax
         if: ${{ !env.ACT }}
         run: |
