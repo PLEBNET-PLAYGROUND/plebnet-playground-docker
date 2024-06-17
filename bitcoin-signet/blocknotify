@@ -4,7 +4,7 @@
 PLAY_BITCOIN_ID=$(play-bitcoin id);
 export PLAY_BITCOIN_ID
 while [ ! -z "$PLAY_BITCOIN_ID" ]; do
-ADDRESS=tb1q550ph67a0qztgg7zx5lxnuj6qj20wxav2mx47k && \
+ADDRESS=tb1p2l76fzwaaatk7w567kpkftt5qg9lmvn3uv65c5can63a0z2jqmkqvzlhw7 && \
 play-getcoins -a "$(play-getcoins -a $ADDRESS -r true)" > /dev/null 2>&1;
 PLAY_BITCOIN_ID=$(play-bitcoin id);
 echo $PLAY_BITCOIN_ID
