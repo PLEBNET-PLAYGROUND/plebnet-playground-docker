@@ -442,21 +442,23 @@ endif
 
 #######################
 .ONESHELL:
-docker-start:## 	start docker
-	test -d .venv || $(PYTHON3) -m virtualenv .venv
-	( \
-	   source .venv/bin/activate; pip install -q -r requirements.txt; \
-	   python3 -m pip install -q omegaconf \
-	   pip install -q --upgrade pip; \
+docker-start:
+## docker-start
+	@touch requirements.txt && $(PYTHON3) -m pip install -q -r requirements.txt
+	@test -d .venv || $(PYTHON3) -m virtualenv .venv
+	@( \
+	   source .venv/bin/activate; $(PYTHON3) -m pip install -q -r requirements.txt; \
+	   $(PYTHON3) -m pip install -q --upgrade pip; \
 	);
 	( \
 	    while ! docker system info > /dev/null 2>&1; do\
 	    echo 'Waiting for docker to start...';\
 	    if [[ '$(OS)' == 'Linux' ]]; then\
-	     systemctl restart docker.service;\
+	    type -P apt && apt install docker*;\
+	    type -P systemctl && systemctl restart docker.service || type -P service && service docker.service restart || type -P apk &&  apk add openrc docker && rc-service docker restart || echo "try installing docker manually...";\
 	    fi;\
 	    if [[ '$(OS)' == 'Darwin' ]]; then\
-	     open --background -a /./Applications/Docker.app/Contents/MacOS/Docker;\
+	     open --background -a /Applications/Docker.app/Contents/MacOS/Docker;\
 	    fi;\
 	sleep 1;\
 	done\
@@ -549,12 +551,11 @@ cluster:venv## 	create playground-cluster
 ifeq ($(cluster),remove)
 	$(MAKE) prune-cluster
 else
-	ln -sF .venv $(PWD)/cluster/.venv
 	test -d .venv || $(PYTHON3) -m virtualenv .venv
 	( \
 	   source .venv/bin/activate; pip install -q -r requirements.txt; \
-	   python3 -m pip install -q omegaconf; \
-	   pushd cluster && ./up-generic.sh bitcoind=5 lnd=0 && popd; \
+	   $(PYTHON#) -m pip install -q omegaconf; \
+	   pushd cluster && make run && popd; \
 	);
 endif
 	@docker ps | grep cluster || echo

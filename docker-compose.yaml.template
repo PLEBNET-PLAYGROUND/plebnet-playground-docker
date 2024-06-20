@@ -3,6 +3,7 @@ version: "3.4"
 networks: {}
 services:
   bitcoind:
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/bitcoind-${TRIPLET}/root:v0.5.12
     build: 
       context: ./bitcoin-signet
       dockerfile: Dockerfile
@@ -48,6 +49,7 @@ services:
       rpchost: 'playground-bitcoind'
     restart: unless-stopped
     container_name: playground-lnd
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/lnd-${TRIPLET}/root:v0.5.12
     build: 
       context: ./lnd-signet
       dockerfile: Dockerfile
@@ -94,6 +96,7 @@ services:
   tor:
       restart: unless-stopped
       container_name: playground-tor
+      image: ghcr.io/plebnet-playground/plebnet-playground-docker/tor-${TRIPLET}/root:v0.5.12
       build:
         context: ./tor
         dockerfile: Dockerfile
@@ -118,6 +121,7 @@ services:
     links: 
       - bitcoind
       - lnd
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/thunderhub-${TRIPLET}/root:v0.5.12
     build:
         context: ./thub
         dockerfile: Dockerfile
@@ -263,6 +267,7 @@ services:
     container_name: playground-docs
     environment:
       - TRIPLET=${TRIPLET}
+    image: ghcr.io/plebnet-playground/plebnet-playground-docker/docs-${TRIPLET}/root:v0.5.12
     build: 
       context: ${oc.env:PWD}/docs
       dockerfile: Dockerfile
